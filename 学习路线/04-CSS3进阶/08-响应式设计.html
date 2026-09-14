@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>响应式设计 · CSS3 进阶 — 前端自习室</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23B8552F'/%3E%3Ctext x='16' y='22' font-size='16' font-family='serif' font-weight='700' fill='%23FFF7EF' text-anchor='middle'%3E学%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="../assets/learn.css">
+</head>
+<body data-page="04-CSS3进阶/08-响应式设计.html">
+    <main class="lx-main">
+        <article class="lx-article">
+
+            <nav class="lx-crumb">
+                <a href="../教程中心页.html">学习路线</a><span class="sep">›</span>
+                <a href="index.html">CSS3 进阶</a><span class="sep">›</span>
+                <span class="here">响应式设计</span>
+            </nav>
+            <h1><span class="h-no">08</span>响应式设计</h1>
+            <p class="lx-lead">
+                一套代码，适配手机、平板、电脑：<strong class="hl">媒体查询</strong>监听屏幕宽度，
+                不同宽度套用不同样式。<b>移动优先</b>是现代前端的默认姿势——
+                这也是学习路线的最后一章，毕业快乐。
+            </p>
+            <div class="lx-meta-row">
+                <span class="lx-chip">约 55 分钟</span>
+                <span class="lx-chip">6 个动手实验</span>
+                <span class="lx-chip">CSS 收官章</span>
+            </div>
+
+            <section>
+                <h2>一、为什么需要响应式</h2>
+                <p>
+                    2010 年以前，网页只需要伺候一种屏幕：电脑显示器。之后 iPhone 掀翻桌面——
+                    如今<strong class="hl">六成以上的流量来自手机</strong>。摆在面前的选择只有两条路：
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>响应式 vs 分开做</caption>
+                        <thead>
+                            <tr><th>方案</th><th>做法</th><th>代价</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">分开做（老办法）</td><td>www.x.com 给电脑，m.x.com 给手机</td><td>两套代码两倍维护，链接容易跳丢</td></tr>
+                            <tr><td class="td-val">响应式（现标准）</td><td>一套代码 + 媒体查询按宽度换样式</td><td>需要学习本章——仅此而已</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>
+                    响应式的三块基石，本章各占一节：<strong class="hl">viewport 视口（第二节）、
+                    @media 媒体查询（第三~五节）、弹性单位与布局（第六节）</strong>。
+                    显隐控制和新兴的容器查询收尾。
+                </p>
+                <div class="lx-tip"><span>一句话版本：响应式不是「为每种设备各设计一版」，
+                    而是<b>让同一版设计能屈能伸</b>——先伸到最宽，再屈到最窄，都不断、都不丑。</span></div>
+            </section>
+
+            <section>
+                <h2>二、viewport：一切的起点</h2>
+                <p>
+                    每个响应式页面 head 里必须有这一行。没有它，手机会把页面当成
+                    <strong class="hl">980px 宽的老式桌面页</strong>整体缩小塞进屏幕——
+                    用户看到的就是一张密密麻麻的缩略图，得靠双指放大才能读字。
+                </p>
+                <div class="lx-codeblock" data-lang="html" data-file="viewport-meta.html">
+                    <script type="text/plain" class="lab-code"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- width=device-width：视口宽度 = 设备真实宽度（而不是 980px） -->
+<!-- initial-scale=1.0：初始缩放 1:1，不放大不缩小 --></script>
+                </div>
+                <div class="lab" data-lang="css" data-file="viewport-demo.css">
+                    <div class="lab-head"><span class="lab-cap">同一部手机：左边「没写 viewport」（整页缩小），右边「写了」（正常排版）——把右框改成和左边一样的 <code>min-height: 500px</code> 感受区别</span></div>
+                    <template class="lab-html">
+                        <div class="c3-vp-stage">
+                            <div class="item">
+                                <div class="c3-vp-phone">
+                                    <div class="c3-vp-page">
+                                        <div class="c3-vp-pills"><i></i><i></i><i></i></div>
+                                        <div class="c3-vp-hd">桌面版页面 980px</div>
+                                        <div class="c3-vp-hero">大横幅</div>
+                                        <div class="c3-vp-grid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                                        <div class="c3-vp-txt">这一段文字在手机上被缩小到看不清，用户必须双指放大、左右拖动才能阅读……</div>
+                                        <div class="c3-vp-ft"></div>
+                                    </div>
+                                </div>
+                                <span>没写 viewport · 整页缩略</span>
+                            </div>
+                            <div class="item">
+                                <div class="c3-vp-phone">
+                                    <div class="c3-vp-page m">
+                                        <div class="c3-vp-hd">移动版页面</div>
+                                        <div class="c3-vp-grid one"><i></i><i></i></div>
+                                        <div class="c3-vp-txt">文字清晰可读，单列排布，手指点得到每个目标。</div>
+                                    </div>
+                                </div>
+                                <span>写了 viewport · 正常排版</span>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.c3-vp-stage { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; padding: 12px 0; }
+.c3-vp-stage .item { text-align: center; }
+.c3-vp-phone {
+    width: 124px; height: 170px; margin: 0 auto;
+    border: 3px solid #3A2E26; border-radius: 16px; overflow: hidden; background: #fff;
+}
+.c3-vp-page {
+    width: 340px; min-height: 500px; padding: 10px; background: rgba(138, 78, 99, 0.07);
+    transform: scale(0.35); transform-origin: top left;
+}
+.c3-vp-page.m { width: 100%; min-height: 0; transform: none; background: none; padding: 8px; }
+.c3-vp-pills { display: flex; gap: 6px; margin-bottom: 8px; }
+.c3-vp-pills i { flex: 1; height: 16px; background: rgba(108, 59, 76, 0.3); border-radius: 8px; }
+.c3-vp-hd { background: #8A4E63; color: #fff; font-size: 11px; padding: 6px; border-radius: 6px; text-align: center; }
+.c3-vp-hero { margin-top: 8px; height: 120px; border-radius: 6px; background: linear-gradient(135deg, #C08A3E, #B3472E); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 11px; }
+.c3-vp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px; }
+.c3-vp-grid i { height: 34px; background: #B3748A; border-radius: 6px; }
+.c3-vp-grid.one { grid-template-columns: 1fr; }
+.c3-vp-txt { font-size: 10px; color: #6B6053; margin-top: 8px; line-height: 1.5; }
+.c3-vp-ft { margin-top: 8px; height: 26px; background: rgba(138, 78, 99, 0.25); border-radius: 6px; }
+.c3-vp-stage span { display: block; margin-top: 8px; font-size: 11.5px; color: #6B6053; }</script>
+                </div>
+                <div class="lx-warn"><span>别用 <code>user-scalable=no</code> 禁止用户缩放——无障碍大忌，
+                    视障用户依赖缩放读你的页面。<b>视口标签只管「初始尺寸」，不管「剥夺自由」。</b></span></div>
+            </section>
+
+            <section>
+                <h2>三、@media：媒体查询的完整语法</h2>
+                <p>
+                    媒体查询 = <strong class="hl">「如果条件成立，就应用花括号里的样式」</strong>。
+                    条件由<strong class="hl">媒体类型</strong>和<strong class="hl">媒体特性</strong>组成，用逻辑词连接：
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="media-syntax.css">
+                    <script type="text/plain" class="lab-code">@media [类型] and (特性: 值) { /* 满足条件时生效的样式 */ }
+
+/* 常见媒体类型：screen（屏幕）/ print（打印）/ all（全部，默认） */
+@media print { .no-print { display: none; } }        /* 打印时隐藏导航广告 */
+
+/* 常见媒体特性：宽度 / 方向 / 悬停能力 / 深色模式 */
+@media (min-width: 768px)        { /* 宽度 ≥ 768px */ }
+@media (max-width: 767px)        { /* 宽度 ≤ 767px */ }
+@media (orientation: landscape)  { /* 横屏 */ }
+@media (hover: hover)            { /* 设备真的能悬停（真鼠标） */ }
+@media (prefers-color-scheme: dark) { /* 系统开了深色模式 */ }
+
+/* 逻辑词：and 同时满足 / not 取反 / 逗号 = 或 */
+@media (min-width: 768px) and (max-width: 1023px) { /* 平板区间 */ }
+@media (min-width: 768px), (orientation: landscape) { /* 满足其一即可 */ }</script>
+                </div>
+                <p>
+                    最核心的用法——<strong class="hl">按宽度切换网格列数</strong>：
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="media-card.css">
+                    <script type="text/plain" class="lab-code">/* 小屏默认样式（移动优先：先写手机的） */
+.c3-mq-cards { grid-template-columns: 1fr; }
+
+/* 屏幕 ≥ 400px：两列 */
+@media (min-width: 400px) { .c3-mq-cards { grid-template-columns: repeat(2, 1fr); } }
+/* 屏幕 ≥ 700px：四列 */
+@media (min-width: 700px) { .c3-mq-cards { grid-template-columns: repeat(4, 1fr); } }</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="media-card-demo.css">
+                    <div class="lab-head"><span class="lab-cap">真·响应式卡片——拖动编辑器宽度越宽列数越多（把断点从 400/700 改成 300/900 感受"换挡太早/太晚"）</span></div>
+                    <template class="lab-html">
+                        <div class="c3-mq-stage">
+                            <div class="c3-mq-cards">
+                                <div class="c">卡片 1</div>
+                                <div class="c">卡片 2</div>
+                                <div class="c">卡片 3</div>
+                                <div class="c">卡片 4</div>
+                            </div>
+                            <p class="c3-mq-label">窄屏 1 列 → 拉宽变 2 列 → 再宽变 4 列</p>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.c3-mq-stage { padding: 8px 0; }
+.c3-mq-cards { display: grid; gap: 10px; }
+.c3-mq-cards .c {
+    background: linear-gradient(135deg, #8A4E63, #B3748A); color: #fff;
+    border-radius: 10px; padding: 18px 10px; text-align: center; font-size: 12.5px;
+}
+@media (min-width: 400px) {
+    .c3-mq-cards { grid-template-columns: repeat(2, 1fr); }
+    .c3-mq-cards .c { padding: 22px 10px; }
+}
+@media (min-width: 700px) {
+    .c3-mq-cards { grid-template-columns: repeat(4, 1fr); }
+    .c3-mq-cards .c { padding: 30px 10px; font-size: 13px; }
+}
+.c3-mq-label { font-size: 12px; color: #6B6053; text-align: center; margin: 10px 0 0; }</script>
+                </div>
+                <div class="lx-tip"><span><b>移动优先</b>用 <code>min-width</code>（从窄到宽逐步增强）；
+                    反过来写 <code>max-width</code> 是「桌面优先」，老思路，不推荐——原因见第五节。</span></div>
+            </section>
+
+            <section>
+                <h2>四、断点：在哪换挡</h2>
+                <p>
+                    宽度条件里的那个数字叫<strong class="hl">断点（breakpoint）</strong>——布局在此「换挡」。
+                    业界惯例基本收敛在这几档：
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>常用断点约定</caption>
+                        <thead>
+                            <tr><th>档位</th><th>宽度区间</th><th>典型设备</th><th>布局策略</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">手机</td><td>&lt; 768px</td><td>iPhone、安卓机</td><td>单列、大按钮、抽屉菜单</td></tr>
+                            <tr><td class="td-val">平板</td><td>768 ~ 1023px</td><td>iPad 竖屏</td><td>两列、紧凑导航</td></tr>
+                            <tr><td class="td-val">电脑</td><td>≥ 1024px</td><td>笔记本、显示器</td><td>多列、完整侧边栏</td></tr>
+                            <tr><td class="td-val">大屏</td><td>≥ 1440px</td><td>外接显示器</td><td>限制内容最大宽度</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lab" data-lang="css" data-file="breakpoint-demo.css">
+                    <div class="lab-head"><span class="lab-cap">同一套卡片在三个「设备画框」里各是一番天地——把手机框的列数也改成 2 列感受高度紧凑</span></div>
+                    <template class="lab-html">
+                        <div class="c3-bp-stage">
+                            <div class="c3-bp-device phone">
+                                <div class="bar"><b>手机画框</b><em>&lt; 768px · 1 列</em></div>
+                                <div class="grid">
+                                    <div class="c">卡片 1</div>
+                                    <div class="c">卡片 2</div>
+                                </div>
+                            </div>
+                            <div class="c3-bp-device pad">
+                                <div class="bar"><b>平板画框</b><em>768~1023px · 2 列</em></div>
+                                <div class="grid">
+                                    <div class="c">卡片 1</div>
+                                    <div class="c">卡片 2</div>
+                                    <div class="c">卡片 3</div>
+                                    <div class="c">卡片 4</div>
+                                </div>
+                            </div>
+                            <div class="c3-bp-device desk">
+                                <div class="bar"><b>电脑画框</b><em>≥ 1024px · 4 列</em></div>
+                                <div class="grid">
+                                    <div class="c">卡片 1</div>
+                                    <div class="c">卡片 2</div>
+                                    <div class="c">卡片 3</div>
+                                    <div class="c">卡片 4</div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.c3-bp-stage { display: flex; flex-direction: column; gap: 14px; padding: 8px 0; }
+.c3-bp-device { border: 2px solid #E3D5C4; border-radius: 14px; padding: 12px; background: #fff; }
+.c3-bp-device.phone { width: 230px; }
+.c3-bp-device.pad { width: 400px; }
+.c3-bp-device.desk { width: 100%; }
+.c3-bp-device .bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.c3-bp-device .bar b { font-size: 12px; color: #6C3B4C; }
+.c3-bp-device .bar em { font-style: normal; font-size: 11px; color: #6B6053; }
+.c3-bp-device .grid { display: grid; gap: 8px; grid-template-columns: 1fr; }
+.c3-bp-device.pad .grid { grid-template-columns: repeat(2, 1fr); }
+.c3-bp-device.desk .grid { grid-template-columns: repeat(4, 1fr); }
+.c3-bp-device .grid .c {
+    background: linear-gradient(135deg, #8A4E63, #B3748A); color: #fff;
+    border-radius: 8px; padding: 14px 8px; text-align: center; font-size: 12px;
+}</script>
+                </div>
+                <div class="lx-warn"><span>断点由<strong class="hl">内容</strong>决定，不由设备决定：哪一档开始「太挤了 / 太空了」，
+                    就在哪换挡。别为「iPhone 15 Pro 是 393pt」这种具体机型写断点——机型年年换，内容需求不变。</span></div>
+            </section>
+
+            <section>
+                <h2>五、移动优先：从最小的开始写</h2>
+                <p>
+                    <strong class="hl">移动优先</strong>：基础样式写给手机（最受限的环境，逼你写最核心的样式），
+                    再用 <code>min-width</code> 逐级增强到平板、电脑。
+                    反过来（桌面优先）则要在小屏上<strong class="hl">一路做减法、覆盖</strong>——越写越乱。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="mobile-first.css">
+                    <script type="text/plain" class="lab-code">/* ✕ 桌面优先（不推荐）：默认就是横排，小屏再拆 */
+.c3-mf-nav { display: flex; flex-direction: row; }
+@media (max-width: 639px) { .c3-mf-nav { flex-direction: column; } }
+
+/* ✓ 移动优先（推荐）：默认竖排，够宽了才横排 */
+.c3-mf-nav { display: flex; flex-direction: column; }
+@media (min-width: 640px) { .c3-mf-nav { flex-direction: row; } }</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="mobile-first-demo.css">
+                    <div class="lab-head"><span class="lab-cap">窄时导航竖排（拇指友好），宽过 640px 自动横排——把 640px 改成 1200px 看它"一直竖着"</span></div>
+                    <template class="lab-html">
+                        <nav class="c3-mf-nav">
+                            <a href="#">首页</a>
+                            <a href="#">课程</a>
+                            <a href="#">练习场</a>
+                            <a href="#">关于</a>
+                        </nav>
+                        <p class="c3-mf-note">基础样式 = 手机版；媒体查询 = 给大屏的「加餐」</p>
+                    </template>
+                    <script type="text/plain" class="lab-code">.c3-mf-nav { display: flex; flex-direction: column; gap: 6px; background: #fff; border: 1.5px solid #E3D5C4; border-radius: 12px; padding: 10px; }
+.c3-mf-nav a {
+    padding: 9px 12px; border-radius: 8px; background: rgba(138, 78, 99, 0.1); color: #6C3B4C;
+    text-decoration: none; font-size: 12.5px; text-align: center;
+}
+@media (min-width: 640px) {
+    .c3-mf-nav { flex-direction: row; }
+    .c3-mf-nav a { flex: 1; }
+}
+.c3-mf-note { font-size: 12px; color: #6B6053; text-align: center; margin: 10px 0 0; }</script>
+                </div>
+                <div class="lx-note"><span>移动优先的隐藏福利：<b>基础样式服务最受限的环境，天然逼你砍掉花架子</b>——
+                    字号、间距、层级在 375px 宽里都成立的话，放大到 1440px 差不到哪去。</span></div>
+            </section>
+
+            <section>
+                <h2>六、免媒体查询三板斧：让布局自己适应</h2>
+                <p>
+                    很多时候<strong class="hl">根本不用写断点</strong>——弹性工具自己会适应。
+                    优先级：<strong class="hl">能用弹性方案就不写 @media，断点越少维护越轻松</strong>。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>免媒体查询三板斧</caption>
+                        <thead>
+                            <tr><th>板斧</th><th>自适应性</th><th>例子</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">① 百分比 + max-width</td><td>跟随父容器伸缩，永不溢出</td><td><code>img { max-width: 100% }</code></td></tr>
+                            <tr><td class="td-val">② <code>clamp()</code></td><td>在上下限之间弹性变化</td><td><code>font-size: clamp(18px, 5vw, 40px)</code></td></tr>
+                            <tr><td class="td-val">③ <code>auto-fill + minmax</code></td><td>Grid 自动增减列数</td><td><code>repeat(auto-fill, minmax(110px, 1fr))</code></td></tr>
+                            <tr><td class="td-val">（附）<code>flex-wrap: wrap</code></td><td>放不下自动换行</td><td>标签流、卡片行</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="clamp.css">
+                    <script type="text/plain" class="lab-code">/* 板斧② clamp(最小值, 首选值, 最大值)：首选值随视口宽度变化，但永不越过上下限 */
+.c3-cl-title { font-size: clamp(18px, 5vw, 40px); }   /* 最小 18px，最大 40px，中间跟 5vw 走 */</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="clamp-demo.css">
+                    <div class="lab-head"><span class="lab-cap">流式标题——拖动编辑器宽度，字号在 18px~40px 之间平滑变化（把 5vw 改成 8vw 感受更大落差）</span></div>
+                    <template class="lab-html">
+                        <p class="c3-cl-title">标题字号：clamp(18px, 5vw, 40px)</p>
+                        <p class="c3-cl-sub">窗口很窄时锁在 18px，很宽时锁在 40px，中间按视口宽度的 5% 流动</p>
+                    </template>
+                    <script type="text/plain" class="lab-code">.c3-cl-title {
+    font-size: clamp(18px, 5vw, 40px); font-weight: 700; color: #6C3B4C;
+    text-align: center; margin: 10px 0 4px; line-height: 1.3;
+}
+.c3-cl-sub { font-size: 12.5px; color: #6B6053; text-align: center; margin: 0 0 10px; }</script>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="auto-fill.css">
+                    <script type="text/plain" class="lab-code">/* 板斧③ auto-fill + minmax：每列至少 110px，能塞几列塞几列，剩余均分 */
+.c3-af-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="auto-fill-demo.css">
+                    <div class="lab-head"><span class="lab-cap">零媒体查询的响应式网格——拖动编辑器宽度列数自己变（把 <code>minmax</code> 第二个值改成 auto 观察列宽差异）</span></div>
+                    <template class="lab-html">
+                        <div class="c3-af-grid">
+                            <div class="c">项目 1</div>
+                            <div class="c">项目 2</div>
+                            <div class="c">项目 3</div>
+                            <div class="c">项目 4</div>
+                            <div class="c">项目 5</div>
+                            <div class="c">项目 6</div>
+                        </div>
+                        <p class="c3-af-label">一行没有一句 @media —— 「按内容换挡」的自动化版本</p>
+                    </template>
+                    <script type="text/plain" class="lab-code">.c3-af-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+.c3-af-grid .c {
+    background: linear-gradient(135deg, #6E8B6E, #4E7A52); color: #fff;
+    border-radius: 10px; padding: 16px 8px; text-align: center; font-size: 12px;
+}
+.c3-af-label { font-size: 12px; color: #6B6053; text-align: center; margin: 10px 0 0; }</script>
+                </div>
+                <p>
+                    图片是响应式的重头戏——<strong class="hl">省流量</strong>和<strong class="hl">不变形</strong>两手抓：
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="responsive-img.html">
+                    <script type="text/plain" class="lab-code">img {
+    max-width: 100%;   /* 永远不超出父容器（救命一行） */
+    height: auto;      /* 等比缩放不变形 */
+}
+
+/* 不同屏幕加载不同图（手机别下载电脑的大图，省流量） */
+<picture>
+    <source media="(min-width: 768px)" srcset="big.jpg">
+    <img src="small.jpg" alt="响应式图片">
+</picture></script>
+                </div>
+                <div class="lx-tip"><span>手机流量贵、网速飘。<code>picture</code> 让小屏只下载小图——
+                    <b>响应式不只是「看起来对」，还要「加载得省」</b>。</span></div>
+            </section>
+
+            <section>
+                <h2>七、按断点显示隐藏，与容器查询</h2>
+                <p>
+                    有些元素只在特定设备有意义（手机上的汉堡按钮、电脑上的侧边栏），
+                    用 <code>display</code> 按断点切换。注意切换的是
+                    <strong class="hl">display</strong>（彻底移出布局），不是 <code>visibility</code>（还占着位）：
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="show-hide.css">
+                    <script type="text/plain" class="lab-code">.c3-sh-mobile  { display: inline-block; }   /* 默认（手机）：显示汉堡按钮 */
+.c3-sh-desktop { display: none; }            /* 默认（手机）：隐藏完整菜单 */
+
+@media (min-width: 700px) {                  /* 宽屏：反过来 */
+    .c3-sh-mobile  { display: none; }
+    .c3-sh-desktop { display: inline-block; }
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="show-hide-demo.css">
+                    <div class="lab-head"><span class="lab-cap">窄屏看到「手机版徽章」，宽过 700px 换成「电脑版徽章」（把断点 700px 改成 1000px 试试）</span></div>
+                    <template class="lab-html">
+                        <div class="c3-sh-stage">
+                            <span class="c3-sh-badge c3-sh-mobile">◆ 窄屏专属徽章</span>
+                            <span class="c3-sh-badge c3-sh-desktop">◆ 宽屏专属徽章</span>
+                        </div>
+                        <p class="c3-sh-note">同一时刻只有一个在场 —— display: none 连布局位置都不留</p>
+                    </template>
+                    <script type="text/plain" class="lab-code">.c3-sh-stage { display: flex; gap: 12px; justify-content: center; padding: 12px 0; flex-wrap: wrap; }
+.c3-sh-badge { padding: 10px 20px; border-radius: 999px; font-size: 13px; color: #fff; }
+.c3-sh-mobile  { display: inline-block; background: linear-gradient(135deg, #C08A3E, #B3472E); }
+.c3-sh-desktop { display: none; background: linear-gradient(135deg, #8A4E63, #B3748A); }
+@media (min-width: 700px) {
+    .c3-sh-mobile  { display: none; }
+    .c3-sh-desktop { display: inline-block; }
+}
+.c3-sh-note { font-size: 12px; color: #6B6053; text-align: center; margin: 0; }</script>
+                </div>
+                <p>
+                    媒体查询的年轻亲戚<strong class="hl">容器查询 @container</strong>：不问「屏幕多宽」，
+                    问「<strong class="hl">容器自己多宽</strong>」——组件不再依赖页面环境，放哪儿都能自适应：
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="container-query.css">
+                    <script type="text/plain" class="lab-code">.c3-cq-wrap {
+    container-type: inline-size;   /* 声明：我是一个容器，按我的宽度查询 */
+}
+.c3-cq-grid { grid-template-columns: 1fr; }   /* 容器窄：单列 */
+
+@container (min-width: 420px) {               /* 容器宽过 420px：三列 */
+    .c3-cq-grid { grid-template-columns: repeat(3, 1fr); }
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="container-query-demo.css">
+                    <div class="lab-head"><span class="lab-cap">鼠标悬停虚线框让它变宽——容器自己过 420px 时，卡片从 1 列跳成 3 列（把阈值 420px 改成 320px 找临界点）</span></div>
+                    <template class="lab-html">
+                        <div class="c3-cq-wrap">
+                            <div class="c3-cq-grid">
+                                <div class="c">卡片 1</div>
+                                <div class="c">卡片 2</div>
+                                <div class="c">卡片 3</div>
+                            </div>
+                        </div>
+                        <p class="c3-cq-note">看的是「框的宽度」不是「屏幕的宽度」——组件级响应式的开端</p>
+                    </template>
+                    <script type="text/plain" class="lab-code">.c3-cq-wrap {
+    container-type: inline-size; width: 240px; margin: 0 auto;
+    border: 1.5px dashed #C9A8B8; border-radius: 12px; padding: 12px; transition: width 0.5s ease;
+}
+.c3-cq-wrap:hover { width: 100%; }
+.c3-cq-grid { display: grid; gap: 8px; }
+.c3-cq-grid .c {
+    background: linear-gradient(135deg, #C08A3E, #B3472E); color: #fff;
+    border-radius: 8px; padding: 12px 6px; text-align: center; font-size: 11.5px;
+}
+@container (min-width: 420px) { .c3-cq-grid { grid-template-columns: repeat(3, 1fr); } }
+.c3-cq-note { font-size: 12px; color: #6B6053; text-align: center; margin: 10px 0 0; }</script>
+                </div>
+                <div class="lx-note"><span>什么时候用哪个：<b>页面级布局用 @media（跟着视口走），
+                    组件内部布局用 @container（跟着容器走）</b>。同一张卡片放进侧边栏和主内容区都好看——这就是容器查询的意义。</span></div>
+            </section>
+
+            <section>
+                <h2>八、本章小结</h2>
+                <p>响应式工具箱总表（按出场顺序）：</p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>响应式工具箱总表</caption>
+                        <thead>
+                            <tr><th>工具</th><th>一句话</th><th>关键写法</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">viewport 标签</td><td>让手机按真实宽度排版</td><td><code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</code></td></tr>
+                            <tr><td class="td-val">@media</td><td>条件成立才应用的样式块</td><td><code>@media (min-width: 768px) { }</code></td></tr>
+                            <tr><td class="td-val">断点</td><td>布局换挡的宽度数字</td><td>768 / 1024（由内容决定）</td></tr>
+                            <tr><td class="td-val">移动优先</td><td>基础样式给手机，min-width 增强</td><td><code>@media (min-width: 768px)</code></td></tr>
+                            <tr><td class="td-val">百分比 / max-width</td><td>跟随父容器伸缩</td><td><code>img { max-width: 100% }</code></td></tr>
+                            <tr><td class="td-val">clamp()</td><td>带上下限的弹性值</td><td><code>clamp(18px, 5vw, 40px)</code></td></tr>
+                            <tr><td class="td-val">auto-fill + minmax</td><td>Grid 自动换列数</td><td><code>repeat(auto-fill, minmax(110px, 1fr))</code></td></tr>
+                            <tr><td class="td-val">picture</td><td>按屏幕加载不同图片</td><td><code>&lt;source media="(min-width: 768px)"&gt;</code></td></tr>
+                            <tr><td class="td-val">display 显隐</td><td>按断点切换元素在场</td><td><code>display: none / inline-block</code></td></tr>
+                            <tr><td class="td-val">@container</td><td>按容器宽度响应（组件级）</td><td><code>container-type: inline-size</code></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <ul>
+                    <li>响应式 = <strong class="hl">一套代码服务所有屏幕</strong>，基石是 viewport + @media + 弹性布局</li>
+                    <li>没有 viewport 标签，手机把页面当 980px 缩略——<strong class="hl">第一行检查它</strong></li>
+                    <li><strong class="hl">移动优先</strong>用 min-width 逐级增强；断点由内容决定，不由机型决定</li>
+                    <li>三板斧（百分比、clamp、auto-fill+minmax）能解决的就别写断点——<strong class="hl">断点越少越好维护</strong></li>
+                    <li>显隐切换 <code>display</code> 而非 <code>visibility</code>；组件级响应式交给 <code>@container</code></li>
+                </ul>
+                <div class="lx-note"><span><b>动手练习</b>：①拖动学习路线主界面宽度，观察侧边栏、卡片何时换挡；
+                    ②把第三节演示的断点从 400/700 改成 300/900，感受「换挡太早 / 太晚」；
+                    ③给第六节网格的 minmax 第二个值改成 <code>auto</code>，观察列宽差异；
+                    ④把容器查询演示的阈值 420px 改成 320px，找到「一列直接变三列」的临界点。</span></div>
+            </section>
+
+            <section>
+                <h2>九、路线终点：写在学习路线的最后</h2>
+                <p>
+                    恭喜！<strong class="hl">HTML → CSS → 布局 → CSS3</strong>，
+                    27 章的前端三件套学习路线到这里全部走完。从「标签是什么」到「容器查询怎么用」，
+                    你已经具备了把一张设计稿变成真实页面的全部基础知识。接下来推荐三件事：
+                </p>
+                <ul>
+                    <li><strong class="hl">实战</strong>：用本路线的知识仿写 2~3 个你喜欢的页面（个人主页、作品集、产品落地页）——临摹是最好的练习，卡住的地方就是下一轮学习的地图</li>
+                    <li><strong class="hl">JavaScript</strong>：让页面「动起来、响应用户」的编程语言，前四章的 HTML/CSS 正是它的舞台</li>
+                    <li><strong class="hl">框架预习</strong>：Vue / React——先打好原生基础再上框架，你会感谢现在稳扎稳打的自己</li>
+                </ul>
+                <div class="lx-tip"><span>查资料的姿势：遇到拿不准的属性，<b>MDN 搜属性名</b>看兼容性和正式定义，
+                    <b>Can I Use</b> 查浏览器支持率——本路线教的「查手册」习惯，比记住多少语法都值钱。</span></div>
+                <div class="lx-note"><span>别忘了勾选「标记为已掌握」——27 章全部点亮时，
+                    回学习路线主页看看自己的进度条。<b>从第一行 &lt;h1&gt; 到今天的容器查询，这条路你是一步步走完的。</b>
+                    下一站，见。</span></div>
+            </section>
+
+        </article>
+    </main>
+    <script src="../assets/learn.js" defer></script>
+</body>
+</html>

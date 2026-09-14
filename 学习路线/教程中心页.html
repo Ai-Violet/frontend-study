@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>从零到大神 · 前端自学路线总览 — 前端自习室</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23B8552F'/%3E%3Ctext x='16' y='22' font-size='16' font-family='serif' font-weight='700' fill='%23FFF7EF' text-anchor='middle'%3E学%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="assets/learn.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        .map-lead { display: grid; grid-template-columns: auto 1fr auto; gap: 26px; align-items: center; margin-top: 18px; }
+        .map-hero {
+            display: flex; align-items: center; justify-content: center; gap: 24px;
+            background: linear-gradient(135deg, #C86035, #9A4423); color: #FFF7EF;
+            border-radius: var(--r-card); min-height: 96px; padding: 20px 34px;
+            box-shadow: var(--shadow-2); max-width: 560px;
+        }
+        .map-hero .digits { font-family: var(--font-code); font-size: 40px; font-weight: 800; letter-spacing: -.02em; }
+        .map-hero .cap { font-size: 13.5px; opacity: .9; line-height: 1.6; }
+
+        /* 阶段时间线卡片 */
+        .phases { margin-top: 30px; display: grid; gap: 18px; }
+        .phase {
+            position: relative; background: var(--paper); border: 1px solid var(--line);
+            border-radius: var(--r-card); padding: 4px 24px 22px;
+            overflow: hidden; box-shadow: var(--shadow-1);
+        }
+        .phase::before {
+            content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, #C86035, #E09A5A);
+        }
+        .phase-head { display: flex; align-items: center; gap: 14px; padding: 18px 0 12px; }
+        .p-no {
+            flex: none; width: 46px; height: 46px; border-radius: 12px;
+            display: grid; place-items: center;
+            font-family: var(--font-code); font-size: 16px; font-weight: 800; color: #FFF7EF;
+            background: linear-gradient(135deg, #C86035, #9A4423);
+            box-shadow: 0 4px 14px rgba(154, 68, 35, .28);
+        }
+        .phase-head h2 { font-size: 20px; font-weight: 800; color: var(--ink); }
+        .phase-head .tag { font-size: 12px; color: var(--accent); background: var(--accent-soft); padding: 3px 11px; border-radius: 999px; font-weight: 600; }
+        .phase-desc { color: var(--ink-2); font-size: 14px; line-height: 1.8; margin-bottom: 14px; }
+        .phase-desc strong { color: var(--ink); }
+
+        .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+        .chip {
+            font-family: var(--font-code); font-size: 12px; font-weight: 600;
+            color: var(--accent-deep); background: var(--accent-softer);
+            border: 1px solid rgba(184, 85, 47, .18); padding: 3px 12px; border-radius: 999px;
+        }
+        .chip.new { color: #4F6B44; background: rgba(95, 127, 82, .10); border-color: rgba(95, 127, 82, .2); }
+
+        .ph-res { display: flex; flex-wrap: wrap; gap: 10px; }
+        .ph-link {
+            display: inline-flex; align-items: center; gap: 7px;
+            font-size: 12.5px; font-weight: 600; color: var(--ink-2);
+            background: var(--paper-2); border: 1px solid var(--line);
+            border-radius: 999px; padding: 6px 14px; text-decoration: none;
+            transition: all .25s var(--ease-out);
+        }
+        .ph-link:hover { color: var(--accent); border-color: var(--accent); transform: translateY(-2px); box-shadow: var(--shadow-1); }
+        .ph-link .ico { font-size: 11px; color: var(--accent); }
+
+        /* 阶段内已落地章节 */
+        .linked { margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--line); display: flex; flex-wrap: wrap; gap: 8px; }
+        .linked a {
+            font-size: 12.5px; font-weight: 700; color: #FFF7EF;
+            background: linear-gradient(135deg, #C86035, #9A4423);
+            padding: 5px 15px; border-radius: 999px; text-decoration: none;
+            box-shadow: 0 3px 10px rgba(154, 68, 35, .22); transition: transform .2s var(--ease-out);
+        }
+        .linked a:hover { transform: translateY(-2px); }
+        .linked .lbl { font-size: 12px; color: var(--ink-3); line-height: 26px; margin-right: 4px; }
+
+        /* 权威知识库 / 视频总表 */
+        .vault { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+        .vault a {
+            display: flex; align-items: center; gap: 12px;
+            background: var(--paper); border: 1px solid var(--line); border-radius: 12px;
+            padding: 12px 16px; text-decoration: none; transition: all .25s var(--ease-out);
+        }
+        .vault a:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: var(--shadow-2); }
+        .vault .mono { font-family: var(--font-code); font-size: 14px; color: var(--accent); }
+        .vault b { display: block; font-size: 13.5px; color: var(--ink); }
+        .vault span { font-size: 12px; color: var(--ink-3); }
+
+        .video-hero {
+            display: flex; gap: 20px; align-items: center;
+            background: linear-gradient(135deg, #1B2A37, #0F1B26); color: #EAF2F8;
+            border-radius: var(--r-card); padding: 22px 26px; margin: 26px 0;
+            box-shadow: var(--shadow-2); position: relative; overflow: hidden;
+        }
+        .video-hero::after { content: "▶"; position: absolute; right: 22px; font-size: 40px; opacity: .14; }
+        .video-hero .vh-badge { font-size: 11px; letter-spacing: .14em; color: #8FE3C0; font-weight: 700; }
+        .video-hero h3 { font-size: 18px; font-weight: 800; margin: 4px 0 6px; color: #fff; }
+        .video-hero p { font-size: 13px; color: #B9C7D2; line-height: 1.7; }
+        .video-hero .vh-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+        .video-hero .vh-meta i { font-style: normal; font-size: 11.5px; color: #DCE6EC; background: rgba(255,255,255,.08); padding: 2px 10px; border-radius: 999px; }
+        .video-hero a.vh-btn {
+            flex: none; align-self: center; margin-left: auto;
+            font-size: 13px; font-weight: 700; color: #0F1B26; background: #8FE3C0;
+            padding: 10px 20px; border-radius: 999px; text-decoration: none;
+            box-shadow: 0 6px 18px rgba(0,0,0,.25); transition: transform .2s var(--ease-out);
+        }
+        .video-hero a.vh-btn:hover { transform: translateY(-2px) scale(1.02); }
+
+        @media (max-width: 900px) {
+            .map-lead { grid-template-columns: 1fr; }
+            .video-hero a.vh-btn { margin-left: 0; }
+            .phase { padding: 4px 16px 18px; }
+            .p-no { width: 40px; height: 40px; font-size: 14px; }
+        }
+    </style>
+</head>
+<body data-page="学习路线/教程中心页.html">
+    <main class="lx-main">
+        <article class="lx-article">
+
+            <nav class="lx-crumb">
+                <span>学习路线</span><span class="sep">›</span>
+                <span class="here">从零到大神 · 路线总览</span>
+            </nav>
+            <h1><span class="h-no">0</span>从零到大神</h1>
+            <p class="lx-lead">
+                一条不抄近路、只吃透「最底层的原理 + 最新星的技术」的前端自学路线：
+                从 HTML/CSS 地基起步，经 <strong class="hl">JavaScript → TypeScript → 工程化</strong>，
+                一路到 <strong class="hl">Node.js · Bun · Deno</strong> 运行时，再用
+                <strong class="hl">React / Vue + Tailwind</strong> 把界面做高级。
+                每一阶段都配 <b>中英对照的权威参考</b>（GitHub 星标、W3C、MDN、菜鸟教程）与你可以直接跟练的 <b>解读视频</b>。
+            </p>
+            <div class="lx-meta-row">
+                <span class="lx-chip">7 个阶段</span>
+                <span class="lx-chip">4 章已落地</span>
+                <span class="lx-chip">路线持续更新</span>
+            </div>
+
+            <div class="map-lead">
+                <div class="map-hero">
+                    <span class="digits">0 → 大神</span>
+                </div>
+                <p style="color:var(--ink-2);font-size:14px;line-height:1.9;">
+                    学习顺序建议<b>自上而下</b>：先把脚本和类型地基夯实，再谈工程化与运行时；
+                    框架永远是工具，底层的“为什么”比表面 API 更重要。绿色标签是<b>新星技术</b>（近年热门），
+                    主标签是<b>底层原理</b>（长期有效）。
+                </p>
+            </div>
+
+            <!-- ══════ 阶段一：地基 ══════ -->
+            <section>
+                <div class="phase">
+                    <div class="phase-head"><span class="p-no">01</span><h2>地基 · HTML + CSS</h2><span class="tag">已落地 4 章</span></div>
+                    <p class="phase-desc">
+                        所有前端的地基：<strong>语义化结构</strong>让内容被机器读得懂，
+                        <strong>CSS 布局与动画</strong>让页面真正“好看且灵动”。先把标签语义、盒模型、Flex/Grid 定位吃透，后面所有框架的生动界面都建立在这之上。
+                    </p>
+                    <div class="chips">
+                        <span class="chip">HTML5</span><span class="chip">CSS 基础</span>
+                        <span class="chip">Flex / Grid 布局</span><span class="chip">CSS3 动画</span><span class="chip">响应式</span>
+                    </div>
+                    <div class="ph-res">
+                        <a class="ph-link" href="https://developer.mozilla.org/zh-CN/docs/Web/HTML"><span class="ico">◉</span>MDN HTML</a>
+                        <a class="ph-link" href="https://www.runoob.com/html/html-tutorial.html"><span class="ico">◉</span>菜鸟教程 HTML</a>
+                        <a class="ph-link" href="https://www.w3cschool.cn/html/"><span class="ico">◉</span>W3Cschool</a>
+                        <a class="ph-link" href="https://github.com/topics/html"><span class="ico">★</span>GitHub Topics</a>
+                    </div>
+                    <div class="linked"><span class="lbl">本站已落地</span>
+                        <a href="01-HTML基础/index.html">HTML 基础</a>
+                        <a href="02-CSS基础/index.html">CSS 基础</a>
+                        <a href="03-CSS布局/index.html">CSS 布局</a>
+                        <a href="04-CSS3进阶/index.html">CSS3 进阶</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ══════ 阶段二：JavaScript ══════ -->
+            <section>
+                <div class="phase">
+                    <div class="phase-head"><span class="p-no">02</span><h2>脚本 · JavaScript</h2><span class="tag">本阶段待落地</span></div>
+                    <p class="phase-desc">
+                        唯一的浏览器原生脚本语言。<strong>别急着背 API</strong>，先搞懂<br>
+                        <strong>单线程与事件循环</strong>（为什么“异步”）→ <strong>Promise / async</strong>（怎么编排异步）→
+                        <strong>作用域链与闭包</strong>（变量去哪了）→ <strong>ES 模块化</strong>（代码怎么组织）。这几条吃透，读写前端代码才真正“明明白白”。
+                    </p>
+                    <div class="chips">
+                        <span class="chip">ECMAScript</span><span class="chip">DOM / BOM</span>
+                        <span class="chip">事件循环</span><span class="chip">Promise / async</span>
+                        <span class="chip">闭包与作用域</span><span class="chip">ES Modules</span>
+                    </div>
+                    <div class="ph-res">
+                        <a class="ph-link" href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript"><span class="ico">◉</span>MDN JavaScript</a>
+                        <a class="ph-link" href="https://www.runoob.com/js/js-tutorial.html"><span class="ico">◉</span>菜鸟 JavaScript</a>
+                        <a class="ph-link" href="https://github.com/topics/javascript"><span class="ico">★</span>GitHub Topics</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ══════ 阶段三：TypeScript ══════ -->
+            <section>
+                <div class="phase">
+                    <div class="phase-head"><span class="p-no">03</span><h2>类型 · TypeScript</h2><span class="tag">本阶段待落地</span></div>
+                    <p class="phase-desc">
+                        给 JavaScript 补上<strong>静态类型</strong>。现代大厂与开源几乎全程 TS：
+                        <strong>类型标注 → 接口与泛型 → 类型收窄</strong>。它的价值是在你“写错”之前就拦住，是进阶到工程规模代码的分水岭。
+                    </p>
+                    <div class="chips">
+                        <span class="chip">类型标注</span><span class="chip">interface / type</span>
+                        <span class="chip">泛型 Generics</span><span class="chip">类型收窄</span><span class="chip">tsconfig</span>
+                    </div>
+                    <div class="ph-res">
+                        <a class="ph-link" href="https://www.typescriptlang.org/docs/"><span class="ico">◉</span>TS 官方文档</a>
+                        <a class="ph-link" href="https://github.com/topics/typescript"><span class="ico">★</span>GitHub Topics</a>
+                    </div>
+                </div>
+            </section>
+            
+            
+            <!-- ══════ 阶段四：工程化 ══════ -->
+            <section>
+                <div class="phase">
+                    <div class="phase-head"><span class="p-no">04</span><h2>工程化 · 构建与包管理</h2><span class="tag">本阶段待落地</span></div>
+                    <p class="phase-desc">
+                        单文件跑不通真实项目。学会<strong>包管理器</strong>（npm / <span class="hl-g">pnpm</span> / yarn）、
+                        <strong>构建工具</strong>（Vite / esbuild）与<strong>模块化</strong>（ESM / CJS）。
+                        先分清“开发时工具”和“运行时能力”，你就不会被版本管理器困住。
+                    </p>
+                    <div class="chips">
+                        <span class="chip.new">pnpm</span><span class="chip.new">Vite</span><span class="chip.new">esbuild</span>
+                        <span class="chip">npm / yarn</span><span class="chip">ESM / CJS</span><span class="chip">模块打包原理</span>
+                    </div>
+                    <div class="ph-res">
+                        <a class="ph-link" href="https://pnpm.io/zh/"><span class="ico">◉</span>pnpm 官网</a>
+                        <a class="ph-link" href="https://vitejs.dev/"><span class="ico">◉</span>Vite 官网</a>
+                        <a class="ph-link" href="https://github.com/topics/pnpm"><span class="ico">★</span>GitHub Topics</a>
+                        <a class="ph-link" href="https://github.com/topics/vite"><span class="ico">★</span>GitHub Topics</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ══════ 阶段五：运行时与全栈 ══════ -->
+            <section>
+                <div class="phase">
+                    <div class="phase-head"><span class="p-no">05</span><h2>运行时 · Node.js / Bun / Deno</h2><span class="tag">本阶段待落地</span></div>
+                    <p class="phase-desc">
+                        让 JavaScript 走出浏览器、接管后端。<strong>Node.js</strong> 生态最成熟，先吃透事件循环与 npm；
+                        再看<strong>新星运行时</strong>——<strong>Bun</strong>（全能更快，自带打包器与测试器）与
+                        <strong>Deno</strong>(原生 TS、默认安全沙箱)。会用一种、能讲清三者的取舍差异，才算真的理解运行时。
+                    </p>
+                    <div class="chips">
+                        <span class="chip">Node.js</span><span class="chip.new">Bun</span><span class="chip.new">Deno</span>
+                        <span class="chip">事件循环</span><span class="chip">HTTP / 流</span><span class="chip">权限与安全</span>
+                    </div>
+                    <div class="ph-res">
+                        <a class="ph-link" href="https://nodejs.org/zh-cn/docs"><span class="ico">◉</span>Node 官方</a>
+                        <a class="ph-link" href="https://bun.sh/docs"><span class="ico">◉</span>Bun 官方</a>
+                        <a class="ph-link" href="https://docs.deno.com/zh-cn/"><span class="ico">◉</span>Deno 官方</a>
+                        <a class="ph-link" href="https://github.com/topics/nodejs"><span class="ico">★</span>GitHub Node</a>
+                        <a class="ph-link" href="https://github.com/topics/deno"><span class="ico">★</span>GitHub Deno</a>
+                        <a class="ph-link" href="https://github.com/topics/bun"><span class="ico">★</span>GitHub Bun</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ══════ 阶段六：框架与样式体系 ══════ -->
+            <section>
+                <div class="phase">
+                    <div class="phase-head"><span class="p-no">06</span><h2>框架 · React / Vue + Tailwind</h2><span class="tag">本阶段待落地</span></div>
+                    <p class="phase-desc">
+                        把地基能力收拢成大规模应用。学<strong>响应式 UI 框架</strong>（React 生态成熟、Vue 上手丝滑），
+                        搭配<strong> utility-first 样式体系 Tailwind</strong> 快速产出高级一致的界面。
+                        记住：<strong>框架是脚手架的体现</strong>——把你之前学的 DOM、状态、构建全部用起来。
+                    </p>
+                    <div class="chips">
+                        <span class="chip">React</span><span class="chip">Vue</span><span class="chip.new">Tailwind CSS</span>
+                        <span class="chip">状态管理</span><span class="chip">组件化</span>
+                    </div>
+                    <div class="ph-res">
+                        <a class="ph-link" href="https://react.dev/"><span class="ico">◉</span>React 官方</a>
+                        <a class="ph-link" href="https://vuejs.org/"><span class="ico">◉</span>Vue 官方</a>
+                        <a class="ph-link" href="https://tailwindcss.com/"><span class="ico">◉</span>Tailwind 官方</a>
+                        <a class="ph-link" href="https://github.com/topics/react"><span class="ico">★</span>GitHub React</a>
+                        <a class="ph-link" href="https://github.com/topics/tailwindcss"><span class="ico">★</span>GitHub Tailwind</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ══════ 阶段七：深潜 · 视频与知识库 ══════ -->
+            <section>
+                <div class="phase">
+                    <div class="phase-head"><span class="p-no">07</span><h2>深潜 · 解读视频与权威知识库</h2><span class="tag">贯穿全程</span></div>
+                    <p class="phase-desc">
+                        视频能把“抽象的概念”可视化，权威文档能把“细节”钉牢，两者配合效果最好。
+                        下面这条高级篇科普视频覆盖 Node / Bun / Deno / JS / TS / Tailwind / pnpm，
+                        适合在每个阶段的中后期配合《最底层原理》一起食用；权威文档则随时随地去核对。
+                    </p>
+                    <div class="chips">
+                        <span class="chip">Bilibili</span><span class="chip">MDN</span><span class="chip">W3C</span>
+                        <span class="chip">菜鸟教程</span><span class="chip">GitHub Topics</span>
+                    </div>
+                    <div class="ph-res">
+                        <a class="ph-link" href="https://space.bilibili.com/286402725"><span class="ico">▶</span>视频链接</a>
+                        <a class="ph-link" href="https://developer.mozilla.org/zh-CN/"><span class="ico">◉</span>MDN</a>
+                        <a class="ph-link" href="https://www.w3.org/"><span class="ico">◉</span>W3C</a>
+                        <a class="ph-link" href="https://www.runoob.com/"><span class="ico">◉</span>菜鸟教程</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 视频横幅 -->
+            <div class="video-hero">
+                <div>
+                    <div class="vh-badge">推荐视频</div>
+                    <h3>【视频标题............】</h3>
+                    <p>这里是视频介绍.........................</p>
+                    <div class="vh-meta"><i>Bilibili</i><i>中文</i><i>原理向</i><i>持续更新</i></div>
+                </div>
+                <a class="vh-btn" href="https://space.bilibili.com/286402725" target="_blank" rel="noopener">去观看 ▶</a>
+            </div>
+
+            <!-- 权威知识库总表 -->
+            <section>
+                <h2>常备知识库与 GitHub 星标路线</h2>
+                <p style="color:var(--ink-2);font-size:14px;line-height:1.8;">
+                    别背网址，记住“用哪个层面去哪个站”：<strong>查解释读细节看 MDN</strong>；<strong>核对标准看 W3C</strong>；
+                    <strong>快速中文入门看菜鸟</strong>；<strong>看开源生态与趋势逛 GitHub 话题</strong>。
+                </p>
+                <div class="vault">
+                    <a href="https://developer.mozilla.org/zh-CN/"><span class="mono">M</span><div><b>MDN Web Docs</b><span>最权威的中英参考手册</span></div></a>
+                    <a href="https://www.w3.org/"><span class="mono">W3</span><div><b>W3C 标准</b><span>HTML/CSS/Web 的标准源头</span></div></a>
+                    <a href="https://www.runoob.com/"><span class="mono">菜</span><div><b>菜鸟教程 Runoob</b><span>中文入门 · 在线实例</span></div></a>
+                    <a href="https://github.com/topics/frontend"><span class="mono">G</span><div><b>GitHub · frontend</b><span>前端话题 · 星标趋势</span></div></a>
+                    <a href="https://github.com/topics/web-development"><span class="mono">G</span><div><b>GitHub · web-development</b><span>网页开发话题聚合</span></div></a>
+                    <a href="https://caniuse.com/"><span class="mono">↓↓</span><div><b>Can I Use</b><span>兼容性一查便知</span></div></a>
+                    <a href="https://web.dev/learn"><span class="mono">web</span><div><b>web.dev · Learn</b><span>Google 系统课程</span></div></a>
+                    <a href="互动练习.html"><span class="mono">练</span><div><b>在线练习场</b><span>本站动手练习</span></div></a>
+                </div>
+            </section>
+
+        </article>
+    </main>
+    <script src="assets/learn.js" defer></script>
+</body>
+</html>

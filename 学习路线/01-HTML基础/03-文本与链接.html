@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文本与链接 · HTML 基础 — 前端自习室</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23B8552F'/%3E%3Ctext x='16' y='22' font-size='16' font-family='serif' font-weight='700' fill='%23FFF7EF' text-anchor='middle'%3E学%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="../assets/learn.css">
+    <style>
+        /* 本页静态图解：锚点小窗、图片与 broken 情况 */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        .eg-anchor {
+            height: 200px; overflow-y: auto; border: 1.5px solid var(--line-2);
+            border-radius: 12px; padding: 14px 16px; background: #FDF9F4; margin: 12px 0;
+        }
+        .eg-anchor p { color: #3A2E26; font-size: 14px; margin: 0 0 8px; }
+        .eg-anchor-fill {
+            height: 72px; border-radius: 10px; margin: 10px 0;
+            background: linear-gradient(135deg, #F7F1E6, #EBDFC8);
+            display: flex; align-items: center; justify-content: center;
+            color: #A08C72; font-size: 13px;
+        }
+        .eg-anchor-btn {
+            display: inline-block; margin-top: 6px; background: #B8552F; color: #fff;
+            text-decoration: none; padding: 8px 18px; border-radius: 9px; font-size: 14px;
+        }
+        .eg-anchor-btn:hover { background: #9A4423; color: #fff; }
+        .eg-anchor .eg-note { font-size: 12.5px; color: #A08C72; margin: 10px 0 0; }
+        .eg-img { display: block; max-width: 100%; border-radius: 10px; border: 1.5px solid var(--line-2); }
+        .eg-img-wrap .eg-note { margin: 10px 0 14px; }
+        .eg-broken {
+            display: block; padding: 14px; border: 1.5px dashed #D3B9A4;
+            border-radius: 10px; background: #FDF9F4; max-width: 340px;
+        }
+        .eg-note { font-size: 13px; color: #6B5D4A; margin: 8px 0 0; }
+    </style>
+</head>
+<body data-page="01-HTML基础/03-文本与链接.html">
+    <main class="lx-main">
+        <article class="lx-article">
+
+            <nav class="lx-crumb">
+                <a href="../教程中心页.html">学习路线</a><span class="sep">›</span>
+                <a href="index.html">HTML 基础</a><span class="sep">›</span>
+                <span class="here">文本与链接</span>
+            </nav>
+            <h1><span class="h-no">03</span>文本与链接</h1>
+            <p class="lx-lead">
+                网页的身体是文字，血脉是链接。这一章拿下<strong>标题、段落、格式化、链接、图片、实体</strong>
+                六类内容标签——它们撑起了页面上 80% 的可见内容。
+            </p>
+            <div class="lx-meta-row">
+                <span class="lx-chip">约 18 分钟</span>
+                <span class="lx-chip">5 个动手实验</span>
+                <span class="lx-chip">内容之王</span>
+            </div>
+
+            <section>
+                <h2>一、标题：h1 ~ h6</h2>
+                <p>
+                    标题不是「调大字号的工具」，而是<strong class="hl">文档的目录层级</strong>：
+                    h1 是书名，h2 是章，h3 是节……数字越大级别越低、字号越小。
+                    浏览器、搜索引擎、读屏软件都靠这套层级理解你的页面。
+                </p>
+                <div class="lx-codeblock" data-lang="html" data-file="标题.html">
+                    <script type="text/plain" class="lab-code"><h1>一级标题：页面主标题</h1>
+<h2>二级标题：大板块</h2>
+<h3>三级标题：小节</h3>
+<h4>四级标题</h4>
+<h5>五级标题</h5>
+<h6>六级标题</h6></script>
+                </div>
+                <div class="lab" data-lang="css" data-file="标题层级.css">
+                    <div class="lab-head"><span class="lab-cap">六级标题的实际大小：在模板里把某个标题的等级改一改，看字号跟着变</span></div>
+                    <template class="lab-html">
+                        <div class="hs">
+                            <h1>一级标题：页面主标题</h1>
+                            <h2>二级标题：大板块</h2>
+                            <h3>三级标题：小节</h3>
+                            <h4>四级标题</h4>
+                            <h5>五级标题</h5>
+                            <h6>六级标题</h6>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.hs h1, .hs h2, .hs h3, .hs h4, .hs h5, .hs h6 {
+  font-family: "PingFang SC", sans-serif; color: #3A2E26;
+  margin: 14px 0 6px; line-height: 1.3;
+}
+.hs h1 { font-size: 32px; }
+.hs h2 { font-size: 24px; }
+.hs h3 { font-size: 19px; }
+.hs h4 { font-size: 16px; }
+.hs h5 { font-size: 13.5px; }
+.hs h6 { font-size: 12px; color: #6B5D4A; }</script>
+                </div>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>标题层级：谁是主、谁是次、怎么用</caption>
+                        <thead>
+                            <tr><th>标签</th><th>角色</th><th>使用建议</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>h1</code></td><td>页面主标题</td><td>全页仅一个（SEO 权重最高）</td></tr>
+                            <tr><td><code>h2</code></td><td>大板块标题</td><td>每个板块一个，可反复使用</td></tr>
+                            <tr><td><code>h3</code></td><td>小节标题</td><td>h2 内部再细分</td></tr>
+                            <tr><td><code>h4 ~ h6</code></td><td>更细的层级</td><td>少用；层级太深说明结构该拆了</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-warn"><span>口诀：<b>标题管结构，字号归 CSS；一个页面一个 h1，层级递进不跳级</b>。
+                    想让文字变大就上标题，等于给目录塞私货。</span></div>
+            </section>
+
+            <section>
+                <h2>二、段落与换行：p、br、hr、pre</h2>
+                <p>
+                    <code>&lt;p&gt;</code>（paragraph）装「自然段」，段与段自动留白；
+                    <code>&lt;br&gt;</code> 是「硬回车」，在段内强制换行；<code>&lt;hr&gt;</code>（horizontal rule）
+                    画一条水平分割线；<code>&lt;pre&gt;</code>（preformatted）则是个耿直 boy——
+                    <strong class="hl">空格、缩进、换行全部原样保留</strong>。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>段落四兄弟速查：谁换行、谁画线、谁原样</caption>
+                        <thead>
+                            <tr><th>标签</th><th>全称</th><th>作用</th><th>空格换行</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>p</code></td><td>paragraph</td><td>自然段，段与段自动留白</td><td>折叠</td></tr>
+                            <tr><td><code>br</code></td><td>break</td><td>段内硬换行（诗歌、地址）</td><td>—</td></tr>
+                            <tr><td><code>hr</code></td><td>horizontal rule</td><td>水平分割线</td><td>—</td></tr>
+                            <tr><td><code>pre</code></td><td>preformatted</td><td>预格式化，原样保留</td><td><b>保留</b></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="html" data-file="段落.html">
+                    <script type="text/plain" class="lab-code"><p>段落一：p 是最常见的「自然段」，段落之间自动留白。</p>
+<p>段落二：一句话没写完就<br>强制换行，<br>像诗一样短促。</p>
+<hr>
+<pre>  pre 预格式化：
+    空格、缩进、换行
+        全部原样保留</pre></script>
+                </div>
+                <div class="lab" data-lang="css" data-file="段落.css">
+                    <div class="lab-head"><span class="lab-cap">段落留白 / br 换行 / hr 分割线 / pre 原样：把 <code>&lt;br&gt;</code> 删掉看两行并一行</span></div>
+                    <template class="lab-html">
+                        <div class="para">
+                            <p>段落一：p 是最常见的「自然段」，段落之间自动留白。</p>
+                            <p>段落二：一句话没写完就<br>强制换行，<br>像诗一样短促。</p>
+                            <hr>
+                            <pre>  pre 预格式化：
+    空格、缩进、换行
+        全部原样保留</pre>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.para p { margin: 0 0 12px; color: #3A2E26; }
+.para hr { border: none; border-top: 2px dashed #D3B9A4; margin: 16px 0; }
+.para pre {
+  font-family: "Cascadia Code", Consolas, monospace;
+  background: #2B241E; color: #E8DED0;
+  padding: 14px 16px; border-radius: 10px;
+  font-size: 13.5px; line-height: 1.7; overflow-x: auto;
+}</script>
+                </div>
+                <div class="lx-tip"><span>HTML 有条铁律：<b>连续空格和换行会被折叠成一个空格</b>。
+                    你敲十个空格、回车三次，渲染出来都只是一个空格。想要真换行用 br，想要保留一切格式用 pre。</span></div>
+                <div class="lx-warn"><span>别用连续 <code>&lt;br&gt;&lt;br&gt;&lt;br&gt;</code> 撑出空隙——那是 CSS 的 margin 干的活。
+                    br 只该出现在「诗歌、地址」这种确实需要硬换行的地方。</span></div>
+            </section>
+
+            <section>
+                <h2>三、文本格式化标签</h2>
+                <p>
+                    同样是加粗，<code>&lt;b&gt;</code> 只改外观，<code>&lt;strong&gt;</code> 还告诉浏览器
+                    「这段很重要」。先看全家福，再动手试：
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>格式化标签全家福：谁是化妆，谁是呐喊</caption>
+                        <thead>
+                            <tr><th>标签</th><th>语义</th><th>默认样式</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>b</code></td><td>无特殊语义，纯吸引注意（关键词、产品名）</td><td><b>加粗</b></td></tr>
+                            <tr><td><code>strong</code></td><td><b>重要内容</b>（读屏会加重语气）</td><td><b>加粗</b></td></tr>
+                            <tr><td><code>i</code></td><td>无特殊语义（术语、外来语、图标字）</td><td><i>斜体</i></td></tr>
+                            <tr><td><code>em</code></td><td>语气上的强调</td><td><i>斜体</i></td></tr>
+                            <tr><td><code>mark</code></td><td>引用中需要突出的文字</td><td>黄底高亮</td></tr>
+                            <tr><td><code>small</code></td><td>旁注、版权声明等「小字」</td><td><small>缩小一号</small></td></tr>
+                            <tr><td><code>del</code></td><td>已删除的内容（改价前的旧价）</td><td><del>删除线</del></td></tr>
+                            <tr><td><code>ins</code></td><td>新插入的内容（改价后的新价）</td><td><ins>下划线</ins></td></tr>
+                            <tr><td><code>sub</code></td><td>下标（化学式、脚注编号）</td><td>H<sub>2</sub>O</td></tr>
+                            <tr><td><code>sup</code></td><td>上标（幂、引用标记）</td><td>2<sup>10</sup></td></tr>
+                            <tr><td><code>code</code></td><td>行内代码片段</td><td><code>等宽字体</code></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="html" data-file="格式化.html">
+                    <script type="text/plain" class="lab-code"><p>
+  <b>b：加粗</b>｜<strong>strong：重要</strong>｜
+  <i>i：斜体</i>｜<em>em：强调</em>｜
+  <mark>mark：高亮</mark>｜<small>small：小字</small>
+</p>
+<p>
+  原价 <del>¥99</del> 特价 <ins>¥59</ins>｜水是 H<sub>2</sub>O｜
+  2<sup>10</sup> = 1024｜行内代码 <code>&lt;div&gt;</code>
+</p></script>
+                </div>
+                <div class="lab" data-lang="css" data-file="格式化.css">
+                    <div class="lab-head"><span class="lab-cap">格式化标签混合排版：把 <code>&lt;del&gt;</code> 包住的旧价从 ¥99 改成 ¥49，看删除线同步变化</span></div>
+                    <template class="lab-html">
+                        <div class="fmt">
+                            <p>
+                                <b>b：加粗</b>｜<strong>strong：重要</strong>｜
+                                <i>i：斜体</i>｜<em>em：强调</em>｜
+                                <mark>mark：高亮</mark>｜<small>small：小字</small>
+                            </p>
+                            <p>
+                                原价 <del>¥99</del> 特价 <ins>¥59</ins>｜水是 H<sub>2</sub>O｜
+                                2<sup>10</sup> = 1024｜行内代码 <code>&lt;div&gt;</code>
+                            </p>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.fmt p { margin: 0 0 10px; color: #3A2E26; line-height: 2; }
+.fmt b, .fmt strong { color: #8F3A26; }
+.fmt em { color: #2E6B4A; }
+.fmt mark { background: #F3E2B3; color: #6B4E14; padding: 0 3px; border-radius: 3px; }
+.fmt del { color: #9A8C7A; }
+.fmt ins { color: #2E6B4A; }
+.fmt small { color: #6B5D4A; }
+.fmt sub, .fmt sup { color: #B8552F; font-weight: 700; }
+.fmt code {
+  font-family: "Cascadia Code", Consolas, monospace; background: #F7F1E6;
+  border: 1px solid #E3D5C4; border-radius: 6px; padding: 1px 6px;
+  color: #8F3A26; font-size: .9em;
+}</script>
+                </div>
+                <div class="lx-tip"><span>记忆法：<b>b/i 是「化妆」，strong/em 是「呐喊」</b>。
+                    只想好看用 b/i；想让浏览器和读屏知道「这很重要」，用 strong/em。</span></div>
+            </section>
+
+            <section>
+                <h2>四、链接：a 标签</h2>
+                <p>
+                    HTML 叫「超文本标记语言」，超的就是链接。<code>&lt;a&gt;</code>（anchor，锚）的
+                    <code>href</code> 指向哪里，点一下就飞到哪里——可以飞到别的网站、站内其它页面、
+                    页面某个位置，甚至唤起邮件客户端和拨号盘。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>a 标签属性逐项分析：href 是灵魂</caption>
+                        <thead>
+                            <tr><th>属性</th><th>取值</th><th>说明</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>href</code></td><td>URL / <code>#锚点</code> / <code>mailto:</code> / <code>tel:</code> / <code>data:</code></td><td>目标地址，a 的灵魂；没有 href 就只是普通文字</td></tr>
+                            <tr><td><code>target</code></td><td><code>_blank</code> / <code>_self</code> / <code>_parent</code> / <code>_top</code></td><td>打开位置；<code>_blank</code> 新标签页，<code>_self</code> 当前页（默认）</td></tr>
+                            <tr><td><code>rel</code></td><td><code>noopener</code> / <code>nofollow</code> 等</td><td>与目标页的关系；新标签页打开建议配 <code>noopener</code> 更安全</td></tr>
+                            <tr><td><code>title</code></td><td>任意文字</td><td>鼠标悬停时的提示气泡</td></tr>
+                            <tr><td><code>download</code></td><td>文件名（可省略）</td><td>不跳转、直接下载；配合 data: / blob: 地址可离线下载</td></tr>
+                            <tr><td><code>id</code></td><td>唯一标识</td><td>自己当锚点，给别人跳</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="html" data-file="链接.html">
+                    <script type="text/plain" class="lab-code"><!-- 绝对地址：完整 URL，跳到其它网站 -->
+<a href="https://www.runoob.com" target="_blank" rel="noopener" title="悬停看提示">绝对地址：菜鸟教程 ↗（新标签页）</a>
+
+<!-- 相对地址：只写路径，站内跳转 -->
+<a href="#" title="真实项目里会写成 ./about.html">相对地址：关于我们</a>
+
+<!-- mailto 唤起邮件客户端；tel 唤起拨号盘（手机端） -->
+<a href="mailto:hello@example.com?subject=合作洽谈">mailto：发邮件</a>
+<a href="tel:+8613800000000">tel：打电话</a>
+
+<!-- download：不跳转，直接下载文件 -->
+<a href="data:text/plain;charset=utf-8,Hello%20HTML!" download="hello.txt">download：下载一个 txt</a></script>
+                </div>
+                <div class="lab" data-lang="css" data-file="链接.css">
+                    <div class="lab-head"><span class="lab-cap">五种链接写法：悬停看 <code>title</code>；把第一个 <code>href</code> 改成站内路径看它变成「关于我们」</span></div>
+                    <template class="lab-html">
+                        <div class="links">
+                            <p><a href="https://www.runoob.com" target="_blank" rel="noopener" title="鼠标悬停看提示">绝对地址：菜鸟教程 ↗（新标签页）</a></p>
+                            <p><a href="#" title="真实项目里会写成 ./about.html">相对地址：关于我们</a></p>
+                            <p><a href="mailto:hello@example.com?subject=合作洽谈">mailto：发邮件</a>｜
+                               <a href="tel:+8613800000000">tel：打电话</a></p>
+                            <p><a href="data:text/plain;charset=utf-8,Hello%20HTML!" download="hello.txt">download：下载一个 txt</a></p>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.links p { margin: 0 0 10px; color: #3A2E26; font-size: 14.5px; }
+.links a { color: #B8552F; }
+.links a:hover { color: #8F3A26; }</script>
+                </div>
+                <div class="lx-warn"><span>地址口诀：<b>跨网站写全（https://…），站内跳转写相对（./xxx.html），
+                    页内跳转写井号（#id）</b>。路径写错是新手页面「点不动」的头号原因。</span></div>
+            </section>
+
+            <section>
+                <h2>五、页内锚点：id + href="#id"</h2>
+                <p>
+                    长页面的「目录」「回到顶部」都靠它：给目标元素一个 <code>id</code>，
+                    链接的 <code>href</code> 写成 <code>#id</code>，点击即滚过去。
+                    <code>href="#"</code> 则永远回到页面最顶端。
+                </p>
+                <div class="lx-codeblock" data-lang="html" data-file="锚点.html">
+                    <script type="text/plain" class="lab-code"><div>
+  <p id="eg-top">顶部：这个 p 带着 id="eg-top"。往下滚 →</p>
+  <div>占位内容 1</div>
+  <div>占位内容 2</div>
+  <div>占位内容 3</div>
+  <a href="#eg-top">回到顶部 ↑</a>
+  <p>点一下按钮：href="#eg-top" 让滚动条乖乖回去</p>
+</div></script>
+                </div>
+                <p>在下面的小窗口里滚到底，点「回到顶部」真的会跳：</p>
+                <div class="eg-anchor">
+                    <p id="eg-top">顶部：这个 p 带着 id="eg-top"。往下滚 →</p>
+                    <div class="eg-anchor-fill">占位内容 1</div>
+                    <div class="eg-anchor-fill">占位内容 2</div>
+                    <div class="eg-anchor-fill">占位内容 3</div>
+                    <a class="eg-anchor-btn" href="#eg-top">回到顶部 ↑</a>
+                    <p class="eg-note">点一下按钮：href="#eg-top" 让滚动条乖乖回去</p>
+                </div>
+                <div class="lx-tip"><span>id 是「身份证」：一个页面里<b>不能重复</b>；
+                    锚点跳转、CSS 定位、JS 取元素全靠它。习惯写成小写字母加连字符，如 <code>id="user-avatar"</code>。</span></div>
+            </section>
+
+            <section>
+                <h2>六、图片：img 标签</h2>
+                <p>
+                    <code>&lt;img&gt;</code> 是空元素（没有结束标签），两个属性必须形成肌肉记忆：
+                    <code>src</code> 告诉浏览器图在哪，<code>alt</code> 告诉所有人（以及搜索引擎、读屏软件）图是什么。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>img 属性逐项分析：src / alt / 尺寸 / 懒加载</caption>
+                        <thead>
+                            <tr><th>属性</th><th>取值</th><th>说明</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>src</code></td><td>URL（必填）</td><td>图片地址，绝对/相对/data: 皆可</td></tr>
+                            <tr><td><code>alt</code></td><td>文字（必写）</td><td>替代文字：加载失败时显示、读屏朗读、SEO 抓取</td></tr>
+                            <tr><td><code>width</code> / <code>height</code></td><td>数字（像素，不带单位）</td><td>建议同时写：浏览器提前占位，页面不「跳一下」</td></tr>
+                            <tr><td><code>loading</code></td><td><code>lazy</code> / <code>eager</code> / <code>auto</code></td><td><code>lazy</code>＝滚到快看见才加载，长页面省流量</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="html" data-file="图片.html">
+                    <script type="text/plain" class="lab-code"><!-- 为了离线演示，src 用了 data: 地址；真实项目写 "img/sunset.jpg" 这样的路径 -->
+<img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 480 300'%3E%3Crect width='480' height='300' fill='%23F5C97B'/%3E%3Ccircle cx='240' cy='150' r='64' fill='%23E2603F'/%3E%3Crect y='222' width='480' height='78' fill='%238F3A26'/%3E%3C/svg%3E"
+     alt="橙黄天空里悬着一轮红日的扁平插画" width="240" height="150" loading="lazy">
+
+<!-- 图片挂了怎么办？alt 文字就是救命稻草 -->
+<img src="sunset.jpg" alt="海边日落照片（此图不存在，正在显示 alt 文字）" width="300"></script>
+                </div>
+                <div class="eg-img-wrap">
+                    <img class="eg-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 480 300'%3E%3Crect width='480' height='300' fill='%23F5C97B'/%3E%3Ccircle cx='240' cy='150' r='64' fill='%23E2603F'/%3E%3Crect y='222' width='480' height='78' fill='%238F3A26'/%3E%3C/svg%3E"
+                             alt="橙黄天空里悬着一轮红日的扁平插画" width="240" height="150" loading="lazy">
+                    <p class="eg-note">↑ 宽高各设一半，图片等比缩小；loading="lazy" 让它懒加载</p>
+                    <img class="eg-broken" src="sunset.jpg" alt="海边日落照片（此图不存在，正在显示 alt 文字）" width="300">
+                    <p class="eg-note">↑ 图片加载失败时，alt 文字顶上（把 alt 改成别的字试试）</p>
+                </div>
+                <div class="lx-note"><span>专业习惯：<b>每张图都写 alt</b>。装饰性图片（纯背景、分隔符）可以写
+                    <code>alt=""</code>（空 alt 表示「跳过我」），但绝不能不写。</span></div>
+            </section>
+
+            <section>
+                <h2>七、字符实体：打出打不出的字符</h2>
+                <p>
+                    想显示 <code>&lt;p&gt;</code> 这串字？直接写会被当成标签吃掉；
+                    想敲出连续空格？会被折叠。HTML 的解法是<strong class="hl">字符实体</strong>：
+                    以 <code>&amp;</code> 开头、<code>;</code> 结尾的「暗号」。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>字符实体速查：以 &amp; 开头、以 ; 结尾的暗号</caption>
+                        <thead>
+                            <tr><th>实体</th><th>显示为</th><th>用途</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>&amp;nbsp;</code></td><td>不折叠空格</td><td>普通空格会折叠，它不会</td></tr>
+                            <tr><td><code>&amp;lt;</code></td><td>&lt;</td><td>小于号，避免被当成标签开头</td></tr>
+                            <tr><td><code>&amp;gt;</code></td><td>&gt;</td><td>大于号</td></tr>
+                            <tr><td><code>&amp;amp;</code></td><td>&amp;</td><td>&amp; 本身（写其它实体前先写它）</td></tr>
+                            <tr><td><code>&amp;quot;</code></td><td>"</td><td>双引号，属性值里常用</td></tr>
+                            <tr><td><code>&amp;copy;</code></td><td>&copy;</td><td>版权符号 ©</td></tr>
+                            <tr><td><code>&amp;#169;</code></td><td>&#169;</td><td>数字写法：&#169; 的码点，效果同上</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="html" data-file="实体.html">
+                    <script type="text/plain" class="lab-code"><p>普通：你    好（中间敲了 4 个空格，折叠成 1 个）</p>
+<p>实体：你&nbsp;&nbsp;&nbsp;&nbsp;好（4 个不折叠空格）</p>
+<p>想在网页里显示 &lt;p&gt; 这样的标签？用实体！</p>
+<p>Tom &amp; Jerry｜3 &lt; 5｜&copy; 2026｜双引号 &quot;引号&quot;</p></script>
+                </div>
+                <div class="lab" data-lang="html" data-file="实体预览.html">
+                    <div class="lab-head"><span class="lab-cap">空格折叠 vs <code>&amp;nbsp;</code>：把普通那句里的 4 个空格换成 <code>&amp;nbsp;</code>，看它不再被压扁</span></div>
+                    <template class="lab-html"></template>
+                    <script type="text/plain" class="lab-code"><div>
+  <p>普通：你    好（中间敲了 4 个空格，折叠成 1 个）</p>
+  <p>实体：你&nbsp;&nbsp;&nbsp;&nbsp;好（4 个不折叠空格）</p>
+  <hr style="border:none;border-top:2px dashed #D3B9A4;margin:12px 0">
+  <p>想在网页里显示 <p> 这样的标签？用实体！</p>
+  <p>Tom & Jerry｜3 < 5｜&copy; 2026｜双引号 "引号"</p>
+</div></script>
+                </div>
+                <div class="lx-tip"><span>背不动全部？先记三件套：<b><code>&amp;lt;</code>（&lt;）、<code>&amp;gt;</code>（&gt;）、<code>&amp;amp;</code>（&amp;）</b>，
+                    其它的用时再查。注意：显示「实体本身」要套两层，如 <code>&amp;amp;nbsp;</code> 显示出 <code>&amp;nbsp;</code>。</span></div>
+            </section>
+
+            <section>
+                <h2>八、本章小结</h2>
+                <ul>
+                    <li>标题 h1~h6 是<strong class="hl">目录层级</strong>：一个页面一个 h1，不为字号用标题。</li>
+                    <li>段落 p 自动留白；br 硬换行、hr 分割线、pre 原样保留空格换行。</li>
+                    <li>格式化分两派：b/i 只管化妆，strong/em/mark/del/ins 自带语义。</li>
+                    <li>链接 a 靠 href 走天下：绝对、相对、#锚点、mailto:、tel:、download。</li>
+                    <li>页内跳转 = 目标加 id + 链接写 <code>#id</code>。</li>
+                    <li>img 必写 src 与 alt；width/height 提前占位；loading="lazy" 懒加载。</li>
+                    <li>连续空格和换行会折叠，特殊字符用实体（&amp;nbsp; &amp;lt; &amp;gt; &amp;amp; &amp;copy;）。</li>
+                </ul>
+                <div class="lx-note"><span><b>动手练习</b>：做一个「自我介绍名片页」——h1 写名字，两段 p 做简介，
+                    用 strong/em/mark 各强调一处，放一张带 alt 的图片（src 可用 data: 地址），
+                    最后加一个「发邮件给我」的 mailto 链接和一个「回到顶部」锚点按钮。</span></div>
+            </section>
+
+        </article>
+    </main>
+    <script src="../assets/learn.js" defer></script>
+</body>
+</html>

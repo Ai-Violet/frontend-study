@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>元素与属性 · HTML 基础 — 前端自习室</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23B8552F'/%3E%3Ctext x='16' y='22' font-size='16' font-family='serif' font-weight='700' fill='%23FFF7EF' text-anchor='middle'%3E学%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="../assets/learn.css">
+</head>
+<body data-page="01-HTML基础/02-元素与属性.html">
+    <main class="lx-main">
+        <article class="lx-article">
+
+            <nav class="lx-crumb">
+                <a href="../教程中心页.html">学习路线</a><span class="sep">›</span>
+                <a href="index.html">HTML 基础</a><span class="sep">›</span>
+                <span class="here">元素与属性</span>
+            </nav>
+            <h1><span class="h-no">02</span>元素与属性</h1>
+            <p class="lx-lead">
+                元素（Element）是内容的「容器」，属性（Attribute）是贴在开始标签上的「配置项」。
+                一个元素可以有多个属性，用空格隔开，写成 <b>属性名="属性值"</b>。
+            </p>
+            <div class="lx-meta-row">
+                <span class="lx-chip">约 14 分钟</span>
+                <span class="lx-chip">5 个动手实验</span>
+                <span class="lx-chip">打好地基</span>
+            </div>
+
+            <section>
+                <h2>一、元素的解剖图</h2>
+                <p>
+                    完整元素 = <strong class="hl">开始标签 + 内容 + 结束标签</strong>。
+                    属性永远写在开始标签里，值建议用双引号包住。
+                </p>
+                <div class="lx-codeblock" data-lang="html" data-file="解剖.html">
+                    <script type="text/plain" class="lab-code"><a href="https://www.runoob.com" title="鼠标悬停看提示">菜鸟教程</a></script>
+                </div>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>元素结构三件套：谁是谁</caption>
+                        <thead>
+                            <tr><th>部件</th><th>写法</th><th>作用</th><th>可省略吗</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><b>开始标签</b></td><td><code>&lt;a href="…"&gt;</code></td><td>宣布开始，属性都贴在这里</td><td>不能，元素必须有</td></tr>
+                            <tr><td><b>内容</b></td><td><code>菜鸟教程</code></td><td>真正展示给用户的东西</td><td>可以，空元素就没有</td></tr>
+                            <tr><td><b>结束标签</b></td><td><code>&lt;/a&gt;</code></td><td>宣布结束，前面加斜杠</td><td>空元素没有；非空元素别漏</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lab" data-lang="css" data-file="标签解剖.css">
+                    <div class="lab-head"><span class="lab-cap">用颜色拆解一个元素：把 <code>title</code> 属性的提示文字改一改，再悬停下方链接看效果</span></div>
+                    <template class="lab-html">
+                        <div class="tag-anatomy">
+                            <span class="t">&lt;a</span>
+                            <span class="a"> href</span>=<span class="v">"https://www.runoob.com"</span>
+                            <span class="a"> title</span>=<span class="v">"鼠标悬停看提示"</span>
+                            <span class="t">&gt;</span><span class="c">菜鸟教程</span><span class="t">&lt;/a&gt;</span>
+                        </div>
+                        <div class="legend">
+                            <span><i class="lg-t"></i>标签名</span>
+                            <span><i class="lg-a"></i>属性名</span>
+                            <span><i class="lg-v"></i>属性值</span>
+                            <span><i class="lg-c"></i>内容</span>
+                        </div>
+                        <div class="g-card">
+                            <h4>实际渲染效果（把鼠标悬停在链接上）：</h4>
+                            <p><a href="https://www.runoob.com" title="鼠标悬停看提示">菜鸟教程</a></p>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.tag-anatomy {
+  background: #FDF9F4; border: 1.5px solid #E3D5C4; border-radius: 12px;
+  padding: 20px 22px; text-align: center; font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 17px; margin-bottom: 8px;
+}
+.tag-anatomy .t { color: #B8552F; font-weight: 700; }
+.tag-anatomy .a { color: #8B5A2B; }
+.tag-anatomy .v { color: #2E6B4A; }
+.tag-anatomy .c { color: #3A2E26; }
+.legend { display: flex; gap: 18px; justify-content: center; font-size: 12.5px; color: #6B5D4A; flex-wrap: wrap; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+.lg-t { background: #B8552F; }
+.lg-a { background: #8B5A2B; }
+.lg-v { background: #2E6B4A; }
+.lg-c { background: #3A2E26; }
+.g-card { background: #fff; border: 1.5px solid #E3D5C4; border-radius: 12px; padding: 14px 16px; margin: 12px 0; }
+.g-card h4 { margin: 0 0 8px; font-size: 14px; color: #3A2E26; }
+.g-card p { margin: 0; font-size: 13.5px; color: #6B5D4A; line-height: 1.7; }
+.g-card a { color: #B8552F; }</script>
+                </div>
+                <div class="lx-tip"><span>口诀：<b>属性住开始标签，值加引号，多个属性空格隔开</b>。
+                    HTML 不区分大小写，但约定俗成全小写。</span></div>
+            </section>
+
+            <section>
+                <h2>二、空元素：没有内容的「自闭合」标签</h2>
+                <p>
+                    有些元素天生没有内容、也不需要结束标签，称为<strong class="hl">空元素（void element）</strong>，
+                    常见的有 <code>&lt;br&gt;</code>、<code>&lt;hr&gt;</code>、<code>&lt;img&gt;</code>、
+                    <code>&lt;input&gt;</code>、<code>&lt;meta&gt;</code>、<code>&lt;link&gt;</code>。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>空元素速查：没有结束标签的「自闭合」标签</caption>
+                        <thead>
+                            <tr><th>空元素</th><th>作用</th><th>常见写法</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>&lt;br&gt;</code></td><td>强制换行</td><td><code>&lt;p&gt;第一行&lt;br&gt;第二行&lt;/p&gt;</code></td></tr>
+                            <tr><td><code>&lt;hr&gt;</code></td><td>水平分割线</td><td><code>&lt;hr&gt;</code></td></tr>
+                            <tr><td><code>&lt;img&gt;</code></td><td>图片</td><td><code>&lt;img src="logo.png" alt="徽标"&gt;</code></td></tr>
+                            <tr><td><code>&lt;input&gt;</code></td><td>输入控件</td><td><code>&lt;input type="text"&gt;</code></td></tr>
+                            <tr><td><code>&lt;meta&gt;</code></td><td>元数据（编码、viewport）</td><td><code>&lt;meta charset="UTF-8"&gt;</code></td></tr>
+                            <tr><td><code>&lt;link&gt;</code></td><td>引入外部资源</td><td><code>&lt;link rel="stylesheet" href="style.css"&gt;</code></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="html" data-file="空元素.html">
+                    <script type="text/plain" class="lab-code"><p>第一行<br>第二行（br 强制换行）</p>
+<hr>                              <!-- hr 水平分割线 -->
+<img src="logo.png" alt="网站徽标"> <!-- img 图片 -->
+<input type="text" placeholder="请输入"> <!-- input 输入框 --></script>
+                </div>
+                <div class="lab" data-lang="html" data-file="空元素预览.html">
+                    <div class="lab-head"><span class="lab-cap">空元素渲染效果：把 <code>&lt;br&gt;</code> 删掉，两行文字会并到一行</span></div>
+                    <template class="lab-html"></template>
+                    <script type="text/plain" class="lab-code"><div class="g-card">
+  <h4>br 与 hr：</h4>
+  <p>第一行<br>第二行（br 强制换行）</p>
+  <hr style="border:none;border-top:2px dashed #C9A284;margin:10px 0">
+  <p style="color:#9C8E7B">↑ 这是一条 hr 分割线</p>
+</div>
+<div class="g-card">
+  <h4>input 输入框（可以打字试试）：</h4>
+  <p><input type="text" placeholder="请输入"
+       style="padding:8px 12px;border:1.5px solid #C9A284;border-radius:8px;font-size:13.5px"></p>
+</div>
+<style>
+  .g-card { background: #fff; border: 1.5px solid #E3D5C4; border-radius: 12px; padding: 14px 16px; margin: 10px 0; max-width: 460px; }
+  .g-card h4 { margin: 0 0 8px; font-size: 14px; color: #3A2E26; }
+  .g-card p { margin: 0; font-size: 13.5px; color: #6B5D4A; line-height: 1.7; }
+</style></script>
+                </div>
+                <div class="lx-warn"><span>HTML5 里写 <code>&lt;br&gt;</code> 或 <code>&lt;br /&gt;</code> 都合法，
+                    但不要写成 <code>&lt;br&gt;&lt;/br&gt;</code>——空元素没有结束标签。</span></div>
+            </section>
+
+            <section>
+                <h2>三、布尔属性：有则生效，无则忽略</h2>
+                <p>
+                    一类特殊属性<strong class="hl">只要出现就生效</strong>，不需要值，称为布尔属性。
+                    例如 <code>disabled</code>（禁用）、<code>checked</code>（勾选）、<code>required</code>（必填）、
+                    <code>readonly</code>（只读）、<code>autofocus</code>（自动聚焦）。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>布尔属性：写了就生效，不写就当没这回事</caption>
+                        <thead>
+                            <tr><th>布尔属性</th><th>作用是</th><th>典型场景</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>disabled</code></td><td>禁用控件</td><td>条件未满足时不让点提交</td></tr>
+                            <tr><td><code>checked</code></td><td>默认勾选</td><td>radio / checkbox 预选</td></tr>
+                            <tr><td><code>required</code></td><td>必填校验</td><td>表单提交前的第一道闸</td></tr>
+                            <tr><td><code>readonly</code></td><td>只读</td><td>展示不可改的固定值</td></tr>
+                            <tr><td><code>autofocus</code></td><td>自动聚焦</td><td>页面加载即聚焦搜索框</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="html" data-file="布尔属性.html">
+                    <script type="text/plain" class="lab-code"><input type="text" disabled>          <!-- 禁用，灰色不可输入 -->
+<input type="checkbox" checked> 已勾选 <!-- 默认勾上 -->
+<input type="text" required>          <!-- 表单提交时必须填写 --></script>
+                </div>
+                <div class="lab" data-lang="html" data-file="布尔属性预览.html">
+                    <div class="lab-head"><span class="lab-cap">把 <code>disabled</code> 从第一个 input 上摘掉，它立刻复活可变；<code>checked</code> 删掉则默认不勾</span></div>
+                    <template class="lab-html"></template>
+                    <script type="text/plain" class="lab-code"><div class="g-card">
+  <h4>disabled 禁用 vs 正常：</h4>
+  <p>
+    <input type="text" value="我被 disabled 了" disabled
+       style="padding:8px 12px;border:1.5px solid #C9A284;border-radius:8px;font-size:13.5px;margin-right:10px">
+    <input type="text" value="我可以输入"
+       style="padding:8px 12px;border:1.5px solid #C9A284;border-radius:8px;font-size:13.5px">
+  </p>
+</div>
+<div class="g-card">
+  <h4>checked 默认勾选：</h4>
+  <p>
+    <label><input type="checkbox" checked style="margin-right:6px">已勾选</label>
+    <label style="margin-left:16px"><input type="checkbox" style="margin-right:6px">未勾选</label>
+  </p>
+</div>
+<style>
+  .g-card { background: #fff; border: 1.5px solid #E3D5C4; border-radius: 12px; padding: 14px 16px; margin: 10px 0; max-width: 460px; }
+  .g-card h4 { margin: 0 0 8px; font-size: 14px; color: #3A2E26; }
+  .g-card p { margin: 0; font-size: 13.5px; color: #6B5D4A; line-height: 1.7; }
+</style></script>
+                </div>
+            </section>
+
+            <section>
+                <h2>四、全局属性：任何元素都能用的属性</h2>
+                <p>
+                    有一批属性是「通用通行证」，所有元素都可以使用：
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>全局属性速查：谁都能挂的「通用通行证」</caption>
+                        <thead>
+                            <tr><th>全局属性</th><th>作用</th><th>常用程度</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>id</code></td><td>唯一标识，页面内不能重复；JS/CSS 锚点定位用</td><td>高频</td></tr>
+                            <tr><td><code>class</code></td><td>类名，可重复、可多个（空格分隔），CSS 样式的主力</td><td>最高频</td></tr>
+                            <tr><td><code>style</code></td><td>行内样式，直接写 CSS（优先级高，尽量少用）</td><td>中</td></tr>
+                            <tr><td><code>title</code></td><td>悬停提示文字</td><td>中</td></tr>
+                            <tr><td><code>hidden</code></td><td>隐藏元素（布尔属性）</td><td>少</td></tr>
+                            <tr><td><code>lang</code></td><td>声明内容语言，如 <code>lang="zh-CN"</code></td><td>少</td></tr>
+                            <tr><td><code>dir</code></td><td>文字方向：<code>ltr</code> 左到右 / <code>rtl</code> 右到左</td><td>偶用</td></tr>
+                            <tr><td><code>data-*</code></td><td>自定义数据属性，存 JS 要用的数据，如 <code>data-id="3"</code></td><td>中</td></tr>
+                            <tr><td><code>contenteditable</code></td><td>让内容可编辑（浏览器原生富文本）</td><td>偶用</td></tr>
+                            <tr><td><code>tabindex</code></td><td>控制 Tab 键聚焦顺序</td><td>偶用</td></tr>
+                            <tr><td><code>draggable</code></td><td>元素可拖拽</td><td>偶用</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="html" data-file="全局属性.html">
+                    <script type="text/plain" class="lab-code"><p title="我是悬停提示">鼠标悬停在这段文字上</p>
+
+<p class="note tip warning">一个元素挂三个类，空格隔开</p>
+
+<p contenteditable="true">点击这段文字，可以直接编辑！</p>
+
+<p hidden>我被 hidden 属性藏起来了</p>
+
+<li data-price="29.9" data-id="1001">商品名</li></script>
+                </div>
+                <div class="lab" data-lang="css" data-file="title与编辑.css">
+                    <div class="lab-head"><span class="lab-cap"><code>title</code> 悬停 1 秒出提示；<code>contenteditable</code> 点击文字可直接改——把下面的 <code>contenteditable</code> 删掉看它变回只读</span></div>
+                    <template class="lab-html">
+                        <div class="g-card">
+                            <h4>title 属性（悬停 1 秒出提示）：</h4>
+                            <p><span title="我是悬停提示">鼠标悬停在这段文字上</span></p>
+                        </div>
+                        <div class="g-card">
+                            <h4>contenteditable（点击下面的文字试试编辑）：</h4>
+                            <p class="edit-me" contenteditable="true">点击这段文字，可以直接编辑！</p>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.g-card { background: #fff; border: 1.5px solid #E3D5C4; border-radius: 12px; padding: 14px 16px; margin: 10px 0; max-width: 460px; }
+.g-card h4 { margin: 0 0 8px; font-size: 14px; color: #3A2E26; }
+.g-card p { margin: 0; font-size: 13.5px; color: #6B5D4A; }
+.edit-me {
+  outline: 2px dashed #C9A284; border-radius: 6px; padding: 8px 12px;
+  background: #FFFBF5;
+}</script>
+                </div>
+                <div class="lx-note"><span><code>data-*</code> 是前端的「暗格」：页面显示「商品名」，
+                    但 <code>data-price</code> 里还存着价格，JS 一取就能用，数据和视图两不误。</span></div>
+            </section>
+
+            <section>
+                <h2>五、块级元素与行内元素</h2>
+                <p>
+                    按默认「占据方式」分两大类：<strong class="hl">块级元素</strong>独占一行、能设宽高；
+                    <strong class="hl">行内元素</strong>在一行内排队、宽高由内容决定。（本质是 <code>display</code> 的差异，CSS 章细讲。）
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>块级 vs 行内 vs 行内块：占据方式的三个阵营</caption>
+                        <thead>
+                            <tr><th>分类</th><th>代表元素</th><th>特点</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>块级</td><td><code>div p h1-h6 ul ol li table form header footer section</code></td><td>独占一行；默认宽度撑满父级；可设宽高边距</td></tr>
+                            <tr><td>行内</td><td><code>span a strong em img input button label</code></td><td>在一行内排列；宽高由内容决定；上下边距不生效</td></tr>
+                            <tr><td>行内块</td><td><code>img input button</code>（默认表现）</td><td>像文字一样排队，但又能设宽高</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="html" data-file="块级行内.html">
+                    <script type="text/plain" class="lab-code"><div class="box-demo">我是块级：独占一行</div>
+<div class="box-demo">我又独占一行</div>
+
+<span class="inline-demo">行内1</span><span class="inline-demo">行内2</span><span class="inline-demo">行内3</span></script>
+                </div>
+                <div class="lab" data-lang="css" data-file="块级行内.css">
+                    <div class="lab-head"><span class="lab-cap">块级换行 vs 行内排队：把第三个 <code>&lt;span&gt;</code> 改成 <code>&lt;div&gt;</code>，看排队瞬间变独占</span></div>
+                    <template class="lab-html">
+                        <div class="box-demo">我是块级：独占一行</div>
+                        <div class="box-demo">我又独占一行</div>
+                        <div class="row">
+                            <span class="inline-demo">行内1</span><span class="inline-demo">行内2</span><span class="inline-demo">行内3</span>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.box-demo {
+  background: rgba(184, 85, 47, .07); border-radius: 8px; padding: 10px 14px; margin: 6px 0;
+  font-size: 14px; color: #3A2E26;
+}
+.inline-demo {
+  display: inline-block; margin-right: 8px; background: rgba(150, 101, 44, .1);
+  border-radius: 6px; padding: 6px 10px; font-size: 14px; color: #3A2E26;
+}
+.row { margin-top: 10px; }</script>
+                </div>
+            </section>
+
+            <section>
+                <h2>六、嵌套规则</h2>
+                <ul>
+                    <li>元素可以嵌套，但<strong class="hl">必须正确闭合</strong>：外层先开的后关。<code>&lt;p&gt;&lt;b&gt;加粗&lt;/b&gt;&lt;/p&gt;</code> ✓</li>
+                    <li>块级里可以放块级和行内；行内里一般只放行内或文字。</li>
+                    <li><code>&lt;a&gt;</code> 里不能再放 <code>&lt;a&gt;</code>；<code>&lt;p&gt;</code> 里不能放 <code>&lt;div&gt;</code>（浏览器会自动拆开）。</li>
+                    <li>缩进只影响可读性，不影响渲染。</li>
+                </ul>
+                <div class="lx-warn"><span>错误嵌套不会被报错，浏览器会<b>静默纠错</b>——结构和你写的不一样，
+                    排查起来很痛苦。写的时候就要规范。</span></div>
+            </section>
+
+            <section>
+                <h2>七、本章小结</h2>
+                <ul>
+                    <li>完整元素 = <strong class="hl">开始标签 + 内容 + 结束标签</strong>；空元素没有结束标签（img、br、hr、input、meta）。</li>
+                    <li>属性只写在开始标签里：<code>名="值"</code>，值用双引号包住；一个元素可同时挂多个属性。</li>
+                    <li>四类高频属性：<code>id</code>（全页唯一）、<code>class</code>（可复用、可多个）、<code>style</code>（内联样式）、<code>title</code>（悬停提示）。</li>
+                    <li>布尔属性出现即生效：disabled、checked、required、readonly。</li>
+                    <li><code>data-*</code> 自定义数据是 JS 的「暗格」，不影响显示、随取随用。</li>
+                    <li>块级独占一行可设宽高，行内在一行内排队；嵌套要正确闭合，别让浏览器静默纠错。</li>
+                </ul>
+                <div class="lx-note"><span><b>动手练习</b>：写一张「商品卡片」——最外层 div 挂 <code>class="card"</code> 和
+                    <code>data-price="99"</code>，里面放一张 img（src + alt + title），
+                    一个 strong 写商品名，一个 a 链接挂 <code>target="_blank"</code>，
+                    最后用 <code>id="price-tag"</code> 标出价格。</span></div>
+            </section>
+
+        </article>
+    </main>
+    <script src="../assets/learn.js" defer></script>
+</body>
+</html>

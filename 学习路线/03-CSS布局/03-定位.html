@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>定位 · CSS 布局 — 前端自习室</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23B8552F'/%3E%3Ctext x='16' y='22' font-size='16' font-family='serif' font-weight='700' fill='%23FFF7EF' text-anchor='middle'%3E学%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="../assets/learn.css">
+</head>
+<body data-page="03-CSS布局/03-定位.html">
+    <main class="lx-main">
+        <article class="lx-article">
+
+            <nav class="lx-crumb">
+                <a href="../教程中心页.html">学习路线</a><span class="sep">›</span>
+                <a href="index.html">CSS 布局</a><span class="sep">›</span>
+                <span class="here">定位</span>
+            </nav>
+            <h1><span class="h-no">03</span>定位</h1>
+            <p class="lx-lead">
+                浮动只能「靠边站」，<code>position</code> 定位却能精确到像素：把元素「钉」在你指定的坐标上。
+                弹窗、角标、吸顶导航、返回顶部按钮，背后全是定位。本课的核心只有一件事——
+                <strong class="hl">搞清楚每个定位值的「参照物」是谁</strong>。
+            </p>
+            <div class="lx-meta-row">
+                <span class="lx-chip">约 18 分钟</span>
+                <span class="lx-chip">7 个动手实验</span>
+                <span class="lx-chip">弹窗与吸顶全靠它</span>
+            </div>
+
+            <section>
+                <h2>一、position 五种取值总览</h2>
+                <p>
+                    <code>position</code> 一共五个取值。看懂这张表，定位就懂了一大半——
+                    注意「是否脱离文档流」和「参照物」两列，它们决定了一切行为差异：
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>position 五值语义表：脱流与否 × 参照物</caption>
+                        <thead>
+                            <tr><th>取值</th><th>脱离文档流</th><th>定位参照物</th><th>典型用途</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">static</td><td>否（默认值）</td><td>无——写 top/left 也没用</td><td>普通文档流元素</td></tr>
+                            <tr><td class="td-val">relative</td><td>否（<strong class="hl">占位保留</strong>）</td><td>自己在文档流中的<strong>原位置</strong></td><td>微调位置、给 absolute 当参照物</td></tr>
+                            <tr><td class="td-val">absolute</td><td>是（不占位）</td><td>最近的<strong>非 static 祖先</strong>（没有则相对页面初始包含块）</td><td>弹窗、角标、气泡、精确居中</td></tr>
+                            <tr><td class="td-val">fixed</td><td>是（不占位）</td><td><strong>浏览器视口</strong>（滚动条滚不动它）</td><td>返回顶部、吸顶广告、悬浮客服</td></tr>
+                            <tr><td class="td-val">sticky</td><td>否（滚动前在流内）</td><td>最近的<strong>滚动容器</strong> + top 等阈值</td><td>表头吸顶、通讯录字母条</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-tip"><span>记忆口诀：<b>static 是路人，relative 是原地挪，absolute 找最近定位祖先，
+                    fixed 钉在屏幕上，sticky 滚到才粘住。</b>除了 static，另外四个都叫「定位元素」，才能用 top/right/bottom/left 和 z-index。</span></div>
+            </section>
+
+            <section>
+                <h2>二、static 默认与 relative 相对定位</h2>
+                <p>
+                    不写 <code>position</code> 时元素就是 <code>static</code>，老老实实待在文档流里，
+                    此时 <code>top / left</code> 这些偏移属性对它<strong>完全无效</strong>。
+                    <code>relative</code> 则是「<strong class="hl">保留占位的挪动</strong>」：
+                    元素还在文档流里，原来的位置照常留空（不会被兄弟元素补位），再相对这个原位置偏移。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="relative.css">
+                    <script type="text/plain" class="lab-code">/* relative：相对"自己原来的位置"偏移，原位置照常占位 */
+.ps-rel .box {
+    display: inline-block;
+    width: 96px;
+    height: 62px;
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    text-align: center;
+    line-height: 62px;
+    font-size: 13px;
+    margin-right: 12px;
+}
+.ps-rel .moved {
+    position: relative;   /* 相对定位 */
+    left: 30px;           /* 从原位置向右挪 30px（正值朝右） */
+    top: 16px;            /* 从原位置向下挪 16px（正值朝下） */
+    background: rgba(192,138,62,.35);
+    border-color: #C08A3E;
+    color: #7A5A26;
+    z-index: 2;           /* relative 是定位元素，可以参与层叠 */
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="relative-preview.css">
+                    <div class="lab-head"><span class="lab-cap">中间盒子挪走了，原位置还在：把 <code>left: 30px</code> 改成 <code>-30px</code>，它立刻朝左反方向挪</span></div>
+                    <template class="lab-html">
+                        <div class="ps-rel">
+                            <div class="ps-lab">虚线框是演示舞台：注意第二个盒子挪走后留下的「空位」</div>
+                            <div class="stage">
+                                <span class="box">盒子 1</span><span class="box moved">盒子 2 挪了</span><span class="box">盒子 3</span>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.ps-lab { font-size: 12.5px; color: #8B7E6C; margin: 12px 0 6px; }
+.ps-rel .stage {
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 10px;
+    padding: 10px 10px 40px;
+}
+.ps-rel .box {
+    display: inline-block;
+    width: 96px;
+    height: 62px;
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    text-align: center;
+    line-height: 62px;
+    font-size: 13px;
+    margin-right: 12px;
+}
+.ps-rel .moved {
+    position: relative;   /* 从中二位置挪走 */
+    left: 30px;
+    top: 16px;
+    background: rgba(192,138,62,.35);
+    border-color: #C08A3E;
+    color: #7A5A26;
+    z-index: 2;
+}</script>
+                </div>
+                <div class="lx-warn"><span>方向容易记反：<code>top: 16px</code> 是「顶边离原位置 16px」→ 盒子<strong>向下</strong>动；
+                    <code>left: 30px</code> 是「左边离原位置 30px」→ 盒子<strong>向右</strong>动。想让盒子朝反方向走，用负值。</span></div>
+                <p>
+                    relative 单独用的场景不多（小图标微调、盖层），它更重要的角色是——
+                    <strong class="hl">给 absolute 当参照物</strong>，这是下一节的主角。
+                </p>
+            </section>
+
+            <section>
+                <h2>三、absolute 绝对定位：找「最近的非 static 祖先」</h2>
+                <p>
+                    <code>absolute</code> 是定位家族的核心，两条铁律：
+                </p>
+                <ul>
+                    <li><strong class="hl">不占位</strong>：元素彻底脱离文档流，兄弟元素当它不存在，直接补位；</li>
+                    <li><strong class="hl">参照物是「最近的非 static 祖先」</strong>：从父级往上逐层找，第一个 position 不是 static 的祖先（relative / absolute / fixed / sticky 都算）就是它的坐标原点；一个都没有，就相对整个页面（初始包含块）。</li>
+                </ul>
+                <p>
+                    这就是著名的<strong class="hl">参照物链</strong>：同一个 absolute 子元素，祖先里谁设了定位，它就贴着谁。
+                    对比下面两个演示——唯一的差别是「中间层有没有 position: relative」：
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="chain.css">
+                    <script type="text/plain" class="lab-code">/* 外层绿色虚线框：relative —— 一个潜在的参照物 */
+.ps-chain .outer {
+    position: relative;
+    border: 2.5px dashed #9DB89B;
+    border-radius: 10px;
+    padding: 30px 12px 14px;
+}
+/* 中间橙色框：默认 static（左图）/ 设为 relative（右图） */
+.ps-chain .mid {
+    border: 1.5px solid #C08A3E;
+    background: rgba(192,138,62,.15);
+    border-radius: 8px;
+    padding: 30px 12px 14px;
+    margin-left: 36px;
+    min-height: 34px;
+    font-size: 12px;
+    color: #7A5A26;
+}
+.ps-chain .case-b .mid { position: relative; }   /* 右图：中间层变成参照物 */
+/* 红色小标签：absolute，top/left 都是 0 */
+.ps-chain .dot {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #B3472E;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 11.5px;
+    padding: 2px 8px;
+}
+.ps-chain { display: flex; gap: 12px; }
+.ps-chain .case { flex: 1; }</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="chain-preview.css">
+                    <div class="lab-head"><span class="lab-cap">同样的红标签，左侧贴外层绿框、右侧贴中间橙框：把右边的 <code>.ps-chain .case-b .mid</code> 里的 <code>position: relative</code> 删掉，红标签立刻跳到绿框左上角</span></div>
+                    <template class="lab-html">
+                        <div class="ps-chain">
+                            <div class="case">
+                                <div class="ps-lab">左：中间层未定位 → 红标签贴「外层绿框」</div>
+                                <div class="outer">
+                                    <div class="mid">中间层：static（默认）<div class="dot">top:0 left:0</div></div>
+                                </div>
+                            </div>
+                            <div class="case case-b">
+                                <div class="ps-lab">右：中间层 relative → 红标签贴「中间橙框」</div>
+                                <div class="outer">
+                                    <div class="mid">中间层：relative<div class="dot">top:0 left:0</div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.ps-lab { font-size: 12.5px; color: #8B7E6C; margin: 12px 0 6px; }
+.ps-chain { display: flex; gap: 12px; }
+.ps-chain .case { flex: 1; min-width: 0; }
+.ps-chain .outer {
+    position: relative;
+    border: 2.5px dashed #9DB89B;
+    border-radius: 10px;
+    padding: 30px 12px 14px;
+}
+.ps-chain .mid {
+    border: 1.5px solid #C08A3E;
+    background: rgba(192,138,62,.15);
+    border-radius: 8px;
+    padding: 30px 12px 14px;
+    margin-left: 36px;
+    min-height: 34px;
+    font-size: 12px;
+    color: #7A5A26;
+    margin-bottom: 6px;
+}
+.ps-chain .case-b .mid { position: relative; }   /* 这行是开关：删掉它，红标签就转移参照物 */
+.ps-chain .dot {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #B3472E;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 11.5px;
+    padding: 2px 8px;
+}</script>
+                </div>
+                <div class="lx-warn"><span>新手最常见的问题「absolute 元素满世界乱跑」，几乎都是<strong>忘了给父级设 position: relative</strong>，
+                    导致参照物一路找到页面根部。习惯写法：<b>父 relative + 子 absolute</b>，成对出现。</span></div>
+            </section>
+
+            <section>
+                <h2>四、absolute 实战：角标与绝对定位居中</h2>
+                <p>
+                    两个最高频的 absolute 用法。<strong>角标</strong>：把小徽章钉在卡片右上角，负偏移让它「跨出」卡片边缘；
+                    <strong>居中</strong>：<code>left: 50%; top: 50%</code> 把左上角送到中心，再用 <code>translate(-50%,-50%)</code> 退回自身一半（第 01 课学过的万能居中，这里正是它的主战场）。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="badge.css">
+                    <script type="text/plain" class="lab-code">/* 实战一：卡片角标（负偏移跨出边缘） */
+.ps-badge-card {
+    position: relative;        /* 卡片：角标的参照物 */
+    width: 216px;
+    background: #fff;
+    border: 1.5px solid #E3D5C4;
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: 0 2px 8px rgba(45,40,36,.06);
+}
+.ps-badge {
+    position: absolute;
+    top: -11px;                /* 负值：往上跨出卡片 11px */
+    right: -11px;              /* 负值：往右跨出卡片 11px */
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #B3472E;
+    color: #fff;
+    text-align: center;
+    line-height: 36px;
+    font-size: 12.5px;
+}
+
+/* 实战二：绝对定位 + translate 万能居中 */
+.ps-center-stage {
+    position: relative;        /* 舞台：居中盒子的参照物 */
+    height: 128px;
+    border: 2px dashed #9DB89B;
+    border-radius: 10px;
+    background: rgba(78,122,82,.05);
+}
+.ps-center-box {
+    position: absolute;
+    left: 50%;                 /* 左上角先到中心 */
+    top: 50%;
+    transform: translate(-50%, -50%);   /* 再退回自身一半 → 正中心 */
+    background: rgba(78,122,82,.32);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    font-size: 12.5px;
+    padding: 8px 14px;
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="badge-preview.css">
+                    <div class="lab-head"><span class="lab-cap">角标用负偏移骑在卡片边框上：把 <code>.ps-badge</code> 的 <code>top</code> 改成 <code>0</code>，角标立刻贴进卡片内沿</span></div>
+                    <template class="lab-html">
+                        <div class="ps-badge-card">
+                            <div class="t">热销商品</div>
+                            <div class="d">角标 absolute + top/right 负偏移，骑在卡片右上角。卡片本身 position: relative。</div>
+                            <div class="ps-badge">热</div>
+                        </div>
+                        <div class="ps-lab">绝对定位 + translate(-50%,-50%) 居中：</div>
+                        <div class="ps-center-stage">
+                            <div class="ps-center-box">我在舞台正中心</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.ps-lab { font-size: 12.5px; color: #8B7E6C; margin: 12px 0 6px; }
+.ps-badge-card {
+    position: relative;
+    width: 216px;
+    background: #fff;
+    border: 1.5px solid #E3D5C4;
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: 0 2px 8px rgba(45,40,36,.06);
+}
+.ps-badge-card .t { font-size: 14px; font-weight: 600; color: #26201B; margin-bottom: 4px; }
+.ps-badge-card .d { font-size: 12.5px; color: #6B5D4A; line-height: 1.7; }
+.ps-badge {
+    position: absolute;
+    top: -11px;        /* 改成 0，角标就贴回卡片内沿 */
+    right: -11px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #B3472E;
+    color: #fff;
+    text-align: center;
+    line-height: 36px;
+    font-size: 12.5px;
+    box-shadow: 0 2px 6px rgba(179,71,46,.35);
+}
+.ps-center-stage {
+    position: relative;
+    height: 128px;
+    border: 2px dashed #9DB89B;
+    border-radius: 10px;
+    background: rgba(78,122,82,.05);
+}
+.ps-center-box {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);   /* 删掉它，盒子左上角就卡在中心 */
+    background: rgba(78,122,82,.32);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    font-size: 12.5px;
+    padding: 8px 14px;
+}</script>
+                </div>
+                <div class="lx-tip"><span>角标要用负偏移跨出边缘，前提是<strong>祖先没有 overflow: hidden</strong> 裁掉它——
+                    接下来的第 04 课「溢出处理」专门讲这件事。</span></div>
+            </section>
+
+            <section>
+                <h2>五、fixed 固定定位：钉在视口上</h2>
+                <p>
+                    <code>fixed</code> 的参照物是<strong class="hl">浏览器视口（viewport）</strong>——就是你现在看到的这块屏幕区域。
+                    页面滚动条怎么滚，它都纹丝不动，因此天然适合「返回顶部按钮」「吸顶广告条」「悬浮客服」这类元素。
+                    它同样脱离文档流、不占位。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="fixed.css">
+                    <script type="text/plain" class="lab-code">/* 吸顶广告条：横贯视口顶部 */
+.ps-fx-ad {
+    position: fixed;
+    top: 0;               /* 贴着视口顶边 */
+    left: 0;
+    right: 0;             /* 左右都为 0 → 拉满整行宽 */
+    background: #C08A3E;
+    color: #fff;
+    text-align: center;
+    font-size: 12.5px;
+    padding: 6px 0;
+    z-index: 10;          /* 盖在普通内容之上 */
+}
+
+/* 返回顶部按钮：钉在视口右下角 */
+.ps-fx-btn {
+    position: fixed;
+    bottom: 12px;         /* 离视口底边 12px */
+    right: 12px;          /* 离视口右边 12px */
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #4E7A52;
+    color: #fff;
+    text-align: center;
+    line-height: 44px;
+    font-size: 13px;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(58,95,62,.35);
+    z-index: 10;
+}
+
+/* 演示用的一列普通内容（在预览里会产生滚动） */
+.ps-fx-demo {
+    border: 1.5px solid #E3D5C4;
+    border-radius: 10px;
+    background: #fff;
+    padding-top: 36px;
+}
+.ps-fx-demo .sec {
+    padding: 12px 14px;
+    border-bottom: 1px dashed #EFE5D2;
+    font-size: 13px;
+    color: #6B5D4A;
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="fixed-preview.css">
+                    <div class="lab-head"><span class="lab-cap">在右侧预览里滚动内容：橙色条贴顶、绿色按钮贴右下角，永远不动。把 <code>.ps-fx-btn</code> 的 <code>bottom</code> 改成 <code>40px</code>，按钮立刻上移</span></div>
+                    <template class="lab-html">
+                        <div class="ps-fx-demo">
+                            <div class="sec">第 1 屏内容：滚动预览区域，观察顶部的橙色广告条和右下角的绿色按钮。</div>
+                            <div class="sec">第 2 屏内容：fixed 元素不随滚动移动，因为它相对的是「视口」而不是页面。</div>
+                            <div class="sec">第 3 屏内容：注意它们都设置了 z-index: 10，盖在普通内容上面。</div>
+                            <div class="sec">第 4 屏内容：把 left/right/top/bottom 改成别的值试试，按钮会立刻换位置。</div>
+                            <div class="sec">第 5 屏内容：真实项目里，返回顶部按钮还会配合 JS 判断滚动距离再淡入。</div>
+                            <div class="ps-fx-ad">我是吸顶广告条：position: fixed; top: 0</div>
+                            <div class="ps-fx-btn">顶</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.ps-fx-demo {
+    border: 1.5px solid #E3D5C4;
+    border-radius: 10px;
+    background: #fff;
+    padding-top: 36px;
+    min-height: 460px;      /* 撑高内容，预览框里才滚得起来 */
+}
+.ps-fx-demo .sec {
+    padding: 18px 14px;
+    border-bottom: 1px dashed #EFE5D2;
+    font-size: 13px;
+    color: #6B5D4A;
+}
+.ps-fx-ad {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #C08A3E;
+    color: #fff;
+    text-align: center;
+    font-size: 12.5px;
+    padding: 6px 0;
+    z-index: 10;
+}
+.ps-fx-btn {
+    position: fixed;
+    bottom: 12px;    /* 改成 40px 试试 */
+    right: 12px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #4E7A52;
+    color: #fff;
+    text-align: center;
+    line-height: 44px;
+    font-size: 13px;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(58,95,62,.35);
+    z-index: 10;
+}</script>
+                </div>
+                <div class="lx-warn"><span>坑：如果 fixed 元素的<strong>任何祖先</strong>设置了 <code>transform</code>、<code>filter</code> 等属性，
+                    参照物会从视口变成那个祖先，「钉在屏幕上」就失效了——弹窗组件里最常见这个 bug。</span></div>
+            </section>
+
+            <section>
+                <h2>六、sticky 粘性定位：滚到才粘住</h2>
+                <p>
+                    <code>sticky</code> 是五个值里最年轻的，可以理解为
+                    <strong class="hl">relative 和 fixed 的合体</strong>：平时待在文档流里（relative 状态），
+                    滚动到设定的阈值（如 <code>top: 0</code>）时「粘」在滚动容器边缘不再走（fixed 状态）。
+                    注意它<strong>必须配合 top/right/bottom/left 之一</strong>才生效，且粘附范围不超过父元素。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="sticky.css">
+                    <script type="text/plain" class="lab-code">/* 演示舞台：一个可滚动的容器（高度 232px，内容更高） */
+.ps-sticky-wrap {
+    height: 232px;
+    overflow-y: auto;          /* 关键：产生滚动，sticky 才有用武之地 */
+    border: 1.5px solid #E3D5C4;
+    border-radius: 10px;
+    background: #fff;
+}
+/* 分组标题：粘在容器顶部 */
+.ps-sticky-wrap .group-head {
+    position: sticky;
+    top: 0;                    /* 滚到离容器顶边 0px 时粘住 */
+    background: #4E7A52;
+    color: #fff;
+    padding: 7px 14px;
+    font-size: 13.5px;
+}
+.ps-sticky-wrap .item {
+    padding: 8px 14px;
+    border-bottom: 1px solid #F0E8DB;
+    font-size: 13px;
+    color: #6B5D4A;
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="sticky-preview.css">
+                    <div class="lab-head"><span class="lab-cap">通讯录式分组：滚动这个框，绿色字母条依次吸顶。把 <code>top: 0</code> 改成 <code>top: 24px</code>，字母条就粘在离顶 24px 处</span></div>
+                    <template class="lab-html">
+                        <div class="ps-sticky-wrap">
+                            <div class="group-head">A</div>
+                            <div class="item">阿明 · 138xxxx0001</div>
+                            <div class="item">阿强 · 138xxxx0002</div>
+                            <div class="item">爱丽丝 · 138xxxx0003</div>
+                            <div class="group-head">B</div>
+                            <div class="item">白展堂 · 138xxxx0004</div>
+                            <div class="item">贝塔 · 138xxxx0005</div>
+                            <div class="item">冰冰 · 138xxxx0006</div>
+                            <div class="group-head">C</div>
+                            <div class="item">曹操 · 138xxxx0007</div>
+                            <div class="item">陈宫 · 138xxxx0008</div>
+                            <div class="item">翠花 · 138xxxx0009</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.ps-sticky-wrap {
+    height: 232px;
+    overflow-y: auto;
+    border: 1.5px solid #E3D5C4;
+    border-radius: 10px;
+    background: #fff;
+}
+.ps-sticky-wrap .group-head {
+    position: sticky;
+    top: 0;                 /* 改成 24px，吸顶位置下移 */
+    background: #4E7A52;
+    color: #fff;
+    padding: 7px 14px;
+    font-size: 13.5px;
+}
+.ps-sticky-wrap .item {
+    padding: 8px 14px;
+    border-bottom: 1px solid #F0E8DB;
+    font-size: 13px;
+    color: #6B5D4A;
+}</script>
+                </div>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>sticky 与 relative / fixed 的差异</caption>
+                        <thead>
+                            <tr><th>对比项</th><th>relative</th><th>sticky</th><th>fixed</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>平时位置</td><td>原位置偏移</td><td>文档流内原位置</td><td>相对视口</td></tr>
+                            <tr><td>何时偏移</td><td>始终</td><td>滚动到阈值后</td><td>始终</td></tr>
+                            <tr><td>是否占位</td><td>占位</td><td>滚动前占位</td><td>不占位</td></tr>
+                            <tr><td>参照物</td><td>自己原位置</td><td>滚动容器</td><td>视口（除非祖先 transform）</td></tr>
+                            <tr><td>适用</td><td>微调</td><td>表头吸顶 / 字母导航</td><td>返回顶部 / 悬浮</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-tip"><span>sticky 两大常见失效原因：<b>① 忘了写 top（或其它阈值）；② 父元素高度不够或 overflow 设成了
+                    hidden / scroll。</b>粘性范围受父元素边界限制——滚出父元素，它就会跟着被带走。</span></div>
+            </section>
+
+            <section>
+                <h2>七、偏移属性与 z-index 层叠顺序</h2>
+                <p>
+                    <code>top / right / bottom / left</code> 四个<strong class="hl">偏移属性</strong>负责「钉在哪」：
+                    它们只在定位元素（非 static）身上生效，规定元素对应边缘与参照物对应边的距离，正值朝内、负值朝外。
+                    当元素同时写了相对的两个（如 left 和 right）且没定宽，就会「被拉伸」占满这段空间。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>偏移属性一览：只对定位元素生效</caption>
+                        <thead>
+                            <tr><th>属性</th><th>作用</th><th>常用值</th><th>备注</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">top / bottom</td><td>元素顶边 / 底边离参照物的距离</td><td><code>px</code>、<code>%</code>、<code>auto</code></td><td>bottom 正值 = 贴底往上量</td></tr>
+                            <tr><td class="td-val">left / right</td><td>元素左边 / 右边离参照物的距离</td><td><code>px</code>、<code>%</code>、<code>auto</code></td><td>right 正值 = 贴右往左量</td></tr>
+                            <tr><td class="td-val">z-index</td><td>层叠顺序：谁盖谁</td><td>整数（可负），<code>auto</code></td><td>只对定位元素和 flex/grid 子项生效</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>
+                    <code>z-index</code> 解决「盒子叠盒子时谁在上面」：<strong class="hl">数值大者在上</strong>；
+                    数值相同则<strong class="hl">HTML 里后写的在上</strong>（后来者居上）。下面三张卡片故意叠放，试着改它们的 z-index：
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="zindex.css">
+                    <script type="text/plain" class="lab-code">/* 三张定位卡片叠放，z-index 决定谁在最上面 */
+.ps-z-stage { position: relative; height: 140px; }
+.ps-z-stage .card {
+    position: absolute;
+    width: 96px;
+    height: 72px;
+    border-radius: 10px;
+    color: #fff;
+    text-align: center;
+    line-height: 72px;
+    font-size: 13px;
+}
+.ps-z-stage .a { left: 0;    top: 6px;  background: rgba(78,122,82,.80);   z-index: 3; }
+.ps-z-stage .b { left: 56px; top: 32px; background: rgba(192,138,62,.88);  z-index: 1; }
+.ps-z-stage .c { left: 112px;top: 58px; background: rgba(179,71,46,.82);   z-index: 2; }
+/* z-index：绿卡 3 最高 → 最上层；橙卡 1 最低 → 最底层（虽然它在 HTML 中排在最前） */</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="zindex-preview.css">
+                    <div class="lab-head"><span class="lab-cap">三张卡片按 z-index 排序：把 <code>.ps-z-stage .b</code> 的 <code>z-index</code> 改成 <code>9</code>，橙卡立刻翻到最上层</span></div>
+                    <template class="lab-html">
+                        <div class="ps-z-stage">
+                            <div class="card a">A · 3</div>
+                            <div class="card b">B · 1</div>
+                            <div class="card c">C · 2</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.ps-z-stage { position: relative; height: 150px; }
+.ps-z-stage .card {
+    position: absolute;
+    width: 96px;
+    height: 72px;
+    border-radius: 10px;
+    color: #fff;
+    text-align: center;
+    line-height: 72px;
+    font-size: 13px;
+}
+.ps-z-stage .a { left: 0;    top: 6px;  background: rgba(78,122,82,.80);   z-index: 3; }
+.ps-z-stage .b { left: 56px; top: 32px; background: rgba(192,138,62,.88);  z-index: 1; }  /* 改成 9 看看 */
+.ps-z-stage .c { left: 112px;top: 58px; background: rgba(179,71,46,.82);   z-index: 2; }</script>
+                </div>
+                <div class="lx-warn"><span>z-index 的天坑：<b>层叠上下文</b>。父元素若自身创建了层叠上下文（如 z-index 不是 auto 的定位元素、
+                    或设了 transform / opacity &lt; 1），子元素的 z-index 只在父元素「内部」比大小，
+                    拿不到整个页面的排名——「我明明写了 9999 怎么还是被盖住」多半是它。</span></div>
+            </section>
+
+            <section>
+                <h2>八、本章小结</h2>
+                <ul>
+                    <li>五种定位：<code>static</code> 默认流内；<code>relative</code> 原地偏移、占位保留；<code>absolute</code> 不占位、贴最近的非 static 祖先；<code>fixed</code> 不占位、钉在视口；<code>sticky</code> 滚动到阈值才粘住。</li>
+                    <li><strong class="hl">参照物链</strong>是 absolute 的命门：父 relative + 子 absolute 是标配写法。</li>
+                    <li>角标 = absolute + 负偏移；万能居中 = left/top: 50% + translate(-50%,-50%)。</li>
+                    <li>fixed 做返回顶部与吸顶；sticky 做表头与字母导航，必须写 top 阈值。</li>
+                    <li>偏移属性 top/right/bottom/left 只对定位元素生效；<code>z-index</code> 大者在上、同值后来者在上。</li>
+                    <li>记住口诀：<strong class="hl">static 是路人，relative 原地挪，absolute 找定位祖先，fixed 钉屏幕，sticky 滚到粘。</strong></li>
+                </ul>
+                <div class="lx-note"><span><b>动手练习：</b>做一个「商品卡片」：卡片用 relative，右上角挂 absolute 负偏移的红色圆形「新品」角标；
+                    再做一个 160px 高的相对定位舞台，里面放一个 absolute + translate 居中的标签；
+                    最后给两个叠放的色块分别设 z-index: 1 和 2，交换数值观察盖压关系的变化。</span></div>
+            </section>
+
+        </article>
+    </main>
+    <script src="../assets/learn.js" defer></script>
+</body>
+</html>

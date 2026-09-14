@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>布局与对齐 · CSS 布局 — 前端自习室</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23B8552F'/%3E%3Ctext x='16' y='22' font-size='16' font-family='serif' font-weight='700' fill='%23FFF7EF' text-anchor='middle'%3E学%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="../assets/learn.css">
+</head>
+<body data-page="03-CSS布局/01-布局与对齐.html">
+    <main class="lx-main">
+        <article class="lx-article">
+
+            <nav class="lx-crumb">
+                <a href="../教程中心页.html">学习路线</a><span class="sep">›</span>
+                <a href="index.html">CSS 布局</a><span class="sep">›</span>
+                <span class="here">布局与对齐</span>
+            </nav>
+            <h1><span class="h-no">01</span>布局与对齐</h1>
+            <p class="lx-lead">
+                布局回答一个问题：<strong class="hl">内容放在页面的什么位置</strong>。
+                本章先摸清浏览器「不写任何布局代码时」的默认排版规则（文档流），
+                再总览改变布局的三大门派，并练熟前端面试第一题——居中。
+            </p>
+            <div class="lx-meta-row">
+                <span class="lx-chip">约 14 分钟</span>
+                <span class="lx-chip">5 个动手实验</span>
+                <span class="lx-chip">布局开篇</span>
+            </div>
+
+            <section>
+                <h2>一、文档流：不写布局时的默认规则</h2>
+                <p>
+                    不写任何布局 CSS，浏览器也有一套自带的排版规则，叫<strong class="hl">文档流（normal flow，普通流）</strong>。
+                    它只有两条朴素规则：
+                </p>
+                <ul>
+                    <li><strong class="hl">块级元素</strong>（div、p、h1…）：从上到下<strong>堆</strong>，像一摞积木，每块独占一行，默认宽度撑满父级。</li>
+                    <li><strong class="hl">行内元素</strong>（span、a、strong…)：从左到右<strong>排</strong>，像一行文字，排不下再换行，宽高由内容决定。</li>
+                </ul>
+                <div class="lx-codeblock" data-lang="css" data-file="flow.css">
+                    <script type="text/plain" class="lab-code">/* 演示默认文档流：块级从上到下堆，行内从左到右排 */
+.ly-flow .blk {
+    background: rgba(78,122,82,.18);   /* 半透明绿：块级 */
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    padding: 8px 14px;
+    color: #3A5F3E;
+    margin-bottom: 8px;                /* 行内元素不生效的属性之一：见下方演示 */
+    font-size: 13.5px;
+}
+.ly-flow .inl {
+    background: rgba(192,138,62,.22);  /* 半透明橙：行内 */
+    border: 1.5px solid #C08A3E;
+    border-radius: 8px;
+    padding: 2px 12px;
+    color: #7A5A26;
+    margin-right: 8px;                 /* 行内元素：水平方向的 margin 有效 */
+    font-size: 13px;
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="flow-preview.css">
+                    <div class="lab-head"><span class="lab-cap">块级竖着堆、行内横着排：改动行内那块 <code>.inl</code> 的 <code>width</code>，看它依然纹丝不动（行内不吃宽高）</span></div>
+                    <template class="lab-html">
+                        <div class="ly-flow">
+                            <div class="blk">块级 1：独占一行，宽度默认撑满父级</div>
+                            <div class="blk">块级 2：紧跟着往下堆</div>
+                            <div class="blk">块级 3：从上到下，这就是文档流</div>
+                            <div>
+                                <span class="inl">行内 1</span><span class="inl">行内 2</span><span class="inl">行内 3</span><span class="inl">行内 4</span><span class="inl">行内 5</span>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.ly-flow .blk {
+    background: rgba(78,122,82,.18);   /* 半透明绿：块级 */
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    padding: 8px 14px;
+    color: #3A5F3E;
+    margin-bottom: 8px;                /* 行内元素不生效的属性之一 */
+    font-size: 13.5px;
+}
+.ly-flow .inl {
+    display: inline;                   /* 试一试：改成 inline-block，宽高立刻生效 */
+    background: rgba(192,138,62,.22);  /* 半透明橙：行内 */
+    border: 1.5px solid #C08A3E;
+    border-radius: 8px;
+    padding: 2px 12px;
+    color: #7A5A26;
+    margin-right: 8px;                 /* 行内元素：水平方向的 margin 有效 */
+    font-size: 13px;
+}</script>
+                </div>
+                <div class="lx-tip"><span>注意行内那排色块：它们<strong>上下方向的 margin、宽高都不生效</strong>（padding 上下能撑开背景但不占位）——
+                    这是行内元素的天然限制，后面会看到用 <code>inline-block</code> 或 <code>flex</code> 解决。</span></div>
+                <p>
+                    之后学的浮动、定位、Flex、Grid，本质上都是在<strong class="hl">打破</strong>或<strong class="hl">接管</strong>这套默认规则：
+                    浮动让元素「飘」起来给文字让路，定位把元素「钉」在坐标上，Flex/Grid 则直接接管整条排版流水线。
+                </p>
+            </section>
+
+            <section>
+                <h2>二、改变布局的三大手段（本章是总纲）</h2>
+                <p>CSS 里能把元素「挪出默认文档流」或「重新组织排列」的手段，主流就三类：</p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>三大布局手段：极速建立全局观</caption>
+                        <thead>
+                            <tr><th>手段</th><th>核心属性</th><th>一句直觉</th><th>典型用途</th><th>现状</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>浮动</strong></td><td><code>float</code> / <code>clear</code></td><td>让元素「飘」起来，文字环绕它</td><td>图文混排</td><td>老项目布局 hack，新项目只做文字环绕</td></tr>
+                            <tr><td><strong>定位</strong></td><td><code>position</code> / <code>top</code> 等 / <code>z-index</code></td><td>把元素「钉」在某个参照物的坐标上</td><td>弹窗、角标、吸顶、返回顶部</td><td>精确控制的必备工具</td></tr>
+                            <tr><td><strong>弹性 / 网格</strong></td><td><code>display: flex</code> / <code>display: grid</code></td><td>flex 像「晾衣杆」排一维，grid 像「棋盘」排二维</td><td>导航、卡片列表、整页骨架</td><td>现代布局的绝对主力</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-note"><span>学习顺序 = 演变顺序：先懂文档流的「自然规律」（本节），
+                    再看《浮动》《定位》这些「打破规则」的手段，最后用《Flex》《Grid》优雅地解决问题。
+                    溢出处理（后面的第 04 课）是所有布局都会遇到的收尾问题。</span></div>
+            </section>
+
+            <section>
+                <h2>三、水平居中三法</h2>
+                <p>
+                    「居中」是布局第一课。水平居中前先问一句：<strong class="hl">要居中的是「盒子」还是「文字 / 行内内容」？</strong>
+                    对象不同，方法完全不同。
+                </p>
+                <ul>
+                    <li><strong>法一</strong>：定宽的<strong>块级</strong>盒子 → 自己用 <code>margin: 0 auto</code>（左右 auto 平分剩余空间）。</li>
+                    <li><strong>法二</strong>：<strong>行内内容</strong>（文字、span、图片）→ 给<strong>父级</strong>设 <code>text-align: center</code>。</li>
+                    <li><strong>法三</strong>：不定宽又想设宽高的盒子 → 先变成 <code>inline-block</code>，再让父级 <code>text-align: center</code>。</li>
+                </ul>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>水平居中三法：对象不同、方法不同</caption>
+                        <thead>
+                            <tr><th>方法</th><th>管谁</th><th>核心代码</th><th>前提</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">margin: 0 auto</td><td>定宽块级盒子</td><td><code>width: 220px; margin: 0 auto;</code></td><td>必须定宽、必须是块级</td></tr>
+                            <tr><td class="td-val">text-align: center</td><td>行内内容</td><td>父级 <code>text-align: center</code></td><td>居中对象是行内级内容</td></tr>
+                            <tr><td class="td-val">inline-block + text-align</td><td>能设宽高的「行内」</td><td>子 <code>display: inline-block</code> + 父 <code>text-align: center</code></td><td>想让盒子跟文字一样排队</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="h-center.css">
+                    <script type="text/plain" class="lab-code">/* 法一：定宽块级盒子，左右 margin 平分剩余空间 */
+.ly-h-block {
+    width: 220px;
+    margin: 0 auto;          /* 上 0 下 0，左右自动平分 → 水平居中 */
+    background: rgba(78,122,82,.18);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    padding: 10px 0;
+    text-align: center;
+    color: #3A5F3E;
+    font-size: 13.5px;
+}
+
+/* 法二：父级设 text-align，行内内容整体居中 */
+.ly-h-text {
+    border: 1.5px dashed #9DB89B;
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;      /* 管的是"行内内容" */
+}
+.ly-h-text .pill {
+    background: rgba(192,138,62,.25);
+    border: 1.5px solid #C08A3E;
+    border-radius: 999px;
+    padding: 3px 14px;
+    color: #7A5A26;
+    font-size: 13.5px;
+}
+
+/* 法三：子元素 inline-block + 父级 text-align */
+.ly-h-ib {
+    border: 1.5px dashed #9DB89B;
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;      /* inline-block 会被 text-align 影响 */
+}
+.ly-h-ib .card {
+    display: inline-block;   /* 像文字一样排队，但又能设宽高 */
+    width: 150px;
+    background: rgba(179,71,46,.14);
+    border: 1.5px solid #B3472E;
+    border-radius: 8px;
+    padding: 8px 0;
+    color: #8A3A28;
+    font-size: 13.5px;
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="h-center-preview.css">
+                    <div class="lab-head"><span class="lab-cap">三种水平居中对比：把 <code>.ly-h-block</code> 的 <code>width</code> 改成 <code>100%</code>，法一立刻失守（没有剩余空间可分）</span></div>
+                    <template class="lab-html">
+                        <div class="ly-lab">方法一：定宽块级 + margin: 0 auto（盒子自己居中）</div>
+                        <div class="ly-h-block">width: 220px; margin: 0 auto;</div>
+                        <div class="ly-lab">方法二：text-align: center（行内内容在父级里居中）</div>
+                        <div class="ly-h-text"><span class="pill">我是行内内容 pill</span></div>
+                        <div class="ly-lab">方法三：inline-block + 父级 text-align（能设宽高的「行内」）</div>
+                        <div class="ly-h-ib"><span class="card">inline-block 盒子</span></div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.ly-lab { font-size: 12.5px; color: #8B7E6C; margin: 12px 0 6px; }
+
+/* 法一：定宽块级盒子 */
+.ly-h-block {
+    width: 220px;
+    margin: 0 auto;
+    background: rgba(78,122,82,.18);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    padding: 10px 0;
+    text-align: center;
+    color: #3A5F3E;
+    font-size: 13.5px;
+}
+
+/* 法二：text-align 管行内内容 */
+.ly-h-text {
+    border: 1.5px dashed #9DB89B;
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+}
+.ly-h-text .pill {
+    background: rgba(192,138,62,.25);
+    border: 1.5px solid #C08A3E;
+    border-radius: 999px;
+    padding: 3px 14px;
+    color: #7A5A26;
+    font-size: 13.5px;
+}
+
+/* 法三：inline-block + 父级 text-align */
+.ly-h-ib {
+    border: 1.5px dashed #9DB89B;
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+}
+.ly-h-ib .card {
+    display: inline-block;
+    width: 150px;
+    background: rgba(179,71,46,.14);
+    border: 1.5px solid #B3472E;
+    border-radius: 8px;
+    padding: 8px 0;
+    color: #8A3A28;
+    font-size: 13.5px;
+}</script>
+                </div>
+                <div class="lx-warn"><span>经典坑：<code>margin: 0 auto</code> 居中失效，九成是因为盒子<strong>没有定宽</strong>
+                    （块级默认宽度 100%，没有「剩余空间」可分），或者盒子被设成了 <code>inline</code>/<code>inline-block</code>
+                    （行内级元素不吃 <code>margin auto</code> 居中）。</span></div>
+            </section>
+
+            <section>
+                <h2>四、垂直居中两法：line-height 与 vertical-align</h2>
+                <p>
+                    垂直方向没有 <code>margin: auto</code> 这种万金油，得看场景选工具。
+                    最常用的两招：<strong class="hl">单行文本用 line-height</strong>，
+                    <strong class="hl">行内内容与图片对齐用 vertical-align</strong>。
+                </p>
+                <h3>法一：单行文本——行高等于盒子高度</h3>
+                <div class="lx-codeblock" data-lang="css" data-file="hline.css">
+                    <script type="text/plain" class="lab-code">/* 单行文本垂直居中：line-height = height */
+.ly-v-line {
+    height: 76px;
+    line-height: 76px;        /* 行高把这一行文字"撑"到垂直正中 */
+    background: rgba(78,122,82,.18);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    text-align: center;       /* 顺便水平也居中 */
+    color: #3A5F3E;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+/* 反例：只设高度不设行高 → 文字贴着顶边 */
+.ly-v-bad {
+    height: 76px;
+    background: rgba(179,71,46,.10);
+    border: 1.5px dashed #B3472E;
+    border-radius: 8px;
+    text-align: center;
+    color: #8A3A28;
+    font-size: 14px;
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="hline-preview.css">
+                    <div class="lab-head"><span class="lab-cap">绿色条垂直居中 vs 红色虚线条贴顶：把 <code>.ly-v-line</code> 的 <code>line-height</code> 改成 <code>40px</code>，它立刻变回最上面</span></div>
+                    <template class="lab-html">
+                        <div class="ly-v-line">line-height = 76px：我垂直居中了</div>
+                        <div class="ly-v-bad">只设 height 不设 line-height：我贴在顶部</div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.ly-v-line {
+    height: 76px;
+    line-height: 76px;        /* 关键：行高 = 高度，文字就被撑到正中 */
+    background: rgba(78,122,82,.18);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    text-align: center;
+    color: #3A5F3E;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+.ly-v-bad {
+    height: 76px;             /* 只有高度 */
+    background: rgba(179,71,46,.10);
+    border: 1.5px dashed #B3472E;
+    border-radius: 8px;
+    text-align: center;
+    color: #8A3A28;
+    font-size: 14px;
+}</script>
+                </div>
+                <h3>法二：vertical-align——只对行内内容和表格单元格生效</h3>
+                <p>
+                    <code>vertical-align</code> 管的是<strong class="hl">同一行内</strong>行内元素之间（或图片与文字之间）的垂直对齐关系。
+                    下面的「图片」用渐变色块代替：
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>vertical-align 常用取值行为分析</caption>
+                        <thead>
+                            <tr><th>取值</th><th>基准</th><th>一句话</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">baseline（默认）</td><td>文字的「脚」（基线）</td><td>图片底部与文字基线对齐，底下常漏一条缝</td></tr>
+                            <tr><td class="td-val">middle</td><td>行内元素中线</td><td>图片中线与文字中线对齐，图文混排最常用</td></tr>
+                            <tr><td class="td-val">top / bottom</td><td>行框顶边 / 底边</td><td>受同一行最高点影响，适合整行对齐</td></tr>
+                            <tr><td class="td-val">数值 / 百分比</td><td>在 baseline 基础上偏移</td><td>精细微调时用（如 <code>vertical-align: -3px</code>）</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="v-align.css">
+                    <script type="text/plain" class="lab-code">/* vertical-align：调整行内元素在一行中的垂直位置 */
+.ly-va .row {
+    border-bottom: 1px dashed #E3D5C4;
+    padding: 4px 0;
+    font-size: 13.5px;
+    color: #6B5D4A;
+    line-height: 84px;        /* 行高大于"图片"高度，差异才看得出来 */
+}
+.ly-va .pic {
+    display: inline-block;    /* 色块代替图片 */
+    width: 90px;
+    height: 58px;
+    margin-right: 12px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #6B8E6A, #4E7A52);
+}
+.ly-va .mid { vertical-align: middle; }   /* 中线对齐：常用 */
+.ly-va .top { vertical-align: top; }      /* 顶线对齐 */
+.ly-va .btm { vertical-align: bottom; }   /* 底线对齐 */
+/* 默认（不写）= baseline：基线对齐，文字的"脚"与图片底部平齐 */</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="v-align-preview.css">
+                    <div class="lab-head"><span class="lab-cap">图片与文字的三种垂直对齐：把第二行的 <code>vertical-align</code> 改成 <code>top</code>，图片立刻顶到行顶</span></div>
+                    <template class="lab-html">
+                        <div class="ly-va">
+                            <div class="row"><span class="pic"></span>默认 baseline：图片底部与文字基线平齐</div>
+                            <div class="row"><span class="pic mid"></span>vertical-align: middle —— 图片中线与文字中线对齐（最常用）</div>
+                            <div class="row"><span class="pic btm"></span>vertical-align: bottom —— 图片底边贴着行框底部</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.ly-va .row {
+    border-bottom: 1px dashed #E3D5C4;
+    padding: 4px 0;
+    font-size: 13.5px;
+    color: #6B5D4A;
+    line-height: 84px;
+}
+.ly-va .row:last-child { border-bottom: none; }
+.ly-va .pic {
+    display: inline-block;
+    width: 90px;
+    height: 58px;
+    margin-right: 12px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #6B8E6A, #4E7A52);
+}
+.ly-va .mid { vertical-align: middle; }
+.ly-va .top { vertical-align: top; }
+.ly-va .btm { vertical-align: bottom; }</script>
+                </div>
+                <div class="lx-warn"><span><code>vertical-align</code> 是新手最常踩的坑之一：它<strong>只对行内元素和表格单元格生效</strong>，
+                    对普通块级 div 完全无效。「我想让一个 div 在另一个 div 里垂直居中」用它是不行的——
+                    那是下一节 translate 或后面第 05 课 Flex 的活儿。</span></div>
+            </section>
+
+            <section>
+                <h2>五、translate(-50%,-50%)：万能居中</h2>
+                <p>
+                    还有一招「不讲道理但极其好用」的万能居中：先把盒子的<strong class="hl">左上角</strong>放到父级中心
+                    （<code>left: 50%; top: 50%</code>），再用 <code>transform: translate(-50%, -50%)</code>
+                    把盒子往回退<strong class="hl">自身宽高的一半</strong>——正好落在正中心。
+                    因为 -50% 参照的是元素自身尺寸，所以盒子多大都适用，不需要知道尺寸。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="translate.css">
+                    <script type="text/plain" class="lab-code">/* 万能居中三件套：父 relative + 子 absolute + translate */
+.ly-t-stage {
+    position: relative;        /* 父级：定为参照物 */
+    height: 132px;
+    border: 2px dashed #9DB89B;
+    border-radius: 10px;
+    background: rgba(78,122,82,.05);
+}
+
+/* 只有 left/top：盒子的"左上角"落在中心点 → 偏右下 */
+.ly-t-corner {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    background: rgba(179,71,46,.30);
+    border: 1.5px solid #B3472E;
+    border-radius: 8px;
+    color: #8A3A28;
+    font-size: 12.5px;
+    padding: 6px 10px;
+}
+
+/* 再加 translate(-50%,-50%)：整体退回自身一半 → 正中心 */
+.ly-t-box {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(78,122,82,.32);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    font-size: 12.5px;
+    padding: 6px 10px;
+    cursor: pointer;
+    transition: transform .25s ease, background .25s ease;
+}
+.ly-t-box:hover {
+    transform: translate(-50%, -50%) scale(1.18);   /* 放大后依然居中 */
+    background: rgba(78,122,82,.52);
+}
+.ly-t-pair { display: flex; gap: 12px; }</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="translate-preview.css">
+                    <div class="lab-head"><span class="lab-cap">左边只有 left/top（角在中心偏右下），右边加 translate 真正居中：给 <code>.ly-t-box</code> 加 <code>padding: 30px</code>，它依然居中——这就是「与尺寸无关」</span></div>
+                    <template class="lab-html">
+                        <div class="ly-t-pair">
+                            <div>
+                                <div class="ly-lab">只有 left/top: 50%（左上角在中心）</div>
+                                <div class="ly-t-stage">
+                                    <span class="ly-t-corner">左上角在中心</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="ly-lab">加 translate(-50%,-50%)（正中心，hover 放大）</div>
+                                <div class="ly-t-stage">
+                                    <span class="ly-t-box">我在正中心</span>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.ly-lab { font-size: 12.5px; color: #8B7E6C; margin: 12px 0 6px; }
+.ly-t-pair { display: flex; gap: 12px; }
+.ly-t-pair > div { flex: 1; min-width: 0; }
+
+.ly-t-stage {
+    position: relative;
+    height: 132px;
+    border: 2px dashed #9DB89B;
+    border-radius: 10px;
+    background: rgba(78,122,82,.05);
+}
+.ly-t-corner {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    background: rgba(179,71,46,.30);
+    border: 1.5px solid #B3472E;
+    border-radius: 8px;
+    color: #8A3A28;
+    font-size: 12.5px;
+    padding: 6px 10px;
+}
+.ly-t-box {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(78,122,82,.32);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    font-size: 12.5px;
+    padding: 6px 10px;
+    cursor: pointer;
+    transition: transform .25s ease, background .25s ease;
+}
+.ly-t-box:hover {
+    transform: translate(-50%, -50%) scale(1.18);
+    background: rgba(78,122,82,.52);
+}</script>
+                </div>
+                <div class="lx-tip"><span>translate 里的 <code>-50%</code> 参照的是<strong>元素自身宽高</strong>，
+                    与父级尺寸无关——所以叫「万能居中」。transform 的完整用法（旋转、缩放、动画）
+                    会在后面的《CSS3 进阶》章节（2D 与 3D 转换一课）展开，这里先记住这一招即可。</span></div>
+            </section>
+
+            <section>
+                <h2>六、对齐相关属性速查表</h2>
+                <p>本章出现的对齐工具汇总成一张表，用之前先想清楚「对齐的是谁」：</p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>对齐工具总表：先分清对象再用</caption>
+                        <thead>
+                            <tr><th>属性</th><th>管什么</th><th>常用值</th><th>一句话记忆</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">text-align</td><td>行内内容的<strong>水平</strong>对齐（设在父级）</td><td><code>left / center / right / justify</code></td><td>管「文字」，不管块级盒子</td></tr>
+                            <tr><td class="td-val">vertical-align</td><td>行内元素 / 表格单元格的<strong>垂直</strong>对齐</td><td><code>baseline / middle / top / bottom</code></td><td>只对行内和 td 生效</td></tr>
+                            <tr><td class="td-val">margin: 0 auto</td><td>定宽<strong>块级盒子</strong>的水平居中</td><td><code>auto</code></td><td>左右 auto 平分剩余空间</td></tr>
+                            <tr><td class="td-val">line-height</td><td>单行文本的垂直居中</td><td>数值 = 容器高度</td><td>只适合「一行」</td></tr>
+                            <tr><td class="td-val">transform: translate(-50%,-50%)</td><td>任意元素的精确居中</td><td>配合 <code>left/top: 50%</code></td><td>万能居中，不问尺寸</td></tr>
+                            <tr><td class="td-val">place-items</td><td>Grid 中一步完成水平 + 垂直居中</td><td><code>center</code></td><td>Flex 版 = justify-content + align-items</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-tip"><span>选型口诀：<b>文字用 text，盒子用 margin；一行看 line-height，行内看 vertical；
+                    不问尺寸就 translate；进了 Flex/Grid 再学新招。</b></span></div>
+            </section>
+
+            <section>
+                <h2>七、本章小结</h2>
+                <ul>
+                    <li><strong class="hl">文档流</strong>是默认规则：块级从上到下堆，行内从左到右排；行内元素不吃宽高和上下 margin。</li>
+                    <li>改变布局的三大手段：<strong>浮动</strong>（文字环绕）、<strong>定位</strong>（精确坐标）、<strong>Flex/Grid</strong>（现代布局主力）。</li>
+                    <li>水平居中三法：定宽块级 <code>margin: 0 auto</code>；行内内容 <code>text-align: center</code>；<code>inline-block</code> + 父级 text-align。</li>
+                    <li>垂直居中两法：单行文本 <code>line-height = 高度</code>；行内/图片对齐 <code>vertical-align</code>（对块级无效）。</li>
+                    <li><code>left/top: 50%</code> + <code>translate(-50%,-50%)</code> 是与尺寸无关的万能居中。</li>
+                    <li>居中之前先问：<strong>对谁居中？它是行内、块级还是定位元素？</strong></li>
+                </ul>
+                <div class="lx-note"><span><b>动手练习：</b>做一个 320px 宽的「个人名片」——外层用 <code>margin: 0 auto</code> 水平居中；
+                    名片里放一条 48px 高的渐变色横幅，用 <code>line-height</code> 让标题垂直居中；
+                    再放一张渐变色块当头像，用 <code>vertical-align: middle</code> 让旁边的大名与头像对齐。
+                    把本节三种居中全部用上，再故意删掉一行 CSS 看看谁先「翻车」。</span></div>
+            </section>
+
+        </article>
+    </main>
+    <script src="../assets/learn.js" defer></script>
+</body>
+</html>

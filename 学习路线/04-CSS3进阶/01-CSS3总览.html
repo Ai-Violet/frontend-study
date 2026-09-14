@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS3 总览 · CSS3 进阶 — 前端自习室</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23B8552F'/%3E%3Ctext x='16' y='22' font-size='16' font-family='serif' font-weight='700' fill='%23FFF7EF' text-anchor='middle'%3E学%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="../assets/learn.css">
+</head>
+<body data-page="04-CSS3进阶/01-CSS3总览.html">
+    <main class="lx-main">
+        <article class="lx-article">
+
+            <nav class="lx-crumb">
+                <a href="../教程中心页.html">学习路线</a><span class="sep">›</span>
+                <a href="index.html">CSS3 进阶</a><span class="sep">›</span>
+                <span class="here">CSS3 总览</span>
+            </nav>
+            <h1><span class="h-no">01</span>CSS3 总览</h1>
+            <p class="lx-lead">
+                CSS3 不是一个新语言，而是 CSS2.1 之后所有演进的<strong class="hl">总称</strong>：
+                它被拆成一个个「模块」各自更新。圆角、阴影、渐变、变换、动画、响应式——
+                <b>现代网页颜值的全部来源</b>，都在这个模块里。
+            </p>
+            <div class="lx-meta-row">
+                <span class="lx-chip">约 25 分钟</span>
+                <span class="lx-chip">4 个动手实验</span>
+                <span class="lx-chip">CSS3 模块开局</span>
+            </div>
+
+            <section>
+                <h2>一、CSS3 是什么：从「一本书」到「一套丛书」</h2>
+                <p>
+                    CSS2.1 时代，规范像一本<strong class="hl">定稿的教科书</strong>：十年不改版，能做的只有布局、颜色、字体。
+                    之后 W3C 改了思路——不再憋一个「CSS4 大版本」，而是把 CSS <strong class="hl">拆成模块（module）</strong>，
+                    每个模块自己定版本、自己往前跑：选择器已经更新到 Level 4，弹性盒、网格各自成册。
+                </p>
+                <p>
+                    所以「CSS3」更像一个<strong class="hl">时代的昵称</strong>：泛指 CSS2.1 之后出现的这一大批新能力。
+                    好消息是——它们早已在所有主流浏览器稳定支持，放心用。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>CSS3 主要模块一览：代表能力与在哪学</caption>
+                        <thead>
+                            <tr><th>模块</th><th>代表能力</th><th>在哪学</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>选择器</td><td>属性选择器、结构伪类、伪元素</td><td>前面「CSS 基础」课的选择器进阶一课</td></tr>
+                            <tr><td>盒模型</td><td><code>box-sizing</code>、内外边距控制</td><td>前面「CSS 基础」课的盒模型一课</td></tr>
+                            <tr><td>背景与边框</td><td>多重背景、渐变、圆角、阴影、图片边框</td><td>本模块第 2、3 课</td></tr>
+                            <tr><td>文字效果</td><td>文字阴影、换行控制、<code>@font-face</code> 自定义字体</td><td>本模块第 4 课</td></tr>
+                            <tr><td>2D / 3D 转换</td><td><code>translate / rotate / scale / skew</code>、透视空间</td><td>本模块第 5 课</td></tr>
+                            <tr><td>过渡与动画</td><td><code>transition</code> 补间、<code>@keyframes</code> 关键帧</td><td>本模块第 6、7 课</td></tr>
+                            <tr><td>多列布局</td><td><code>columns</code> 报纸式多栏排版</td><td>了解即可，用得少</td></tr>
+                            <tr><td>媒体查询</td><td><code>@media</code> 按屏幕宽度换样式</td><td>本模块第 8 课</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>这张卡片就是本模块的「预告片」：圆角、渐变、阴影、文字阴影、动画、转换六个特性一锅端，先混个脸熟：</p>
+                <div class="lab" data-lang="css" data-file="hero.css">
+                    <div class="lab-head"><span class="lab-cap">渐变角度改 <code>45deg</code>、动画时长改 <code>0.5s</code>、阴影模糊改 <code>4px</code>——每个 CSS3 特性各管一摊</span></div>
+                    <template class="lab-html">
+                        <div class="stage">
+                            <div class="hero">
+                                <h3>CSS3 特性全家福</h3>
+                                <p>圆角 + 渐变 + 阴影 + 文字阴影<br>+ 动画 + 转换，一锅端</p>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.stage {
+    display: flex; justify-content: center; padding: 22px 0;
+}
+
+.hero {
+    width: 300px; padding: 32px 24px; text-align: center;
+    border-radius: 18px;                                    /* ① 圆角 */
+    background: linear-gradient(135deg, #E8A06A, #C45A3D);  /* ② 渐变 */
+    box-shadow: 0 14px 32px rgba(158, 64, 43, 0.35);        /* ③ 阴影 */
+    color: #fff;
+    animation: float 3s ease-in-out infinite;               /* ④ 动画 */
+}
+.hero h3 {
+    margin: 0 0 6px; font-size: 19px;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.28);             /* ⑤ 文字阴影 */
+}
+.hero p { margin: 0; font-size: 13px; opacity: 0.92; }
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }                  /* ⑥ 转换 */
+    50%      { transform: translateY(-10px); }
+}</script>
+                </div>
+                <div class="lx-tip"><span>这张卡片就是本模块的「预告片」：接下来的 7 课会把它拆开揉碎，
+                    每个特性单独练一遍，最后你随手就能写出这种效果。</span></div>
+            </section>
+
+            <section>
+                <h2>二、本模块学习地图</h2>
+                <p>
+                    先看地图再上路。这 7 站是<strong class="hl">层层递进</strong>的：
+                    前四课管「静态颜值」，第五课管「变形」，后三课管「动起来 + 适配所有屏幕」。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>本模块 7 课能力地图：从静态到动态</caption>
+                        <thead>
+                            <tr><th>能力</th><th>一句话说明</th><th>章节</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>圆角与阴影</td><td><code>border-radius</code> 圆润化，<code>box-shadow</code> 给立体感</td><td>第 2 课</td></tr>
+                            <tr><td>背景与渐变</td><td>不用图片，纯 CSS 画出渐变、条纹、光斑</td><td>第 3 课</td></tr>
+                            <tr><td>文本效果与字体</td><td>文字阴影、长文本换行策略、自定义字体</td><td>第 4 课</td></tr>
+                            <tr><td>2D 与 3D 转换</td><td>挪、转、缩、斜，还能进 3D 空间翻牌</td><td>第 5 课</td></tr>
+                            <tr><td>过渡</td><td>样式变化从「跳变」变「平滑滑过去」</td><td>第 6 课</td></tr>
+                            <tr><td>动画</td><td>多关键帧、可循环的导演级动效</td><td>第 7 课</td></tr>
+                            <tr><td>响应式设计</td><td>一套代码适配手机 / 平板 / 桌面</td><td>第 8 课</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="lab" data-lang="css" data-file="badges.css">
+                    <div class="lab-head"><span class="lab-cap">六枚徽章各演示一个特性——第 5 枚要鼠标悬停才转；把第 6 枚动画时长改短看眨眼变快</span></div>
+                    <template class="lab-html">
+                        <div class="badges">
+                            <div class="b b1"><i>圆</i>圆角<br>第2课</div>
+                            <div class="b b2"><i>影</i>阴影<br>第2课</div>
+                            <div class="b b3"><i>渐</i>渐变<br>第3课</div>
+                            <div class="b b4"><i>辉</i>文字阴影<br>第4课</div>
+                            <div class="b b5"><i>旋</i>转换<br>第5课</div>
+                            <div class="b b6"><i>跃</i>动画<br>第7课</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.badges {
+    display: flex; flex-wrap: wrap; gap: 13px; justify-content: center; padding: 8px 0;
+}
+.b {
+    width: 98px; height: 98px; padding: 10px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+    background: #fff; border: 1.5px solid #E3D5C4; border-radius: 12px;
+    color: #473F35; font-size: 12px; text-align: center;
+}
+.b i { font-style: normal; font-size: 22px; line-height: 1; }
+
+.b1 { border-radius: 50%; }                       /* ① 圆角 */
+.b2 { box-shadow: 0 10px 22px rgba(138, 78, 99, 0.3); }   /* ② 阴影 */
+.b3 {                                                /* ③ 渐变 */
+    background: linear-gradient(135deg, #E8A06A, #C45A3D);
+    border-color: transparent; color: #fff;
+}
+.b4 i {                                              /* ④ 文字阴影发光 */
+    color: #B3472E;
+    text-shadow: 0 0 8px #C08A3E, 0 0 18px #C08A3E;
+}
+.b5 { transition: transform 0.4s ease; }             /* ⑤ 转换 + 过渡 */
+.b5:hover { transform: rotate(180deg) scale(1.12); }
+.b6 i {                                              /* ⑥ 动画 */
+    color: #8A4E63;
+    animation: blink 1.2s ease-in-out infinite;
+}
+@keyframes blink {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: 0.35; transform: scale(0.8); }
+}</script>
+                </div>
+            </section>
+
+            <section>
+                <h2>三、浏览器兼容与厂商前缀</h2>
+                <p>
+                    CSS3 规范曾长期「边定边实现」：浏览器厂商等不及标准定稿，就先出自己的实验版本，
+                    并在属性前加<strong class="hl">厂商前缀</strong>标记「这是我家还没定稿的实现」。
+                    同一个效果，老代码要写一串：
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>四大厂商前缀：谁家用哪个</caption>
+                        <thead>
+                            <tr><th>前缀</th><th>厂商</th><th>示例</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">-webkit-</td><td>Chrome / Safari（含新版 Edge）</td><td><code>-webkit-border-radius</code></td></tr>
+                            <tr><td class="td-val">-moz-</td><td>Firefox</td><td><code>-moz-border-radius</code></td></tr>
+                            <tr><td class="td-val">-ms-</td><td>IE / 旧版 Edge</td><td><code>-ms-transform</code></td></tr>
+                            <tr><td class="td-val">-o-</td><td>老 Opera（已基本退役）</td><td><code>-o-transform</code></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="prefix.css">
+                    <script type="text/plain" class="lab-code">/* 老代码里常见的「前缀全家桶」 */
+.box {
+    -webkit-border-radius: 12px;   /* Chrome / Safari 老版本 */
+    -moz-border-radius: 12px;      /* Firefox 老版本 */
+    border-radius: 12px;           /* 标准写法放最后，覆盖前面的 */
+}
+
+/* 现状：主流特性早已全面支持标准写法，前缀基本退役。
+   新项目直接写标准属性；读老代码时认识它们即可。
+   仍有少数新特性（如 background-clip: text 的 -webkit- 版本）
+   习惯上会双写一份，属于「保险」而非必需。 */</script>
+                </div>
+                <div class="lx-tip"><span>查兼容性用 <b>Can I Use</b>（caniuse.com）；
+                    补前缀交给 <b>Autoprefixer</b>——构建工具按浏览器市占率自动加，
+                    手工写前缀的时代已经过去了。</span></div>
+            </section>
+
+            <section>
+                <h2>四、渐进增强与优雅降级：两种兼容思想</h2>
+                <p>
+                    面对五花八门的浏览器，怎么保证页面不崩？业界有两种思路，
+                    方向刚好相反：
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>渐进增强 vs 优雅降级：两种兼容思路对照</caption>
+                        <thead>
+                            <tr><th>对比项</th><th>渐进增强（推荐）</th><th>优雅降级</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>出发点</td><td>先保证核心内容<b>人人可用</b>，再给新浏览器「加糖」</td><td>先按最新浏览器做完美版，再为老浏览器打补丁</td></tr>
+                            <tr><td>写法顺序</td><td>基础样式在前，增强样式在后覆盖</td><td>完整样式在前，降级 hack 在后</td></tr>
+                            <tr><td>老浏览器看到</td><td>保底版本：内容完整、能用</td><td>可能缺胳膊少腿（靠补丁兜住）</td></tr>
+                            <tr><td>适合</td><td>内容型网站、面向大众的产品</td><td>内部工具、强依赖新特性的项目</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>
+                    渐进增强最经典的实现手法，就是<strong class="hl">「同属性写两遍」</strong>：
+                    第一行写老浏览器都认识的值，第二行写新值——认识就用新的覆盖，不认识就整行忽略、保留第一行。
+                </p>
+                <div class="lab" data-lang="css" data-file="fallback.css">
+                    <div class="lab-head"><span class="lab-cap">左边只写第一行「纯色保底」，右边两行都写被渐变覆盖——把右边第二行注释掉，就变回纯色</span></div>
+                    <template class="lab-html">
+                        <div class="fb-row">
+                            <div class="fb old">
+                                <h4>只有第一行</h4>
+                                <p>纯色 #C08A3E<br>（不支持渐变时的样子）</p>
+                            </div>
+                            <div class="fb new">
+                                <h4>两行都写</h4>
+                                <p>渐变覆盖纯色<br>（现代浏览器的样子）</p>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.fb-row {
+    display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; padding: 6px 0;
+}
+.fb {
+    width: 210px; padding: 20px 16px; text-align: center;
+    color: #fff; border-radius: 14px; font-size: 13px;
+}
+.fb h4 { margin: 0 0 6px; font-size: 14px; }
+.fb p { margin: 0; opacity: 0.9; }
+
+.fb.old {                       /* 模拟：只写第一行的「保底版」 */
+    background: #C08A3E;
+}
+
+.fb.new {                       /* 实战：保底 + 加糖 */
+    background: #C08A3E;                                   /* 第一行：纯色打底，谁都懂 */
+    background: linear-gradient(135deg, #E8A06A, #C45A3D); /* 第二行：新浏览器覆盖成渐变 */
+}</script>
+                </div>
+                <div class="lx-warn"><span>口诀：<b>「先保底，再加糖」</b>。向下兼容靠「属性回退」，
+                    而不是靠死记哪年哪个浏览器支持什么——那是工具的活，不是人的活。</span></div>
+            </section>
+
+            <section>
+                <h2>五、@supports：让浏览器「自报家门」</h2>
+                <p>
+                    属性回退是「被动」的，CSS3 还提供了主动检测的语法——
+                    <code>@supports</code>：让浏览器自己回答「你支持这个属性吗」，
+                    支持才应用花括号里的规则，相当于 CSS 里的 <code>if</code> 判断。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="supports.css">
+                    <script type="text/plain" class="lab-code">/* 基础样式：所有浏览器先拿到这一份 */
+.card {
+    background: #F3EDDD;
+    border: 1.5px dashed #C9A284;
+    border-radius: 12px;
+    color: #6B6053;
+}
+
+/* 只有支持 grid 的浏览器才会执行这里的增强 */
+@supports (display: grid) {
+    .card.new {
+        background: linear-gradient(135deg, #6E8B6E, #4E7A52);
+        color: #fff;
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 10px 24px rgba(78, 122, 82, 0.32);
+    }
+}
+
+/* 其他常用写法（认识即可）： */
+@supports not (display: grid) { }                    /* 不支持时 */
+@supports (display: grid) and (transform: rotate(45deg)) { }  /* 同时支持两个 */
+@supports (display: flex) or (display: grid) { }     /* 支持任一个 */</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="supports-demo.css">
+                    <div class="lab-head"><span class="lab-cap">左卡是基础样式，右卡包在 @supports 里——你的浏览器支持 grid，右卡就自动换装成绿色渐变</span></div>
+                    <template class="lab-html">
+                        <div class="sp-row">
+                            <div class="sp">
+                                <h4>基础样式</h4>
+                                <p>不检测，直接生效</p>
+                            </div>
+                            <div class="sp new">
+                                <h4>@supports 增强</h4>
+                                <p>支持 grid 才换装</p>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.sp-row {
+    display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; padding: 6px 0;
+}
+.sp {
+    width: 215px; padding: 20px 16px; text-align: center;
+    font-size: 13px; border-radius: 12px;
+    background: #F3EDDD; color: #6B6053;
+    border: 1.5px dashed #C9A284;
+}
+.sp h4 { margin: 0 0 6px; font-size: 14px; }
+.sp p { margin: 0; }
+
+@supports (display: grid) {
+    .sp.new {
+        background: linear-gradient(135deg, #6E8B6E, #4E7A52);
+        color: #fff; border: none; border-radius: 16px;
+        box-shadow: 0 10px 24px rgba(78, 122, 82, 0.32);
+    }
+}</script>
+                </div>
+                <div class="lx-tip"><span><code>@supports</code> 的日常用途：给支持新特性的浏览器上「进阶版布局」，
+                    不支持的自动用上面的兜底版——渐进增强的「主动版」。
+                    入门阶段<b>看得懂</b>即可，项目里遇到再深入。</span></div>
+            </section>
+
+            <section>
+                <h2>六、怎么查手册：授人以渔</h2>
+                <p>
+                    CSS3 属性成百上千，<strong class="hl">没有人靠背</strong>。专业的做法是「三步查法」：
+                    先快速查语法和示例 → 需要时深挖细节 → 动手改参数验证。三个场景对应三个工具：
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>三步查法：不同场景去不同地方</caption>
+                        <thead>
+                            <tr><th>场景</th><th>去哪查</th><th>特点</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>快速查语法、看示例</td><td>菜鸟教程 · CSS3 参考手册</td><td>中文、例子全、每个属性带「试一试」，入门速查首选</td></tr>
+                            <tr><td>深挖细节、默认值、边界情况</td><td><b>MDN</b>（developer.mozilla.org）</td><td>权威准确，含兼容性表格，进阶必存书签</td></tr>
+                            <tr><td>查浏览器支持度</td><td><b>Can I Use</b>（caniuse.com）</td><td>输入属性名，一眼看出全球支持率</td></tr>
+                            <tr><td>真正学会</td><td>本页实时实验台</td><td>改一个数字，胜过看十遍文档</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <ul>
+                    <li><strong class="hl">带着问题查</strong>：「我想让阴影往右下飘」→ 搜 box-shadow，比通读手册高效十倍</li>
+                    <li>查到的代码<strong class="hl">复制进实验台跑一遍</strong>，改改参数确认理解，再收进自己的代码片段库</li>
+                    <li>同一效果可能有多种写法（渐变 vs 图片、transition vs animation），比较着学，进步最快</li>
+                </ul>
+                <div class="lx-note"><span>建议现在就打开一个搜索引擎，搜「菜鸟教程 CSS3 参考手册」收藏它——
+                    这个模块剩下的 7 课，你都会和它打交道。</span></div>
+            </section>
+
+            <section>
+                <h2>七、本章小结</h2>
+                <ul>
+                    <li>CSS3 = CSS2.1 之后演进的<strong class="hl">总称</strong>，规范被拆成模块各自更新，没有「CSS4」</li>
+                    <li>本模块七站：<strong>圆角阴影 → 渐变 → 文本效果 → 转换 → 过渡 → 动画 → 响应式</strong>，层层递进</li>
+                    <li>厂商前缀（-webkit- / -moz- / -ms- / -o-）已基本退役，量产交给 Autoprefixer，查兼容交给 Can I Use</li>
+                    <li>兼容心法是<strong class="hl">渐进增强</strong>：「先保底，再加糖」——基础样式在前，增强样式覆盖在后</li>
+                    <li><code>@supports (属性: 值) { … }</code> 是 CSS 的 if 判断，让浏览器自报支持情况</li>
+                    <li>查手册三步法：菜鸟速查 → MDN 深挖 → 实验台验证，没有人靠背属性</li>
+                </ul>
+                <div class="lx-note"><span><b>动手练习</b>：滚回第一节的「CSS3 特性全家福」卡片实验台，
+                    做三件事——①把渐变角度 <code>135deg</code> 改成 <code>45deg</code>；
+                    ②把动画时长 <code>3s</code> 改成 <code>0.5s</code>；
+                    ③把 <code>box-shadow</code> 的 <code>32px</code> 模糊改成 <code>4px</code>。
+                    每改一次观察右侧预览——这就是学 CSS3 的正确姿势。</span></div>
+            </section>
+
+        </article>
+    </main>
+    <script src="../assets/learn.js" defer></script>
+</body>
+</html>

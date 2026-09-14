@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>盒模型 · CSS 基础 — 前端自习室</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23B8552F'/%3E%3Ctext x='16' y='22' font-size='16' font-family='serif' font-weight='700' fill='%23FFF7EF' text-anchor='middle'%3E学%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="../assets/learn.css">
+    <style>
+        /* 本页专属图解：盒模型四层常驻图（嵌套 div，各层不同暖色背景 + 标注） */
+        .boxmap {
+            background: #FFFDF8; border: 1.5px solid var(--line); border-radius: var(--r-card);
+            box-shadow: var(--shadow-1); padding: 20px 22px 14px; margin: 18px 0 8px;
+        }
+        .bm-layer { position: relative; }
+        .bm-margin {
+            background: #F8EFDC; border: 1.5px dashed #D9B26A; border-radius: 12px;
+            padding: 34px 32px 36px;
+        }
+        .bm-border { background: #DFAF66; border-radius: 9px; padding: 30px 30px 32px; }
+        .bm-padding { background: #F4E6CC; border-radius: 6px; padding: 32px 32px 34px; }
+        .bm-content {
+            background: #B8552F; color: #FFF7EF; border-radius: 5px;
+            text-align: center; padding: 14px 10px;
+            font-family: var(--font-code); font-size: 12.5px; font-weight: 700; line-height: 1.6;
+        }
+        .bm-tag {
+            position: absolute; left: 10px; top: 7px;
+            font-family: var(--font-code); font-size: 11px; font-weight: 700;
+            letter-spacing: .02em; white-space: nowrap;
+        }
+        .bm-margin > .bm-tag  { color: #A87F2E; }
+        .bm-border > .bm-tag  { color: #6E4712; }
+        .bm-padding > .bm-tag { color: #8A6D35; }
+        .bm-foot { font-size: 12px; color: var(--ink-3); text-align: center; margin-top: 12px; }
+        .bm-foot code { font-size: 11.5px; }
+    </style>
+</head>
+<body data-page="02-CSS基础/05-盒模型.html">
+    <main class="lx-main">
+        <article class="lx-article">
+
+            <nav class="lx-crumb">
+                <a href="../教程中心页.html">学习路线</a><span class="sep">›</span>
+                <a href="index.html">CSS 基础</a><span class="sep">›</span>
+                <span class="here">盒模型</span>
+            </nav>
+            <h1><span class="h-no">05</span>盒模型</h1>
+            <p class="lx-lead">
+                浏览器眼里，<strong>每个元素都是一个矩形盒子</strong>：内容、内边距、边框、外边距四层套娃。
+                弄懂盒模型，就弄懂了 CSS 布局的一半——为什么 div 设了 width 却「越量越宽」、
+                为什么两个盒子之间会「神秘合并」，答案全在盒子里。
+            </p>
+            <div class="lx-meta-row">
+                <span class="lx-chip">约 18 分钟</span>
+                <span class="lx-chip">8 个动手实验</span>
+                <span class="lx-chip">布局第一课</span>
+            </div>
+
+            <section>
+                <h2>一、万物皆盒：四层解剖图</h2>
+                <p>
+                    从里到外四层：<strong class="hl">content（内容）→ padding（内边距）→
+                    border（边框）→ margin（外边距）</strong>。
+                    padding 是「盒子里面的软垫」，撑大盒子本体的透明区域；
+                    margin 是「盒子外面的气场」，负责推开别人，永远透明。
+                </p>
+
+                <div class="boxmap">
+                    <div class="bm-layer bm-margin">
+                        <span class="bm-tag">margin 外边距 · 永远透明，只负责推开别人</span>
+                        <div class="bm-layer bm-border">
+                            <span class="bm-tag">border 边框 · 盒子的实体边</span>
+                            <div class="bm-layer bm-padding">
+                                <span class="bm-tag">padding 内边距 · 有背景色的软垫</span>
+                                <div class="bm-content">content 内容区<br>width / height 默认量这里</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bm-foot">背景色会铺满 content + padding 直到 border 内沿；margin 永远是透明的「社交距离」</div>
+                </div>
+
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>四层速查：谁能染色、谁占尺寸</caption>
+                        <thead>
+                            <tr><th>层级</th><th>名字</th><th>能设颜色吗</th><th>占尺寸吗</th><th>一句话</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>第 1 层</td><td><code>content</code></td><td>—（背景透出）</td><td>✓</td><td>真正放文字图片的地方</td></tr>
+                            <tr><td>第 2 层</td><td><code>padding</code></td><td>✓（跟背景色）</td><td>✓</td><td>内容与边框之间的软垫</td></tr>
+                            <tr><td>第 3 层</td><td><code>border</code></td><td>✓</td><td>✓</td><td>盒子的实体边</td></tr>
+                            <tr><td>第 4 层</td><td><code>margin</code></td><td>✗ 永远透明</td><td>✗（只推开别人）</td><td>盒子间的社交距离</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>把四层同时开到一个元素上，看它们各自的「势力范围」：</p>
+                <div class="lab" data-lang="css" data-file="box-anatomy.css">
+                    <div class="lab-head"><span class="lab-cap">四层套娃实体图：分别把 <code>padding</code>、<code>border</code>、<code>margin</code> 改大，看哪几层跟着变胖</span></div>
+                    <template class="lab-html">
+                        <div class="tip-line">← 外围虚线圈是 outline；虚线与金框之间的空白是 margin →</div>
+                        <div class="center">
+                            <div class="box">content 内容区<br><span class="sub">背景色铺满到 border 内沿</span></div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.tip-line {
+    text-align: center;
+    color: #96652C;
+    font-size: 12.5px;
+    margin-bottom: 2px;
+}
+
+.center { display: flex; justify-content: center; }
+
+.box {
+    background: #C08A3E;
+    color: #fff;
+    text-align: center;
+    max-width: 300px;
+    font-weight: 700;
+    padding: 22px 14px;                   /* 内边距：上下22 左右14 */
+    border: 14px solid #E3C08A;           /* 边框：金色实体 */
+    margin: 26px;                         /* 外边距：四面气场 */
+    outline: 2px dashed #96652C;          /* 轮廓：不占位的描边 */
+    outline-offset: 8px;
+}
+
+.box .sub { font-weight: 400; font-size: 12px; }</script>
+                </div>
+                <div class="lx-tip"><span>记法：<b>padding 是「私人物品」</b>（撑大自己、有背景色）、
+                    <b>margin 是「社交距离」</b>（推开别人、永远透明）。点 F12 → Elements →
+                    右下角 Styles 旁的彩色盒模型图，四层一秒看懂。</span></div>
+            </section>
+
+            <section>
+                <h2>二、width 到底量到哪：content-box vs border-box</h2>
+                <p>
+                    这是盒模型<strong class="hl">最重要的一课</strong>。默认 <code>box-sizing: content-box</code> 下，
+                    <code>width</code> 只量内容区——加上 padding 和 border 后，盒子实际宽度
+                    = width + padding×2 + border×2。<code>border-box</code> 则让 width「一口价包含全部」。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>box-sizing 两个值：width 这把尺子量到哪</caption>
+                        <thead>
+                            <tr><th>值</th><th>效果</th><th>使用场景</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">content-box（默认值）</td><td>width 只量内容区，padding / border 额外加上去</td><td>兼容老代码；需要精确控制「内容净尺寸」时</td></tr>
+                            <tr><td class="td-val">border-box</td><td>width 一口价：内容 + padding + border 全包</td><td><b>现代项目标配</b>，重置样式里全站开启</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="lab" data-lang="css" data-file="box-sizing.css">
+                    <div class="lab-head"><span class="lab-cap">同样 width:160px，两种盒子的真实宽度：把 <code>.cb</code> 的 border 改成 <code>20px</code>，左边继续长胖、右边纹丝不动</span></div>
+                    <template class="lab-html">
+                        <div class="row">
+                            <div class="cell cb">content-box<br>写着 160<br>实际 172px</div>
+                            <div class="cell bb">border-box<br>写着 160<br>实际 160px</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">/* 两个盒子都写了 width:160px，实际宽度却差了 24px！ */
+.row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.cell {
+    width: 160px;
+    height: 74px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12.5px;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.cb {
+    box-sizing: content-box;       /* 默认值：width 只量内容 */
+    width: 160px;                  /* 实际 160 + 6×2 = 172px */
+    background: #F6E8DF;
+    border: 6px solid #C99A88;
+    color: #8F3A26;
+}
+
+.bb {
+    box-sizing: border-box;        /* 业界标准配置 */
+    width: 160px;                  /* 一口价：实际就是 160px */
+    background: #F3EFE6;
+    border: 6px solid #B8AC93;
+    color: #6B6053;
+}
+
+/* 项目里的万能开头：全站 border-box，从此宽度所见即所得 */
+/* *, *::before, *::after { box-sizing: border-box; } */</script>
+                </div>
+                <div class="lx-warn"><span>为什么全世界的重置样式都有 <code>* { box-sizing: border-box }</code>？
+                    因为算加法（content-box）反人类——设计稿量出来 200px，你就写 200px，
+                    padding、border 都从里面扣，不用再拿计算器。</span></div>
+            </section>
+
+            <section>
+                <h2>三、padding：盒内软垫的四种写法</h2>
+                <p>
+                    和 margin 语法完全一致：1~4 个值按<strong class="hl">上 → 右 → 下 → 左</strong>顺时针转一圈，
+                    缺的值「对面补齐」。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>padding / margin 简写规则：一到四个值，顺时针 + 对面补齐</caption>
+                        <thead>
+                            <tr><th>写法</th><th>展开含义</th><th>记忆</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">padding: 8px</td><td>上 8、右 8、下 8、左 8</td><td>一个值管四面</td></tr>
+                            <tr><td class="td-val">padding: 8px 24px</td><td>上下 8，左右 24</td><td>先上下、后左右</td></tr>
+                            <tr><td class="td-val">padding: 4px 8px 28px</td><td>上 4，左右 8，下 28</td><td>缺的「左」找对面的「右」补齐</td></tr>
+                            <tr><td class="td-val">padding: 4px 8px 6px 12px</td><td>上 4、右 8、下 6、左 12</td><td>顺时针转一整圈</td></tr>
+                            <tr><td class="td-val">padding-left: 20px</td><td>只设一面</td><td>微调时用单边属性</td></tr>
+                            <tr><td class="td-val">margin: 0 auto</td><td>上下 0，左右自动平分（仅 margin 有 auto）</td><td>块级水平居中，第五节细讲</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="lx-codeblock" data-lang="css" data-file="padding-shorthand.css">
+                    <script type="text/plain" class="lab-code">/* 4 个值：上 右 下 左（顺时针） */
+.demo { padding: 4px 8px 6px 12px; }
+
+/* 也可以单打某一面 */
+.demo2 { padding-left: 20px; }
+
+/* margin 的写法与 padding 一模一样 */
+.demo3 { margin: 10px 20px; }</script>
+                </div>
+
+                <div class="lab" data-lang="css" data-file="padding.css">
+                    <div class="lab-head"><span class="lab-cap">金色区域就是 padding：把 <code>.pd-c</code> 的第 3 个值改成 <code>40px</code>，看底部软垫变厚</span></div>
+                    <template class="lab-html">
+                        <div class="grid">
+                            <div class="pd-a"><span>padding: 8px<br>四边全 8</span></div>
+                            <div class="pd-b"><span>padding: 8px 24px<br>上下8 左右24</span></div>
+                            <div class="pd-c"><span>padding: 4px 8px 28px<br>上4 左右8 下28</span></div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    max-width: 520px;
+}
+
+.grid > div {
+    background: #C08A3E;           /* 金色区域就是 padding */
+    border-radius: 8px;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.grid span {
+    background: #FDF9F4;
+    border-radius: 5px;
+    padding: 8px 10px;
+    font-size: 12px;
+    color: #8F3A26;
+    display: block;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.pd-a { padding: 8px; }            /* 1个值：四面全 8 */
+.pd-b { padding: 8px 24px; }       /* 2个值：上下8 左右24 */
+.pd-c { padding: 4px 8px 28px; }   /* 3个值：上4 左右8 下28 */</script>
+                </div>
+                <div class="lx-note"><span>按钮变大法：给按钮加 <code>padding: 12px 32px</code>，比写死 width/height 更灵活——
+                    文字多长按钮就多长，中英文都适用。</span></div>
+            </section>
+
+            <section>
+                <h2>四、margin：外边距与著名的「合并」现象</h2>
+                <p>
+                    margin 推开相邻元素。但有个<strong class="hl">垂直方向</strong>的经典陷阱：
+                    上下两个块级元素的 margin-bottom 和 margin-top <strong class="hl">不会叠加，取大的那个</strong>——
+                    这叫「外边距合并」。左右方向没有这个现象。
+                </p>
+
+                <div class="lab" data-lang="css" data-file="margin-collapse.css">
+                    <div class="lab-head"><span class="lab-cap">合并现场：间距取 max(40, 60) = 60 而非相加。把 <code>margin-top</code> 改成 <code>20px</code>——间距不变，因为 40 更大</span></div>
+                    <template class="lab-html">
+                        <div class="mg-a">上面的盒子 margin-bottom: 40px</div>
+                        <div class="mg-b">下面的盒子 margin-top: 60px（间距是 60，不是 100）</div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.mg-a, .mg-b {
+    background: #F3EFE6;
+    border: 1.5px solid #B8AC93;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #6B6053;
+}
+
+.mg-a { margin-bottom: 40px; }   /* 上面的盒子 */
+.mg-b { margin-top: 60px; }      /* 下面的盒子 */
+
+/* 实际间距不是 40 + 60 = 100px，而是 max(40, 60) = 60px —— 大鱼吃小鱼 */</script>
+                </div>
+
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>外边距合并三种情形与规避：谁合并、谁不合并</caption>
+                        <thead>
+                            <tr><th>情形</th><th>合并结果</th><th>规避办法</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><b>相邻兄弟</b>：A 的 margin-bottom 遇上 B 的 margin-top</td>
+                                <td>取两者较大值，不相加</td>
+                                <td>团队约定<b>统一只写 margin-bottom</b>，最省心</td>
+                            </tr>
+                            <tr>
+                                <td><b>父子首尾</b>：父元素与第一个 / 最后一个孩子的上 / 下 margin</td>
+                                <td>合并取大，看起来像「父被孩子的 margin 顶跑」</td>
+                                <td>父元素加 padding / border 挡住，或加 <code>overflow: hidden</code> 触发 BFC</td>
+                            </tr>
+                            <tr>
+                                <td><b>空块自身</b>：没有内容、没有 padding / border 的空元素</td>
+                                <td>它自己的 margin-top 和 margin-bottom 也会合并取大</td>
+                                <td>别用空 div 撑间距，改用 padding 或固定高度</td>
+                            </tr>
+                            <tr>
+                                <td><b>不合并的</b>：左右方向、行内元素、flex / grid 项目</td>
+                                <td>正常相加</td>
+                                <td>—</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-warn"><span>防合并三板斧：父元素加 <code>overflow: hidden</code>（触发 BFC）、
+                    父元素加 padding/border 挡住、或干脆「间距只写在一侧」——
+                    实战中团队约定<b>统一只用 margin-bottom</b> 最省心。</span></div>
+            </section>
+
+            <section>
+                <h2>五、margin auto：块级盒子水平居中</h2>
+                <p>
+                    给有宽度的块级元素写 <code>margin: 0 auto</code>，左右 auto 会<strong class="hl">平分剩余空间</strong>，
+                    盒子就居中了。注意两个前提：盒子必须有 width、必须是块级元素。
+                </p>
+
+                <div class="lab" data-lang="css" data-file="margin-auto.css">
+                    <div class="lab-head"><span class="lab-cap">水平居中：把 <code>width</code> 那行删掉，盒子立刻铺满失去居中——前提一不成立</span></div>
+                    <template class="lab-html">
+                        <div class="wrap">
+                            <div class="box">margin: 0 auto</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.wrap {
+    background: #F6F1E7;
+    border: 1.5px dashed #C9B995;
+    border-radius: 10px;
+    padding: 14px;
+}
+
+.box {
+    width: 180px;          /* 前提一：有确定宽度 */
+    margin: 0 auto;        /* 上下0，左右自动平分 → 水平居中 */
+    background: #C08A3E;
+    color: #fff;
+    text-align: center;    /* 文字居中靠 text-align，别和盒子居中搞混 */
+    padding: 10px 0;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+}</script>
+                </div>
+                <div class="lx-tip"><span><code>margin: 0 auto</code> 只能水平居中；垂直居中它无能为力
+                    （垂直方向的 auto 算出来是 0）。想上下也居中，要用 flex——布局模块见。</span></div>
+            </section>
+
+            <section>
+                <h2>六、border：三件套 width / style / color</h2>
+                <p>
+                    border 必须三个属性齐活才显示，其中<strong class="hl">style 是灵魂</strong>——
+                    不写 style，width 写 100px 也是白搭。（上一章已逐个属性细讲，这里看它们在盒子上的表现。）
+                </p>
+
+                <div class="lab" data-lang="css" data-file="border-recap.css">
+                    <div class="lab-head"><span class="lab-cap">六种边框写法：把 <code>.bd-one</code> 的 <code>border-bottom</code> 改成 <code>border-top</code>，看分隔线跑到上面</span></div>
+                    <template class="lab-html">
+                        <div class="grid">
+                            <div class="bd-solid"><b>solid 实线</b>按钮、卡片的标配</div>
+                            <div class="bd-dashed"><b>dashed 虚线</b>占位区、待填区域</div>
+                            <div class="bd-dotted"><b>dotted 点线</b>柔和的提示框</div>
+                            <div class="bd-double"><b>double 双线</b>复古证书风</div>
+                            <div class="bd-one"><b>border-bottom</b>新闻列表分隔线</div>
+                            <div class="bd-mix"><b>上下粗左右细</b>混搭玩法</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    max-width: 500px;
+}
+
+.grid > div {
+    padding: 12px 14px;
+    font-size: 13px;
+    color: #6B5D4A;
+    border-radius: 8px;
+    background: #FDF9F4;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.grid b {
+    font-size: 12px;
+    color: #96652C;
+    font-family: "Cascadia Code", Consolas, monospace;
+}
+
+.bd-solid  { border: 3px solid  #C08A3E; }          /* 实线：最常用 */
+.bd-dashed { border: 3px dashed #C08A3E; }          /* 虚线 */
+.bd-dotted { border: 3px dotted #C08A3E; }          /* 点线 */
+.bd-double { border: 6px double #C08A3E; }          /* 双线：要够宽才明显 */
+.bd-one    { border-bottom: 3px solid #C08A3E; }    /* 只要下边线：分隔线神器 */
+.bd-mix    { border-width: 3px 1px; border-style: solid; border-color: #C08A3E; }</script>
+                </div>
+                <div class="lx-note"><span>四条边可以单独控制：<code>border-top / right / bottom / left</code> 各自的三件套随便组合。
+                    透明边框 <code>border: 1px solid transparent</code> 还能用来「占位防抖动」。</span></div>
+            </section>
+
+            <section>
+                <h2>七、outline：不占空间的描边</h2>
+                <p>
+                    outline 长得像 border，但<strong class="hl">不占布局空间</strong>：
+                    加 10px 的 outline，盒子纹丝不动；加 10px 的 border，盒子立刻被撑大。
+                    它最著名的舞台是<strong class="hl">键盘聚焦时的焦点圈</strong>。
+                </p>
+
+                <div class="lab" data-lang="css" data-file="outline.css">
+                    <div class="lab-head"><span class="lab-cap">右边盒子描了 3px 外圈，宽高纹丝不动：把 <code>outline-offset</code> 改成 <code>8px</code>，看空隙变大</span></div>
+                    <template class="lab-html">
+                        <div class="row">
+                            <div class="item">普通状态（无 outline）</div>
+                            <div class="item focus">focus 聚焦圈（盒子尺寸未变）</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.row { display: flex; gap: 14px; flex-wrap: wrap; }
+
+.item {
+    padding: 10px 16px;
+    border: 2px solid #C08A3E;
+    border-radius: 8px;
+    background: #FDF9F4;
+    font-size: 13px;
+    color: #6B5D4A;
+}
+
+.focus {
+    outline: 3px solid rgba(150, 101, 44, 0.55);   /* 粗描边 */
+    outline-offset: 3px;                           /* 与边缘的距离 */
+    /* 布局完全不受影响：对比左边盒子的站位 */
+}</script>
+                </div>
+                <div class="lx-warn"><span>千万别为了好看写 <code>outline: none</code> 又不给替代样式——
+                    键盘用户将完全迷失在你的页面里。要么留着，要么换成明显的自定义焦点样式。</span></div>
+            </section>
+
+            <section>
+                <h2>八、在 DevTools 里「看见」盒模型</h2>
+                <p>
+                    F12 → Elements → 选中元素 → 右下角 Styles 面板下方，有一张<strong class="hl">彩色盒模型图</strong>：
+                    橙黄=margin、绿黄=border、绿=padding、蓝=content，鼠标悬停对应区域，
+                    页面上的盒子会同步高亮。调间距时改这里的数字，所见即所得。
+                </p>
+
+                <div class="lab" data-lang="css" data-file="devtools-box.css">
+                    <div class="lab-head"><span class="lab-cap">模拟 DevTools 盒模型视图：把 <code>.dt-mid</code> 的 border 改成 <code>12px</code>，看金色边框层变厚</span></div>
+                    <template class="lab-html">
+                        <div class="dt">
+                            <div class="dt-outer">
+                                <div class="dt-mid">
+                                    <div class="dt-in">content 内容区</div>
+                                </div>
+                            </div>
+                            <div class="dt-tag">最外层=margin · 中间=border(金) · 内衬=padding · 核心=content</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.dt {
+    border: 1.5px solid #E3D5C4;
+    border-radius: 10px;
+    padding: 16px;
+    max-width: 460px;
+    background: #fff;
+}
+
+/* margin 层：最外圈浅色 */
+.dt-outer {
+    background: #F9EFD9;
+    padding: 14px;
+    border-radius: 8px;
+    outline: 1.5px dashed #B8AC93;
+}
+
+/* border 层（金色实体）包着 padding 层 */
+.dt-mid {
+    background: #F3E9D8;
+    padding: 12px;
+    border: 5px solid #C08A3E;
+    border-radius: 6px;
+}
+
+/* content 核心 */
+.dt-in {
+    background: #C08A3E;
+    color: #fff;
+    text-align: center;
+    padding: 14px 8px;
+    border-radius: 4px;
+    font-size: 12.5px;
+    font-weight: 600;
+}
+
+.dt-tag {
+    font-size: 11.5px;
+    color: #96652C;
+    text-align: center;
+    font-family: "Cascadia Code", Consolas, monospace;
+    margin-top: 6px;
+}</script>
+                </div>
+                <div class="lx-note"><span>现在就试：在本页按 F12，点左上角箭头再点任意卡片，
+                    右下角盒模型图会显示它的 padding/margin 实时数值——这是之后调布局的日常操作。</span></div>
+            </section>
+
+            <section>
+                <h2>九、本章小结</h2>
+                <ul>
+                    <li>四层套娃：content → padding（有背景、占位）→ border → margin（透明、推开别人）。</li>
+                    <li><strong class="hl">box-sizing: border-box 让 width 一口价</strong>；项目开头必写 <code>* { box-sizing: border-box }</code>。</li>
+                    <li>padding/margin 一到四个值顺时针展开：上右下左，缺的找对面补齐。</li>
+                    <li>垂直 margin 相邻会<strong class="hl">合并取大值</strong>；防合并用 BFC、挡板或统一单侧。</li>
+                    <li><code>margin: 0 auto</code> 水平居中的前提：块级 + 有 width。</li>
+                    <li>border 三件套 width/style/color，style 不写全白搭；单边 border 是分隔线神器。</li>
+                    <li>outline 不占空间，是焦点圈专用；去掉焦点圈必须给替代方案。</li>
+                    <li>DevTools 盒模型图是调间距的「透视眼」，四色分区所见即所得。</li>
+                </ul>
+                <div class="lx-note"><span><b>动手练习</b>：做三张「名片」——同一份 HTML，第一张 content-box、第二张 border-box
+                    （同样 width:220px 对比实际宽度）、第三张 border-box + padding:20px + border:5px，
+                    全部 <code>margin: 0 auto</code> 居中，中间用 margin-bottom 控制间距。
+                    再 F12 打开盒模型图验证你算的数字。</span></div>
+            </section>
+
+        </article>
+    </main>
+    <script src="../assets/learn.js" defer></script>
+</body>
+</html>

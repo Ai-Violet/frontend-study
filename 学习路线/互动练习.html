@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231e1e1e'/%3E%3Ctext x='16' y='22' font-size='14' font-family='monospace' font-weight='700' fill='%2300A8F0' text-anchor='middle'%3E%3C/%3E%3C/text%3E%3C/svg%3E">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>前端练习场 · VSCode 风在线编辑器</title>
+<link rel="stylesheet" href="assets/ide.css">
+</head>
+<!--
+  方向契约
+  THESIS: 把 VSCode 的肌肉记忆搬进浏览器——IntelliSense 弹层、双标签自动闭合、
+          Emmet 缩写、命令面板、查找替换，全部离线零依赖，而非"长得像编辑器的网页"。
+  OWN-WORLD: VSCode Dark+ 五主题体系（含暖白纸张·呼吸渐变·网格动画），JetBrains Mono，
+          活动栏/侧栏/文件树/标签/微缩地图/状态栏全套 IDE 语法，赭橙站点血脉仅在暖白主题显影。
+  STORY: 学完章节的学生像在真 IDE 里一样练手：敲一个字母出标签提示，Tab 展开缩写，
+          右侧实时看效果，存进「复习示例」下次打开继续，刷新不丢。
+  FIRST VIEWPORT: 全屏 IDE——左活动栏+章节示例侧栏，中央编辑器（行号/缩进参考线/当前行
+          高亮/minimap），右侧实时预览+设备宽度，底部控制台，状态栏报行列与状态。
+  FORM: Operate 模式，编辑器即产品。
+  FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
+-->
+<body data-theme="dark">
+<div id="ide">
+
+    <!-- ===== 标题栏 ===== -->
+    <header class="tb">
+        <a class="tb-brand" href="教程中心页.html" title="返回教程中心">
+            <svg viewBox="0 0 24 24" class="tb-logo"><path d="M8 5 3 12l5 7M16 5l5 7-5 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>前端练习场</span>
+        </a>
+        <nav class="tb-menus" id="menus"></nav>
+        <div class="tb-right">
+            <button class="tb-ic" id="btn-palette" title="命令面板 Ctrl+K">
+                <svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="m15 15 5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+            <span class="tb-dots"><i></i><i></i><i></i></span>
+        </div>
+    </header>
+
+    <div class="ide-body">
+        <!-- ===== 活动栏 ===== -->
+        <nav class="ab" id="activity"></nav>
+
+        <!-- ===== 侧边栏 ===== -->
+        <aside class="sb" id="sidebar">
+            <div class="sb-head"><h3 id="sb-title">资源管理器</h3><button class="sb-x" id="sb-close" title="收起侧栏 Ctrl+B">
+                <svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button></div>
+            <div class="sb-scroll">
+                <div class="sb-view" data-view="explorer"></div>
+                <div class="sb-view" data-view="samples"></div>
+                <div class="sb-view" data-view="review"></div>
+                <div class="sb-view" data-view="theme"></div>
+            </div>
+        </aside>
+        <div class="grip grip-sb" id="grip-sb"></div>
+
+        <!-- ===== 主区 ===== -->
+        <main class="main">
+            <div class="work">
+                <!-- 编辑器 -->
+                <section class="ed">
+                    <div class="ed-tabs" id="tabs"></div>
+                    <div class="ed-bc" id="bc"></div>
+                    <div class="ed-wrap" id="ed-wrap">
+                        <div class="gutter"><div class="g-in" id="g-in"></div></div>
+                        <div class="ed-scroll" id="ed-scroll">
+                            <pre class="hl" id="hl" aria-hidden="true"><code id="code"></code></pre>
+                            <div class="find-layer" id="find-layer"></div>
+                            <textarea class="src" id="src" spellcheck="false" autocomplete="off"
+                                autocapitalize="off" autocorrect="off" wrap="off"></textarea>
+                        </div>
+                        <canvas class="minimap" id="minimap" width="84"></canvas>
+                    </div>
+                    <div class="findbar" id="findbar">
+                        <div class="fb-row">
+                            <input type="text" id="fb-q" placeholder="查找">
+                            <span class="fb-count" id="fb-count">0/0</span>
+                            <button class="fb-btn" id="fb-prev" title="上一个">
+                                <svg viewBox="0 0 24 24"><path d="m6 14 6-6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                            <button class="fb-btn" id="fb-next" title="下一个">
+                                <svg viewBox="0 0 24 24"><path d="m6 10 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                            <button class="fb-btn fb-x" id="fb-close" title="关闭 Esc">
+                                <svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+                        </div>
+                        <div class="fb-row fb-rp">
+                            <input type="text" id="fb-r" placeholder="替换">
+                            <button class="fb-btn fb-txt" id="fb-rep">替换</button>
+                            <button class="fb-btn fb-txt" id="fb-repall">全部</button>
+                        </div>
+                    </div>
+                </section>
+                <div class="grip grip-pv" id="grip-pv"></div>
+                <!-- 预览 -->
+                <section class="pv">
+                    <div class="pv-head">
+                        <span class="pv-dot"></span><span class="pv-title">实时预览</span>
+                        <span class="pv-state" id="pv-state">● 实时</span>
+                        <span class="pv-sp"></span>
+                        <select id="pv-device" class="pv-sel" title="预览宽度">
+                            <option value="0">自适应</option>
+                            <option value="375">375px 手机</option>
+                            <option value="768">768px 平板</option>
+                            <option value="1024">1024px 笔记本</option>
+                            <option value="1440">1440px 桌面</option>
+                        </select>
+                        <button class="pv-btn" id="btn-live" title="暂停 / 恢复自动运行">
+                            <svg viewBox="0 0 24 24"><path d="M9 5v14M15 5v14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                        </button>
+                        <button class="pv-btn" id="btn-run" title="立即运行 Ctrl+Enter">
+                            <svg viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5Z" fill="currentColor"/></svg>
+                        </button>
+                    </div>
+                    <div class="pv-body"><div class="pv-frame-holder"><iframe id="pv-frame" title="预览"></iframe></div></div>
+                </section>
+            </div>
+            <!-- 控制台面板 -->
+            <div class="panel" id="panel">
+                <div class="pn-head">
+                    <span class="pn-tab on">控制台</span>
+                    <span class="pn-count" id="pn-count"></span>
+                    <span class="pn-sp"></span>
+                    <button class="pn-btn" id="pn-clear" title="清空">清空</button>
+                    <button class="pn-btn" id="pn-hide" title="收起 Ctrl+J">
+                        <svg viewBox="0 0 24 24"><path d="m6 14 6-6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                </div>
+                <div class="pn-body" id="pn-body"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ===== 状态栏 ===== -->
+    <footer class="sb2" id="status">
+        <span class="st-item st-brand">前端练习场</span>
+        <span class="st-item" id="st-msg"></span>
+        <span class="st-sp"></span>
+        <span class="st-item" id="st-pos">行 1, 列 1</span>
+        <span class="st-item">空格: 2</span>
+        <span class="st-item">UTF-8</span>
+        <span class="st-item" id="st-lang">HTML</span>
+        <span class="st-item st-accent" id="st-theme">Dark+ 经典</span>
+    </footer>
+</div>
+
+<!-- 智能提示弹层 -->
+<div class="ac" id="ac"><div class="ac-list" id="ac-list"></div></div>
+
+<!-- 命令面板 -->
+<div class="cmdk" id="cmdk">
+    <div class="cmdk-box">
+        <input type="text" id="ck-q" placeholder="输入命令、示例名或主题，回车执行">
+        <div class="cmdk-list" id="ck-list"></div>
+    </div>
+</div>
+
+<!-- 帮助弹窗 -->
+<div class="modal" id="modal">
+    <div class="modal-box">
+        <div class="modal-head"><h3 id="modal-title">快捷键与用法</h3>
+            <button class="fb-btn fb-x" id="modal-x"><svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+        </div>
+        <div class="modal-body" id="modal-body"></div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="assets/ide-data.js"></script>
+<script src="assets/ide.js"></script>
+</body>
+</html>

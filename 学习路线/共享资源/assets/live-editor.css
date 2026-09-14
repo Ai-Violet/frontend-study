@@ -1,0 +1,920 @@
+/* ==========================================================================
+   live-editor.css — 学习文档 · 交互式代码编辑器组件
+   温暖大地色系 · 与现有学习文档视觉系统保持一致
+   ========================================================================== */
+
+/* ---------- 编辑器外壳 ---------- */
+.le-editor {
+    --le-bg: #FBF8F4;
+    --le-border: #E7DCCB;
+    --le-surface: #F6F0E7;
+    --le-ink: #26201B;
+    --le-muted: #6B6053;
+    --le-accent: #C45A3D;
+    --le-accent-deep: #9E402B;
+    --le-code-bg: #FDFBF8;
+    --le-radius: 16px;
+
+    background: #fff;
+    border: 1px solid var(--le-border);
+    border-radius: var(--le-radius);
+    box-shadow: 0 1px 3px rgba(45, 40, 36, 0.08);
+    margin: 20px 0 26px;
+    overflow: hidden;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+/* ---------- 工具栏 ---------- */
+.le-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 10px 14px;
+    background: var(--le-surface);
+    border-bottom: 1px solid var(--le-border);
+}
+
+.le-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--le-ink);
+    margin-right: auto;
+    letter-spacing: -0.01em;
+}
+
+.le-title::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--le-accent);
+    box-shadow: 0 0 0 3px rgba(196, 90, 61, 0.18);
+    flex: none;
+}
+
+.le-hint {
+    font-size: 12px;
+    color: var(--le-muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.le-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.le-btn {
+    appearance: none;
+    border: 1px solid var(--le-border);
+    background: #fff;
+    color: var(--le-ink);
+    font-size: 12.5px;
+    font-weight: 500;
+    font-family: inherit;
+    padding: 6px 12px;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: all 0.16s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    line-height: 1.4;
+}
+
+.le-btn:hover { border-color: #D8C9B2; background: #FCF9F5; }
+.le-btn:active { transform: translateY(1px); }
+.le-btn:focus-visible { outline: 2px solid rgba(196, 90, 61, 0.55); outline-offset: 1px; }
+
+.le-btn-primary {
+    background: linear-gradient(135deg, var(--le-accent) 0%, var(--le-accent-deep) 100%);
+    border-color: transparent;
+    color: #fff;
+}
+.le-btn-primary:hover { background: linear-gradient(135deg, #D06548 0%, #A9452E 100%); filter: brightness(1.02); }
+
+.le-btn-ghost { background: transparent; border-color: transparent; color: var(--le-muted); }
+.le-btn-ghost:hover { background: rgba(196, 90, 61, 0.08); color: var(--le-ink); border-color: transparent; }
+
+.le-btn-restore { font-size: 12px; color: var(--le-muted); }
+
+/* ---------- 主体：左右分栏 ---------- */
+.le-body {
+    display: flex;
+    align-items: stretch;
+    min-height: 300px;
+}
+
+.le-pane { min-width: 0; }
+
+.le-pane-code {
+    flex: 1 1 52%;
+    display: flex;
+    flex-direction: column;
+    background: var(--le-code-bg);
+}
+
+.le-pane-preview {
+    flex: 1 1 48%;
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--le-border);
+    background: #fff;
+}
+
+/* ---------- 标签页 ---------- */
+.le-tabs {
+    display: flex;
+    gap: 2px;
+    padding: 8px 10px 0;
+    background: var(--le-surface);
+    border-bottom: 1px solid var(--le-border);
+}
+
+.le-tab {
+    appearance: none;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--le-muted);
+    padding: 7px 12px 8px;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.15s ease;
+}
+
+.le-tab:hover { color: var(--le-ink); }
+.le-tab:focus-visible { outline: 2px solid rgba(196, 90, 61, 0.55); outline-offset: -2px; }
+
+.le-tab.active { color: var(--le-accent-deep); background: var(--le-code-bg); }
+.le-tab.active::after {
+    content: "";
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    bottom: -1px;
+    height: 2px;
+    background: var(--le-accent);
+    border-radius: 2px 2px 0 0;
+}
+
+/* ---------- 代码编辑区 ---------- */
+.le-code {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 260px;
+}
+
+.le-input,
+.le-hl {
+    margin: 0 !important;
+    border: 0 !important;
+    padding: 14px 16px 18px 52px !important;
+    font-family: "Cascadia Code", "JetBrains Mono", Consolas, "SF Mono", Menlo, monospace !important;
+    font-size: 13px !important;
+    line-height: 1.65 !important;
+    tab-size: 4;
+    white-space: pre;
+    word-wrap: normal;
+    overflow-wrap: normal;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 260px !important;
+    border-radius: 0 !important;
+    background: var(--le-code-bg) !important;
+    color: var(--le-ink) !important;
+}
+
+.le-hl {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+.le-hl code { font: inherit; color: inherit; background: transparent; }
+
+.le-input {
+    position: relative;
+    resize: none;
+    overflow: auto;
+    caret-color: var(--le-accent-deep);
+    outline: none;
+    z-index: 1;
+}
+.le-input::selection { background: rgba(196, 90, 61, 0.28); color: var(--le-ink); }
+.le-input::-moz-selection { background: rgba(196, 90, 61, 0.28); color: var(--le-ink); }
+
+.le-input:focus-visible { box-shadow: inset 0 0 0 2px rgba(196, 90, 61, 0.35); }
+
+/* 语法高亮配色 — 浅色主题（温暖大地色系·加深对比度） */
+.tk-comment  { color: #7A6F5E; font-style: italic; }
+.tk-doctype  { color: #7A6F5E; }
+.tk-tag      { color: #B3472E; font-weight: 600; }
+.tk-attr     { color: #8B5A2B; }
+.tk-value    { color: #2E6B4A; }
+.tk-punct    { color: #6B5D4A; }
+.tk-selector { color: #B3472E; font-weight: 600; }
+.tk-property { color: #2E5A7A; }
+.tk-string   { color: #2E6B4A; }
+.tk-text     { color: #26201B; }
+.tk-keyword  { color: #7A3E9E; font-weight: 500; }
+.tk-number   { color: #B5651E; }
+.tk-function { color: #96652C; }
+.tk-variable { color: #2E5A7A; }
+.tk-important { color: #C45A3D; font-weight: 700; }
+.tk-operator { color: #6B5D4A; }
+.tk-unit     { color: #8B5A2B; }
+.tk-js-keyword   { color: #7A3E9E; font-weight: 500; }
+.tk-js-string    { color: #2E6B4A; }
+.tk-js-number    { color: #B5651E; }
+.tk-js-comment   { color: #7A6F5E; font-style: italic; }
+.tk-js-function  { color: #96652C; }
+
+/* ---------- 语法高亮 — 深色主题（VSCode Dark+ 风格） ---------- */
+.le-editor[data-theme="dark"] {
+    --le-code-bg: #1E1E1E;
+    --le-surface: #252526;
+    --le-border: #3E3E42;
+    --le-ink: #D4D4D4;
+    --le-muted: #858585;
+    --le-bg: #1E1E1E;
+}
+.le-editor[data-theme="dark"] .tk-comment  { color: #6A9955; }
+.le-editor[data-theme="dark"] .tk-doctype  { color: #6A9955; }
+.le-editor[data-theme="dark"] .tk-tag      { color: #569CD6; font-weight: 600; }
+.le-editor[data-theme="dark"] .tk-attr     { color: #9CDCFE; }
+.le-editor[data-theme="dark"] .tk-value    { color: #CE9178; }
+.le-editor[data-theme="dark"] .tk-punct    { color: #D4D4D4; }
+.le-editor[data-theme="dark"] .tk-selector { color: #D7BA7D; font-weight: 600; }
+.le-editor[data-theme="dark"] .tk-property { color: #9CDCFE; }
+.le-editor[data-theme="dark"] .tk-string   { color: #CE9178; }
+.le-editor[data-theme="dark"] .tk-text     { color: #D4D4D4; }
+.le-editor[data-theme="dark"] .tk-keyword  { color: #569CD6; font-weight: 500; }
+.le-editor[data-theme="dark"] .tk-number   { color: #B5CEA8; }
+.le-editor[data-theme="dark"] .tk-function { color: #DCDCAA; }
+.le-editor[data-theme="dark"] .tk-variable { color: #4EC9B0; }
+.le-editor[data-theme="dark"] .tk-important { color: #C586C0; font-weight: 700; }
+.le-editor[data-theme="dark"] .tk-operator { color: #D4D4D4; }
+.le-editor[data-theme="dark"] .tk-unit     { color: #B5CEA8; }
+.le-editor[data-theme="dark"] .tk-js-keyword   { color: #569CD6; font-weight: 500; }
+.le-editor[data-theme="dark"] .tk-js-string    { color: #CE9178; }
+.le-editor[data-theme="dark"] .tk-js-number    { color: #B5CEA8; }
+.le-editor[data-theme="dark"] .tk-js-comment   { color: #6A9955; font-style: italic; }
+.le-editor[data-theme="dark"] .tk-js-function  { color: #DCDCAA; }
+.le-editor[data-theme="dark"] .le-input    { caret-color: #AEAFAD; }
+.le-editor[data-theme="dark"] .le-input::selection { background: rgba(38, 79, 120, 0.6); }
+.le-editor[data-theme="dark"] .le-gutter   { background: #252526; border-right-color: #3E3E42; }
+.le-editor[data-theme="dark"] .le-gutter-line { color: #858585; }
+.le-editor[data-theme="dark"] .le-tab.active { color: #DCDCAA; }
+.le-editor[data-theme="dark"] .le-tab.active::after { background: #569CD6; }
+.le-editor[data-theme="dark"] .le-toolbar { background: #252526; border-bottom-color: #3E3E42; }
+.le-editor[data-theme="dark"] .le-title { color: #D4D4D4; }
+.le-editor[data-theme="dark"] .le-title::before { background: #569CD6; box-shadow: 0 0 0 3px rgba(86, 156, 214, 0.2); }
+.le-editor[data-theme="dark"] .le-tabs { background: #252526; border-bottom-color: #3E3E42; }
+.le-editor[data-theme="dark"] .le-btn { background: #2D2D2D; border-color: #3E3E42; color: #D4D4D4; }
+.le-editor[data-theme="dark"] .le-btn:hover { background: #3E3E42; border-color: #555; }
+.le-editor[data-theme="dark"] .le-btn-primary { background: linear-gradient(135deg, #0E639C 0%, #1177BB 100%); }
+.le-editor[data-theme="dark"] .le-btn-primary:hover { background: linear-gradient(135deg, #1177BB 0%, #1899E6 100%); }
+.le-editor[data-theme="dark"] .le-btn-ghost { background: transparent; color: #858585; }
+.le-editor[data-theme="dark"] .le-btn-ghost:hover { background: rgba(86, 156, 214, 0.12); color: #D4D4D4; }
+.le-editor[data-theme="dark"] .le-preview-head { background: #252526; border-bottom-color: #3E3E42; color: #858585; }
+.le-editor[data-theme="dark"] .le-status { color: #858585; }
+.le-editor[data-theme="dark"] .le-layout-group { border-color: #3E3E42; background: #2D2D2D; }
+.le-editor[data-theme="dark"] .le-layout-btn { color: #858585; }
+.le-editor[data-theme="dark"] .le-layout-btn:hover { background: rgba(86, 156, 214, 0.12); color: #D4D4D4; }
+.le-editor[data-theme="dark"] .le-layout-btn.active { background: rgba(86, 156, 214, 0.2); color: #569CD6; }
+.le-editor[data-theme="dark"] .le-mod-dot { background: #D9A13B; }
+.le-editor[data-theme="dark"] .le-back-btn { background: #252526; border-color: #3E3E42; color: #569CD6; }
+.le-editor[data-theme="dark"] .le-back-btn:hover { background: #2D2D2D; border-color: #569CD6; }
+.le-editor[data-theme="dark"] .le-input:focus-visible { box-shadow: inset 0 0 0 2px rgba(86, 156, 214, 0.4); }
+
+/* ---------- 主题切换按钮 ---------- */
+.le-theme-btn {
+    appearance: none;
+    border: 1px solid var(--le-border);
+    background: var(--le-surface);
+    color: var(--le-muted);
+    font-size: 14px;
+    padding: 4px 8px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    line-height: 1;
+    margin-left: 2px;
+}
+.le-theme-btn:hover { background: rgba(196, 90, 61, 0.08); color: var(--le-ink); }
+.le-theme-btn:focus-visible { outline: 2px solid rgba(196, 90, 61, 0.55); }
+
+/* ---------- 预览区 ---------- */
+.le-preview-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--le-muted);
+    background: var(--le-surface);
+    border-bottom: 1px solid var(--le-border);
+}
+
+.le-status { font-weight: 500; margin-left: auto; display: inline-flex; align-items: center; gap: 5px; }
+.le-status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #9BB08C; transition: background 0.3s ease; }
+.le-status.is-running::before { background: #D9A13B; }
+.le-status-ok::before { background: #6B8E4A; }
+.le-status-err::before { background: #C4453D; }
+
+/* ---------- 修改指示小圆点 ---------- */
+.le-mod-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #D9A13B;
+    margin-left: 8px;
+    vertical-align: middle;
+    animation: le-mod-pulse 1.8s ease-in-out infinite;
+}
+@keyframes le-mod-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+.le-preview {
+    flex: 1 1 auto;
+    min-height: 300px;
+    background: #fff;
+}
+.le-preview iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+    border: 0;
+    background: #fff;
+}
+
+/* ---------- 全屏模式 ---------- */
+.le-editor.le-fullscreen {
+    position: fixed;
+    inset: 16px;
+    z-index: 9999;
+    margin: 0;
+    border-radius: 18px;
+    box-shadow: 0 24px 64px rgba(30, 24, 18, 0.35);
+    display: flex;
+    flex-direction: column;
+}
+.le-editor.le-fullscreen .le-body { flex: 1 1 auto; }
+
+/* ---------- 面板布局切换（工具栏分段按钮 + 面板头部展开按钮） ---------- */
+.le-layout-group {
+    display: inline-flex;
+    gap: 2px;
+    border: 1px solid var(--le-border);
+    border-radius: 9px;
+    padding: 2px;
+    background: #fff;
+    margin-right: 2px;
+}
+.le-layout-btn {
+    appearance: none;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1;
+    padding: 5px 10px;
+    border-radius: 7px;
+    cursor: pointer;
+    color: var(--le-muted);
+    transition: all 0.15s ease;
+}
+.le-layout-btn:hover { background: rgba(196, 90, 61, 0.08); color: var(--le-ink); }
+.le-layout-btn:focus-visible { outline: 2px solid rgba(196, 90, 61, 0.55); }
+.le-layout-btn.active { background: rgba(196, 90, 61, 0.13); color: var(--le-accent-deep); }
+
+/* 代码区展开：预览压缩成窄条 */
+.le-editor.le-layout-code .le-pane-code { flex: 1 1 76%; }
+.le-editor.le-layout-code .le-pane-preview { flex: 0 0 24%; min-width: 210px; }
+.le-editor.le-layout-code .le-preview-head { flex-wrap: wrap; row-gap: 4px; }
+.le-editor.le-layout-code .le-status { display: none; }
+
+/* 预览区展开：代码压缩成窄条 */
+.le-editor.le-layout-preview .le-pane-preview { flex: 1 1 76%; }
+.le-editor.le-layout-preview .le-pane-code { flex: 0 0 24%; min-width: 230px; }
+.le-editor.le-layout-preview .le-tabs { flex-wrap: wrap; }
+.le-editor.le-layout-preview .le-hint { display: none; }
+
+/* 面板头部展开按钮 */
+.le-tabs-spacer { flex: 1; }
+.le-pane-expand { font-size: 11.5px; padding: 4px 9px; margin: 0 2px 5px 0; flex: none; }
+.le-preview-head { flex-wrap: wrap; row-gap: 4px; }
+
+@media (max-width: 760px) {
+    .le-body { flex-direction: column; }
+    .le-pane-preview { border-left: 0; border-top: 1px solid var(--le-border); }
+    .le-hint { display: none; }
+    .le-layout-group { display: none; }
+    .le-pane-expand { display: none; }
+}
+
+/* ---------- 静态模式 ---------- */
+.le-original { display: none; position: relative; }
+.le-original--shown { display: block; }
+
+/* ---------- 返回编辑按钮 ---------- */
+.le-back-btn {
+    display: block;
+    width: 100%;
+    margin-top: 16px;
+    padding: 10px 0;
+    appearance: none;
+    border: 2px dashed var(--le-border);
+    border-radius: 10px;
+    background: var(--le-surface);
+    color: var(--le-accent-deep);
+    font-size: 13.5px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+.le-back-btn:hover {
+    border-color: var(--le-accent);
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(196, 90, 61, 0.15);
+}
+
+/* ---------- 行号 ---------- */
+.le-gutter {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 40px;
+    padding: 14px 0 18px;
+    background: var(--le-surface);
+    border-right: 1px solid var(--le-border);
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 2;
+    user-select: none;
+}
+.le-gutter-line {
+    font-family: "Cascadia Code", "JetBrains Mono", Consolas, "SF Mono", Menlo, monospace;
+    font-size: 12px;
+    line-height: 1.65;
+    color: var(--le-muted);
+    text-align: right;
+    padding-right: 8px;
+    height: 1.65em;
+}
+.le-code { position: relative; }
+.le-code .le-input,
+.le-code .le-hl {
+    padding-left: 52px !important;
+}
+
+/* ---------- 设备切换器 ---------- */
+.le-device-group {
+    display: inline-flex;
+    gap: 2px;
+    margin-left: 8px;
+}
+.le-device-btn {
+    appearance: none;
+    border: 1px solid transparent;
+    background: transparent;
+    font-size: 14px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    line-height: 1;
+    opacity: 0.5;
+}
+.le-device-btn:hover { opacity: 0.8; background: rgba(196, 90, 61, 0.08); }
+.le-device-btn.active { opacity: 1; background: rgba(196, 90, 61, 0.12); border-color: rgba(196, 90, 61, 0.2); }
+
+/* ---------- 控制台 ---------- */
+.le-console-show-btn { font-size: 11.5px; }
+.le-console-show-btn.active { color: var(--le-accent-deep); background: rgba(196, 90, 61, 0.08); }
+
+.le-console {
+    border-top: 1px solid var(--le-border);
+    background: #1F1B18;
+    max-height: 200px;
+    display: flex;
+    flex-direction: column;
+}
+.le-console-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background: #2A2520;
+    border-bottom: 1px solid #3A3530;
+    flex-shrink: 0;
+}
+.le-console-title {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #A89A88;
+    margin-right: auto;
+}
+.le-console .le-btn {
+    font-size: 11px;
+    padding: 3px 8px;
+    color: #A89A88;
+    border-color: transparent;
+}
+.le-console .le-btn:hover { background: rgba(255,255,255,0.08); color: #D8C9B2; }
+.le-console-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 6px 10px;
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    min-height: 60px;
+    max-height: 140px;
+}
+.le-console-line {
+    padding: 2px 0;
+    color: #C8B9A6;
+    word-break: break-all;
+}
+.le-console-error { color: #E86A6A; }
+.le-console-warn { color: #D9A13B; }
+
+/* ---------- 静态代码块上的复制按钮 ---------- */
+.le-copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 5;
+    appearance: none;
+    border: 1px solid var(--le-border);
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--le-muted);
+    font-size: 11.5px;
+    font-weight: 500;
+    font-family: inherit;
+    padding: 4px 10px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 1px 2px rgba(45, 40, 36, 0.08);
+}
+.le-copy-btn:hover { color: var(--le-accent-deep); border-color: #D8C9B2; }
+.le-copy-btn:focus-visible { outline: 2px solid rgba(196, 90, 61, 0.55); }
+.le-copy-btn.copied { color: #2F7D5A; border-color: #2F7D5A; }
+
+/* ---------- 页面级样式覆盖（防止页面 pre/body 等规则干扰编辑器） ---------- */
+.le-editor pre,
+.le-editor code,
+.le-editor .le-hl,
+.le-editor .le-input {
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    padding: 14px 16px 18px 52px !important;
+    background: var(--le-code-bg) !important;
+    color: var(--le-ink) !important;
+    font-family: "Cascadia Code", "JetBrains Mono", Consolas, "SF Mono", Menlo, monospace !important;
+    font-size: 13px !important;
+    line-height: 1.65 !important;
+}
+.le-editor pre code {
+    background: transparent !important;
+    color: inherit !important;
+    padding: 0 !important;
+    padding-left: 0 !important;
+}
+.le-editor .le-pane-code {
+    background: var(--le-code-bg) !important;
+}
+.le-editor .le-pane-preview {
+    background: #fff !important;
+}
+.le-editor .le-body {
+    min-height: 300px !important;
+}
+.le-editor .le-code {
+    min-height: 260px !important;
+}
+.le-editor .le-gutter {
+    background: var(--le-surface) !important;
+    border-right: 1px solid var(--le-border) !important;
+}
+
+/* ==========================================================================
+   主题切换功能 - VS Code 风格
+   ========================================================================== */
+
+/* ---------- 浅色主题（默认） ---------- */
+:root {
+    /* 编辑器主题 */
+    --theme-bg: #FFFFFF;
+    --theme-surface: #F8F8F8;
+    --theme-border: #E0E0E0;
+    --theme-text: #1E1E1E;
+    --theme-text-secondary: #6A6A6A;
+    --theme-accent: #0066CC;
+    --theme-accent-hover: #0052A3;
+    
+    /* 代码高亮主题 */
+    --code-bg: #FFFFFF;
+    --code-line-highlight: #F5F5F5;
+    --code-selection: #ADD6FF;
+    --code-cursor: #1E1E1E;
+    
+    /* 语法高亮颜色 */
+    --syntax-keyword: #0000FF;
+    --syntax-string: #A31515;
+    --syntax-number: #098658;
+    --syntax-comment: #008000;
+    --syntax-function: #795E26;
+    --syntax-variable: #001080;
+    --syntax-tag: #800000;
+    --syntax-attribute: #FF0000;
+    --syntax-value: #0451A5;
+    --syntax-operator: #000000;
+    --syntax-punctuation: #000000;
+    --syntax-class: #267F99;
+    --syntax-id: #EE0000;
+    --syntax-property: #FF0000;
+    --syntax-important: #FF0000;
+    --syntax-at-rule: #0000FF;
+    --syntax-selector: #800000;
+    --syntax-unit: #098658;
+    --syntax-color: #0451A5;
+    --syntax-url: #0451A5;
+    --syntax-gradient: #795E26;
+    
+    /* 行号 */
+    --gutter-bg: #F8F8F8;
+    --gutter-text: #858585;
+    --gutter-border: #E0E0E0;
+    
+    /* 滚动条 */
+    --scrollbar-track: #F1F1F1;
+    --scrollbar-thumb: #C1C1C1;
+    --scrollbar-thumb-hover: #A8A8A8;
+}
+
+/* ---------- 深色主题 ---------- */
+[data-theme="dark"] {
+    /* 编辑器主题 */
+    --theme-bg: #1E1E1E;
+    --theme-surface: #252526;
+    --theme-border: #3C3C3C;
+    --theme-text: #D4D4D4;
+    --theme-text-secondary: #858585;
+    --theme-accent: #4FC1FF;
+    --theme-accent-hover: #80D4FF;
+    
+    /* 代码高亮主题 */
+    --code-bg: #1E1E1E;
+    --code-line-highlight: #2A2D2E;
+    --code-selection: #264F78;
+    --code-cursor: #AEAFAD;
+    
+    /* 语法高亮颜色 - VS Code Dark+ */
+    --syntax-keyword: #569CD6;
+    --syntax-string: #CE9178;
+    --syntax-number: #B5CEA8;
+    --syntax-comment: #6A9955;
+    --syntax-function: #DCDCAA;
+    --syntax-variable: #9CDCFE;
+    --syntax-tag: #569CD6;
+    --syntax-attribute: #9CDCFE;
+    --syntax-value: #CE9178;
+    --syntax-operator: #D4D4D4;
+    --syntax-punctuation: #D4D4D4;
+    --syntax-class: #4EC9B0;
+    --syntax-id: #D7BA7D;
+    --syntax-property: #9CDCFE;
+    --syntax-important: #569CD6;
+    --syntax-at-rule: #C586C0;
+    --syntax-selector: #D7BA7D;
+    --syntax-unit: #B5CEA8;
+    --syntax-color: #CE9178;
+    --syntax-url: #CE9178;
+    --syntax-function: #DCDCAA;
+    
+    /* 行号 */
+    --gutter-bg: #252526;
+    --gutter-text: #858585;
+    --gutter-border: #3C3C3C;
+    
+    /* 滚动条 */
+    --scrollbar-track: #1E1E1E;
+    --scrollbar-thumb: #424242;
+    --scrollbar-thumb-hover: #4F4F4F;
+}
+
+/* ---------- 主题切换按钮样式 ---------- */
+.theme-toggle {
+    appearance: none;
+    border: 1px solid var(--theme-border);
+    background: var(--theme-surface);
+    color: var(--theme-text);
+    font-size: 12px;
+    font-weight: 500;
+    font-family: inherit;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: 8px;
+}
+
+.theme-toggle:hover {
+    background: var(--theme-accent);
+    color: white;
+    border-color: var(--theme-accent);
+}
+
+.theme-toggle:focus-visible {
+    outline: 2px solid var(--theme-accent);
+    outline-offset: 2px;
+}
+
+.theme-toggle .icon {
+    font-size: 14px;
+    line-height: 1;
+}
+
+/* ---------- 主题特定的编辑器样式 ---------- */
+[data-theme="dark"] .le-editor {
+    --le-bg: #1E1E1E;
+    --le-border: #3C3C3C;
+    --le-surface: #252526;
+    --le-ink: #D4D4D4;
+    --le-muted: #858585;
+    --le-accent: #4FC1FF;
+    --le-accent-deep: #80D4FF;
+    --le-code-bg: #1E1E1E;
+}
+
+[data-theme="dark"] .le-toolbar {
+    background: var(--le-surface);
+    border-bottom-color: var(--le-border);
+}
+
+[data-theme="dark"] .le-tabs {
+    background: var(--le-surface);
+    border-bottom-color: var(--le-border);
+}
+
+[data-theme="dark"] .le-tab {
+    color: var(--le-muted);
+}
+
+[data-theme="dark"] .le-tab.active {
+    color: var(--le-accent-deep);
+    background: var(--le-code-bg);
+}
+
+[data-theme="dark"] .le-btn {
+    background: var(--le-surface);
+    border-color: var(--le-border);
+    color: var(--le-ink);
+}
+
+[data-theme="dark"] .le-btn:hover {
+    background: #3C3C3C;
+    border-color: #4C4C4C;
+}
+
+[data-theme="dark"] .le-btn-primary {
+    background: linear-gradient(135deg, var(--le-accent) 0%, var(--le-accent-deep) 100%);
+    border-color: transparent;
+    color: #1E1E1E;
+}
+
+[data-theme="dark"] .le-gutter {
+    background: var(--gutter-bg);
+    border-right-color: var(--gutter-border);
+}
+
+[data-theme="dark"] .le-gutter-line {
+    color: var(--gutter-text);
+}
+
+/* ---------- 深色主题的滚动条 ---------- */
+[data-theme="dark"] ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 5px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+}
+
+/* ---------- 深色主题的选中文本 ---------- */
+[data-theme="dark"] ::selection {
+    background: var(--code-selection);
+    color: white;
+}
+
+/* ---------- 深色主题的控制台 ---------- */
+[data-theme="dark"] .le-console {
+    background: #1E1E1E;
+    border-top-color: var(--le-border);
+}
+
+[data-theme="dark"] .le-console-head {
+    background: #252526;
+    border-bottom-color: #3C3C3C;
+}
+
+[data-theme="dark"] .le-console-title {
+    color: #858585;
+}
+
+[data-theme="dark"] .le-console .le-btn {
+    color: #858585;
+}
+
+[data-theme="dark"] .le-console .le-btn:hover {
+    background: rgba(255,255,255,0.08);
+    color: #D4D4D4;
+}
+
+[data-theme="dark"] .le-console-body {
+    background: #1E1E1E;
+}
+
+[data-theme="dark"] .le-console-line {
+    color: #D4D4D4;
+}
+
+[data-theme="dark"] .le-console-error {
+    color: #F48771;
+}
+
+[data-theme="dark"] .le-console-warn {
+    color: #CCA700;
+}
+
+/* ---------- 深色主题的复制按钮 ---------- */
+[data-theme="dark"] .le-copy-btn {
+    background: rgba(30, 30, 30, 0.92);
+    border-color: var(--le-border);
+    color: var(--le-muted);
+}
+
+[data-theme="dark"] .le-copy-btn:hover {
+    color: var(--le-accent-deep);
+    border-color: #4C4C4C;
+}
+
+[data-theme="dark"] .le-copy-btn.copied {
+    color: #4EC9B0;
+    border-color: #4EC9B0;
+}
+
+/* ---------- 主题切换动画 ---------- */
+[data-theme] {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+[data-theme] .le-editor,
+[data-theme] .le-toolbar,
+[data-theme] .le-tabs,
+[data-theme] .le-gutter,
+[data-theme] .le-console {
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+[data-theme] .le-input,
+[data-theme] .le-hl {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}

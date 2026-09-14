@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS 布局 · 章节目录 — 前端自习室</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23B8552F'/%3E%3Ctext x='16' y='22' font-size='16' font-family='serif' font-weight='700' fill='%23FFF7EF' text-anchor='middle'%3E学%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="../assets/learn.css">
+</head>
+<body data-page="03-CSS布局/index.html">
+    <main class="lx-main">
+        <article class="lx-article">
+
+            <nav class="lx-crumb">
+                <a href="../教程中心页.html">学习路线</a><span class="sep">›</span>
+                <span class="here">CSS 布局</span>
+            </nav>
+            <h1><span class="h-no">03</span>CSS 布局</h1>
+            <p class="lx-lead">
+                内容终于要「放」到正确的位置上了。6 节课覆盖布局的全部现代手段：
+                文档流、浮动、定位、溢出处理，以及接管一切的 Flex 与 Grid。
+                每个属性都配取值分析表，每个知识点都配可随手修改的实时实验台。
+            </p>
+            <div class="lx-meta-row">
+                <span class="lx-chip">6 节课</span>
+                <span class="lx-chip">40+ 个动手实验</span>
+                <span class="lx-chip">布局是前端面试重头</span>
+            </div>
+
+            <section>
+                <h2>课程列表</h2>
+                <div class="lx-grid">
+                    <a class="lx-card" href="01-布局与对齐.html">
+                        <span class="c-no">01</span>
+                        <h3>布局与对齐</h3>
+                        <p>文档流的默认规则、改变布局的三大手段，以及水平 / 垂直居中的前四招。</p>
+                        <span class="c-tags"><i>文档流</i><i>居中</i><i>text-align</i></span>
+                    </a>
+                    <a class="lx-card" href="02-浮动.html">
+                        <span class="c-no">02</span>
+                        <h3>浮动</h3>
+                        <p>文字环绕的本职、脱离文档流的三特性、高度塌陷与 clearfix 修复、float 三栏历史遗产。</p>
+                        <span class="c-tags"><i>float</i><i>clear</i><i>clearfix</i></span>
+                    </a>
+                    <a class="lx-card" href="03-定位.html">
+                        <span class="c-no">03</span>
+                        <h3>定位</h3>
+                        <p>position 五种取值、参照物链、角标与绝对定位居中、fixed / sticky、z-index 层叠。</p>
+                        <span class="c-tags"><i>position</i><i>参照物</i><i>z-index</i></span>
+                    </a>
+                    <a class="lx-card" href="04-溢出处理.html">
+                        <span class="c-no">04</span>
+                        <h3>溢出处理</h3>
+                        <p>溢出的成因、overflow 四取值、单行 / 多行省略号、定制滚动区域。</p>
+                        <span class="c-tags"><i>overflow</i><i>省略号</i><i>滚动</i></span>
+                    </a>
+                    <a class="lx-card" href="05-Flex弹性布局.html">
+                        <span class="c-no">05</span>
+                        <h3>Flex 弹性布局</h3>
+                        <p>主轴与交叉轴、容器六属性、项目四属性，以及等宽导航、完美居中、圣杯布局、沉底页脚四大配方。</p>
+                        <span class="c-tags"><i>flex</i><i>一维</i><i>box-sizing 兄弟</i></span>
+                    </a>
+                    <a class="lx-card" href="06-Grid网格布局.html">
+                        <span class="c-no">06</span>
+                        <h3>Grid 网格布局</h3>
+                        <p>轨道单位 fr / minmax / repeat、网格线定位、命名区域、对齐全家桶、响应式卡片墙。</p>
+                        <span class="c-tags"><i>grid</i><i>二维</i><i>响应式</i></span>
+                    </a>
+                </div>
+            </section>
+
+            <section>
+                <h2>本章你将学会</h2>
+                <ul>
+                    <li>看懂浏览器默认的<strong class="hl">文档流</strong>规则，知道块级与行内元素如何自然排列</li>
+                    <li>用 <code>float</code> 做文字环绕，理解其三特性与高度塌陷，以及 clearfix 修复法</li>
+                    <li>用 <code>position</code> 五种取值精确「钉住」任意元素，掌握参照物链与 z-index 层叠规则</li>
+                    <li>用 <code>overflow</code> 收场溢出内容，熟练写出单行 / 多行省略号</li>
+                    <li>用 <strong class="hl">Flex</strong> 处理一维排队，用 <strong class="hl">Grid</strong> 处理二维铺格，直接背下实战四大配方</li>
+                    <li>拿到一个布局需求，能判断该用哪种手段、各属性取哪些值</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>实验台使用指南</h2>
+                <p>本站每个知识点都配有「左代码、右预览」的实验台，几个隐藏技能先交底：</p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <thead>
+                            <tr><th>操作</th><th>效果</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>直接改左侧代码</td><td>右侧预览 0.35 秒内自动刷新，所见即所得</td></tr>
+                            <tr><td>拖拽中间分隔条</td><td>左右分屏比例任意调整，双击分隔条恢复 1:1</td></tr>
+                            <tr><td>工具栏「主题」下拉</td><td>暖墨 / 暖纸 / 夜幕 / 抹茶四套语法高亮主题，全站记忆</td></tr>
+                            <tr><td><span class="kbd">Tab</span> 键</td><td>在代码框内缩进 4 个空格</td></tr>
+                            <tr><td>「重置」按钮</td><td>改乱了也不怕，一键回到初始代码</td></tr>
+                            <tr><td>顶栏「课程大纲 / 扩展阅读」</td><td>左侧抽屉跳任意课时，右侧边栏去 MDN / 菜鸟深挖</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-tip"><span>学习建议：<b>每个实验台都至少改三处值</b>。布局的属性特别适合「改数看变化」——
+                    把 <code>justify-content</code> 换一个值、把 <code>flex: 1</code> 改成 <code>flex: 2</code>、
+                    把 <code>top: 50%</code> 改小，都比背口诀记得牢。</span></div>
+            </section>
+
+        </article>
+    </main>
+    <script src="../assets/learn.js" defer></script>
+</body>
+</html>

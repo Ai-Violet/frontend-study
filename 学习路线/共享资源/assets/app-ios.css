@@ -1,0 +1,1202 @@
+/* ============================================================
+ * app-ios.css — iOS App 专用响应式增强样式表
+ * 设计风格：温暖大地色系
+ * 适配设备：iPad Pro 10.5寸、iPhone 13 Pro 及全系列 iOS 设备
+ * ============================================================ */
+
+/* ============================================================
+ * 一、CSS 变量定义 — 断点与尺寸系统
+ * ============================================================ */
+:root {
+    /* ---- 响应式断点 ---- */
+    --bp-xs: 375px;          /* 超小屏：iPhone SE 等 */
+    --bp-sm: 430px;          /* 小屏：iPhone 12/13/14/15 等 */
+    --bp-md: 768px;          /* 中屏：大屏手机、小屏平板 */
+    --bp-lg: 1024px;         /* 平板：iPad mini、iPad 等 */
+    --bp-xl: 1366px;         /* 大平板：iPad Pro 等 */
+    /* 桌面：> 1366px */
+
+    /* ---- 安全区域 ---- */
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+
+    /* ---- 字体缩放基准 ---- */
+    --font-base: 16px;
+    --font-scale-xs: 0.875;  /* 超小屏缩放 */
+    --font-scale-sm: 0.9375; /* 小屏缩放 */
+    --font-scale-md: 1;      /* 中屏基准 */
+    --font-scale-lg: 1.0625; /* 平板放大 */
+    --font-scale-xl: 1.125;  /* 大平板放大 */
+
+    /* ---- 间距基准 ---- */
+    --spacing-unit: 8px;
+    --gap-card: 20px;
+    --pad-card: 40px;
+    --pad-container-x: 24px;
+
+    /* ---- 圆角 ---- */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-pill: 999px;
+
+    /* ---- 过渡 ---- */
+    --transition-fast: 0.15s ease;
+    --transition-base: 0.22s ease;
+    --transition-slow: 0.3s ease;
+}
+
+/* ============================================================
+ * 二、iOS WebView 基础优化
+ * ============================================================ */
+
+/* 禁用长按菜单和文字选择（除了可编辑区域） */
+*:not(input):not(textarea):not([contenteditable="true"]) {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* 允许代码块和输入框选择文字 */
+pre, code, input, textarea, [contenteditable="true"],
+.code-inline, .demo {
+    -webkit-user-select: text;
+    user-select: text;
+    -webkit-touch-callout: default;
+}
+
+/* 平滑滚动 */
+html {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+}
+
+/* 安全区域适配 — viewport-fit=cover 时生效 */
+body {
+    padding-top: var(--safe-top);
+    padding-bottom: var(--safe-bottom);
+    padding-left: var(--safe-left);
+    padding-right: var(--safe-right);
+}
+
+/* 固定顶部导航安全区域补偿 */
+.top-nav {
+    padding-top: calc(28px + var(--safe-top)) !important;
+}
+
+/* 底部元素安全区域补偿 */
+.footer {
+    padding-bottom: calc(48px + var(--safe-bottom)) !important;
+}
+
+/* 固定进度条下移安全区域 */
+.progress-bar {
+    top: var(--safe-top) !important;
+}
+
+/* 禁用点击高亮 */
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* 按钮点击反馈优化 */
+a, button, .nav-item, .btn-primary, .btn-secondary,
+.doc-list a, .overview-item {
+    -webkit-tap-highlight-color: rgba(196, 90, 61, 0.15);
+}
+
+/* 触摸设备移除 hover 闪烁，使用 active 状态 */
+@media (hover: none) and (pointer: coarse) {
+    .section-card:hover,
+    .module-card:hover,
+    .feature-card:hover {
+        transform: none;
+        box-shadow: 0 1px 3px rgba(45, 40, 36, 0.07);
+    }
+
+    .section-card:active,
+    .module-card:active,
+    .feature-card:active {
+        transform: scale(0.98);
+        transition: transform 0.1s ease;
+    }
+
+    .nav-item:hover,
+    .doc-list a:hover {
+        background: #F9F6F2;
+        transform: none;
+    }
+}
+
+/* ============================================================
+ * 三、iOS 风格滚动条美化
+ * ============================================================ */
+
+/* 代码块滚动条 */
+pre::-webkit-scrollbar {
+    height: 6px;
+    width: 6px;
+}
+
+pre::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+pre::-webkit-scrollbar-thumb {
+    background: rgba(196, 90, 61, 0.3);
+    border-radius: 3px;
+}
+
+pre::-webkit-scrollbar-thumb:hover {
+    background: rgba(196, 90, 61, 0.5);
+}
+
+/* 主滚动条（iPad 横屏时可见） */
+@media (min-width: 768px) {
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: rgba(196, 90, 61, 0.25);
+        border-radius: 4px;
+        border: 2px solid transparent;
+        background-clip: padding-box;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(196, 90, 61, 0.45);
+        background-clip: padding-box;
+        border: 2px solid transparent;
+    }
+}
+
+/* ============================================================
+ * 四、超小屏适配 (< 375px) — iPhone SE 等
+ * ============================================================ */
+@media (max-width: 374px) {
+    :root {
+        --pad-card: 20px;
+        --gap-card: 12px;
+        --pad-container-x: 14px;
+    }
+
+    body {
+        padding: 16px 12px !important;
+        font-size: 14px;
+    }
+
+    .container {
+        padding: 0 !important;
+    }
+
+    /* Hero 区域 */
+    .hero {
+        padding: 32px 0 28px !important;
+        margin-bottom: 40px !important;
+    }
+
+    .hero h1 {
+        font-size: 28px !important;
+    }
+
+    .hero .hero-desc {
+        font-size: 14px !important;
+    }
+
+    .badge, .chapter-badge {
+        font-size: 11px !important;
+        padding: 5px 12px !important;
+    }
+
+    /* 顶部导航 */
+    .top-nav {
+        padding: 16px 12px 0 !important;
+        margin-bottom: 32px !important;
+    }
+
+    .top-nav .logo {
+        font-size: 14px !important;
+    }
+
+    .logo-mark, .logo-icon {
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 13px !important;
+        border-radius: 8px !important;
+    }
+
+    .nav-links {
+        display: none !important;
+    }
+
+    /* 章节导航 */
+    .chapter-nav {
+        padding: 18px !important;
+        margin-bottom: 36px !important;
+    }
+
+    .chapter-nav .nav-grid {
+        grid-template-columns: 1fr !important;
+        gap: 6px !important;
+    }
+
+    .chapter-nav .nav-item {
+        padding: 10px 12px !important;
+        font-size: 13px !important;
+    }
+
+    /* 知识点总览 */
+    .overview-card {
+        padding: 20px !important;
+        margin-bottom: 36px !important;
+    }
+
+    .overview-card h2 {
+        font-size: 18px !important;
+    }
+
+    .overview-list {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+    }
+
+    .overview-item {
+        padding: 12px !important;
+        gap: 10px !important;
+    }
+
+    .overview-item .item-num {
+        width: 24px !important;
+        height: 24px !important;
+        font-size: 11px !important;
+        border-radius: 6px !important;
+    }
+
+    .overview-item .item-info h4 {
+        font-size: 13px !important;
+    }
+
+    .overview-item .item-info p {
+        font-size: 11.5px !important;
+    }
+
+    /* 内容卡片 */
+    .section-card {
+        padding: 20px !important;
+        margin-bottom: 16px !important;
+        border-radius: 14px !important;
+    }
+
+    .section-card h2 {
+        font-size: 17px !important;
+        padding-right: 40px !important;
+        gap: 8px !important;
+    }
+
+    .section-card h2 .icon {
+        font-size: 16px !important;
+    }
+
+    .section-card::after {
+        top: 18px !important;
+        right: 18px !important;
+        font-size: 10px !important;
+    }
+
+    .section-card::before {
+        left: 20px !important;
+        right: 20px !important;
+    }
+
+    .section-subtitle {
+        font-size: 12px !important;
+        margin-bottom: 18px !important;
+        padding-bottom: 14px !important;
+    }
+
+    .desc {
+        font-size: 13px !important;
+        line-height: 1.7 !important;
+        margin-bottom: 16px !important;
+    }
+
+    /* 代码块 */
+    pre {
+        padding: 14px !important;
+        font-size: 11px !important;
+        line-height: 1.6 !important;
+        border-radius: 10px !important;
+        margin-bottom: 16px !important;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .code-inline {
+        font-size: 11.5px !important;
+        padding: 1px 6px !important;
+    }
+
+    /* 演示区域 */
+    .demo {
+        padding: 18px !important;
+        border-radius: 12px !important;
+        margin-bottom: 18px !important;
+    }
+
+    .demo::before {
+        font-size: 9px !important;
+        top: 10px !important;
+        right: 12px !important;
+        padding: 2px 8px !important;
+    }
+
+    .demo .demo-title {
+        font-size: 11px !important;
+        margin-bottom: 10px !important;
+    }
+
+    /* 特性网格 */
+    .features,
+    .feature-list,
+    .tool-grid {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+    }
+
+    .feature-card {
+        padding: 18px !important;
+        border-radius: 14px !important;
+    }
+
+    .feature-card .f-icon {
+        width: 32px !important;
+        height: 32px !important;
+        border-radius: 9px !important;
+        font-size: 15px !important;
+        margin-bottom: 10px !important;
+    }
+
+    .feature-card h3 {
+        font-size: 14px !important;
+    }
+
+    .feature-card p {
+        font-size: 12px !important;
+    }
+
+    /* 总览页模块卡片 */
+    .module-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+
+    .module-card {
+        padding: 20px !important;
+        border-radius: 16px !important;
+    }
+
+    .module-num {
+        width: 34px !important;
+        height: 34px !important;
+        border-radius: 9px !important;
+        font-size: 13px !important;
+    }
+
+    .module-head h3 {
+        font-size: 15px !important;
+    }
+
+    .module-desc {
+        font-size: 12px !important;
+        margin-bottom: 12px !important;
+    }
+
+    .doc-list a {
+        font-size: 12.5px !important;
+        padding: 5px 8px !important;
+    }
+
+    /* 按钮 */
+    .btn-primary, .btn-secondary {
+        font-size: 13px !important;
+        padding: 10px 18px !important;
+        border-radius: 10px !important;
+    }
+
+    /* 页脚 */
+    .footer {
+        font-size: 11px !important;
+        padding: 32px 0 20px !important;
+    }
+
+    .footer .footer-links {
+        gap: 16px !important;
+        margin-bottom: 12px !important;
+    }
+
+    .footer .footer-links a {
+        font-size: 11px !important;
+    }
+
+    /* 练习场页面 */
+    .pg-head {
+        padding: 10px 14px !important;
+        gap: 8px !important;
+    }
+
+    .pg-title {
+        font-size: 13px !important;
+    }
+
+    .pg-title-icon {
+        width: 26px !important;
+        height: 26px !important;
+        font-size: 12px !important;
+        border-radius: 7px !important;
+    }
+
+    .pg-select {
+        font-size: 12px !important;
+        padding: 6px 10px !important;
+        min-width: 100px !important;
+    }
+
+    /* 表格响应式 */
+    .compare-table,
+    table {
+        font-size: 12px !important;
+    }
+
+    .compare-table th,
+    .compare-table td,
+    table th,
+    table td {
+        padding: 8px 10px !important;
+    }
+}
+
+/* ============================================================
+ * 五、小屏适配 (375px - 430px) — iPhone 12/13/14/15 等
+ * ============================================================ */
+@media (min-width: 375px) and (max-width: 429px) {
+    :root {
+        --pad-card: 24px;
+        --gap-card: 14px;
+        --pad-container-x: 16px;
+    }
+
+    body {
+        padding: 20px 16px !important;
+        font-size: 15px;
+    }
+
+    /* Hero 区域 */
+    .hero {
+        padding: 40px 0 32px !important;
+        margin-bottom: 48px !important;
+    }
+
+    .hero h1 {
+        font-size: 34px !important;
+    }
+
+    .hero .hero-desc {
+        font-size: 15px !important;
+    }
+
+    /* 顶部导航 */
+    .top-nav {
+        padding: 20px 16px 0 !important;
+        margin-bottom: 40px !important;
+    }
+
+    .nav-links {
+        display: none !important;
+    }
+
+    /* 章节导航 */
+    .chapter-nav {
+        padding: 20px 22px !important;
+        margin-bottom: 44px !important;
+    }
+
+    .chapter-nav .nav-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+    }
+
+    .chapter-nav .nav-item {
+        padding: 10px 14px !important;
+        font-size: 13px !important;
+    }
+
+    /* 知识点总览 */
+    .overview-card {
+        padding: 24px !important;
+        margin-bottom: 44px !important;
+    }
+
+    .overview-card h2 {
+        font-size: 19px !important;
+    }
+
+    .overview-list {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+    }
+
+    .overview-item {
+        padding: 14px !important;
+    }
+
+    /* 内容卡片 */
+    .section-card {
+        padding: 24px !important;
+        margin-bottom: 18px !important;
+        border-radius: 16px !important;
+    }
+
+    .section-card h2 {
+        font-size: 19px !important;
+        padding-right: 48px !important;
+    }
+
+    .section-card::after {
+        top: 20px !important;
+        right: 22px !important;
+        font-size: 11px !important;
+    }
+
+    .section-card::before {
+        left: 24px !important;
+        right: 24px !important;
+    }
+
+    .section-subtitle {
+        font-size: 13px !important;
+        margin-bottom: 20px !important;
+        padding-bottom: 18px !important;
+    }
+
+    .desc {
+        font-size: 14px !important;
+        margin-bottom: 18px !important;
+    }
+
+    /* 代码块 */
+    pre {
+        padding: 16px 18px !important;
+        font-size: 12px !important;
+        border-radius: 12px !important;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .code-inline {
+        font-size: 12.5px !important;
+    }
+
+    /* 演示区域 */
+    .demo {
+        padding: 20px !important;
+        border-radius: 14px !important;
+    }
+
+    /* 特性网格 */
+    .features,
+    .feature-list {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+
+    .feature-card {
+        padding: 20px !important;
+        border-radius: 14px !important;
+    }
+
+    .feature-card .f-icon {
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 16px !important;
+    }
+
+    /* 总览页模块卡片 */
+    .module-grid {
+        grid-template-columns: 1fr !important;
+        gap: 14px !important;
+    }
+
+    .module-card {
+        padding: 22px !important;
+        border-radius: 16px !important;
+    }
+
+    /* 练习场 */
+    .pg-head {
+        padding: 10px 16px !important;
+    }
+}
+
+/* ============================================================
+ * 六、中屏适配 (430px - 768px) — 大屏手机、小屏平板
+ * ============================================================ */
+@media (min-width: 430px) and (max-width: 767px) {
+    :root {
+        --pad-card: 28px;
+        --gap-card: 16px;
+        --pad-container-x: 20px;
+    }
+
+    body {
+        padding: 28px 20px !important;
+    }
+
+    /* Hero */
+    .hero h1 {
+        font-size: 40px !important;
+    }
+
+    /* 章节导航 */
+    .chapter-nav .nav-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    /* 知识点总览 */
+    .overview-list {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    /* 特性网格 */
+    .features {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    .feature-card:last-child {
+        grid-column: span 2;
+    }
+
+    /* 模块卡片 */
+    .module-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* 内容卡片 */
+    .section-card {
+        padding: 30px !important;
+    }
+
+    .section-card h2 {
+        font-size: 21px !important;
+    }
+
+    /* 代码块 */
+    pre {
+        font-size: 12.5px !important;
+        padding: 18px 20px !important;
+    }
+}
+
+/* ============================================================
+ * 七、平板适配 (768px - 1024px) — iPad mini、iPad 等
+ * ============================================================ */
+@media (min-width: 768px) and (max-width: 1023px) {
+    :root {
+        --pad-card: 32px;
+        --gap-card: 18px;
+        --pad-container-x: 28px;
+    }
+
+    body {
+        padding: 36px 24px !important;
+        font-size: 15.5px;
+    }
+
+    .container {
+        max-width: 720px !important;
+    }
+
+    /* Hero */
+    .hero {
+        padding: 60px 0 44px !important;
+    }
+
+    .hero h1 {
+        font-size: 44px !important;
+    }
+
+    /* 章节导航 */
+    .chapter-nav .nav-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+
+    /* 知识点总览 */
+    .overview-list {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    /* 内容卡片 */
+    .section-card {
+        padding: 34px !important;
+    }
+
+    .section-card h2 {
+        font-size: 22px !important;
+    }
+
+    /* 特性网格 */
+    .features {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+
+    /* 模块卡片 */
+    .module-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* 代码块 */
+    pre {
+        font-size: 13px !important;
+    }
+
+    /* iPad 底部安全区域加大 */
+    .footer {
+        padding-bottom: calc(56px + var(--safe-bottom)) !important;
+    }
+}
+
+/* ============================================================
+ * 八、大平板适配 (1024px - 1366px) — iPad Pro 10.5寸 / 12.9寸
+ * ============================================================ */
+@media (min-width: 1024px) and (max-width: 1365px) {
+    :root {
+        --pad-card: 36px;
+        --gap-card: 20px;
+        --pad-container-x: 32px;
+    }
+
+    body {
+        padding: 44px 28px !important;
+        font-size: 16px;
+    }
+
+    .container {
+        max-width: 900px !important;
+    }
+
+    /* Hero */
+    .hero {
+        padding: 72px 0 52px !important;
+    }
+
+    .hero h1 {
+        font-size: 48px !important;
+    }
+
+    .hero .hero-desc {
+        font-size: 17px !important;
+    }
+
+    /* 顶部导航 */
+    .top-nav {
+        max-width: 900px !important;
+        padding: 28px 28px 0 !important;
+    }
+
+    /* 章节导航 */
+    .chapter-nav .nav-grid {
+        grid-template-columns: repeat(4, 1fr) !important;
+    }
+
+    /* 知识点总览 */
+    .overview-list {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    /* 内容卡片 */
+    .section-card {
+        padding: 36px !important;
+    }
+
+    .section-card h2 {
+        font-size: 23px !important;
+    }
+
+    /* 特性网格 */
+    .features {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+
+    /* 模块卡片 */
+    .module-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    /* 代码块 */
+    pre {
+        font-size: 13.5px !important;
+    }
+
+    /* iPad Pro 底部安全区域 */
+    .footer {
+        padding-bottom: calc(60px + var(--safe-bottom)) !important;
+    }
+}
+
+/* ============================================================
+ * 九、桌面级适配 (> 1366px)
+ * ============================================================ */
+@media (min-width: 1366px) {
+    :root {
+        --pad-card: 40px;
+        --gap-card: 24px;
+    }
+
+    body {
+        font-size: 16.5px;
+    }
+
+    .container {
+        max-width: 1080px !important;
+    }
+
+    /* Hero */
+    .hero h1 {
+        font-size: 54px !important;
+    }
+
+    /* 模块卡片 */
+    .module-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+/* ============================================================
+ * 十、iPad 横屏/竖屏切换优化
+ * ============================================================ */
+
+/* iPad 横屏时的双栏阅读优化（当宽度足够时） */
+@media (min-width: 1024px) and (orientation: landscape) {
+    .overview-list {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    .features {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+}
+
+/* iPad 竖屏时优化内容宽度 */
+@media (min-width: 768px) and (orientation: portrait) {
+    .container {
+        max-width: 680px !important;
+    }
+
+    .chapter-nav .nav-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+/* ============================================================
+ * 十一、动态导航组件样式（由 docs-nav.js 动态生成）
+ * ============================================================ */
+
+/* ---- 底部导航栏 ---- */
+.docs-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid #E0D3C0;
+    padding: 10px 16px calc(10px + var(--safe-bottom));
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    z-index: 999;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.docs-bottom-nav.hidden {
+    transform: translateY(100%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.docs-bottom-nav .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    max-width: 40%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.docs-bottom-nav .nav-btn.prev {
+    background: #F6F0E7;
+    color: #473F35;
+    justify-content: flex-start;
+}
+
+.docs-bottom-nav .nav-btn.prev::before {
+    content: "←";
+    font-size: 12px;
+}
+
+.docs-bottom-nav .nav-btn.next {
+    background: linear-gradient(135deg, #C45A3D 0%, #9E402B 100%);
+    color: #fff;
+    justify-content: flex-end;
+}
+
+.docs-bottom-nav .nav-btn.next::after {
+    content: "→";
+    font-size: 12px;
+}
+
+.docs-bottom-nav .nav-btn:disabled,
+.docs-bottom-nav .nav-btn.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.docs-bottom-nav .nav-center {
+    flex: 1;
+    text-align: center;
+    font-size: 12px;
+    color: #6B6053;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.docs-bottom-nav .nav-center .progress-text {
+    font-variant-numeric: tabular-nums;
+}
+
+.docs-bottom-nav .nav-center .progress-bar-mini {
+    width: 80px;
+    height: 3px;
+    background: #E8DDD0;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.docs-bottom-nav .nav-center .progress-bar-mini .fill {
+    height: 100%;
+    background: linear-gradient(90deg, #C45A3D, #9E402B);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+/* ---- 侧边栏导航（平板及以上显示） ---- */
+.docs-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 260px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-right: 1px solid #E0D3C0;
+    padding: calc(60px + var(--safe-top)) 16px calc(20px + var(--safe-bottom));
+    overflow-y: auto;
+    z-index: 900;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    -webkit-overflow-scrolling: touch;
+}
+
+.docs-sidebar.open {
+    transform: translateX(0);
+}
+
+.docs-sidebar .sidebar-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6B6053;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+    padding: 0 8px;
+}
+
+.docs-sidebar .sidebar-module {
+    margin-bottom: 20px;
+}
+
+.docs-sidebar .sidebar-module h4 {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1F1B18;
+    margin-bottom: 6px;
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.docs-sidebar .sidebar-module h4 .mod-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #C45A3D 0%, #9E402B 100%);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.docs-sidebar .sidebar-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.docs-sidebar .sidebar-links a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #473F35;
+    font-size: 13px;
+    padding: 7px 10px;
+    border-radius: 8px;
+    transition: all 0.15s ease;
+}
+
+.docs-sidebar .sidebar-links a::before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #C9BBA6;
+    flex: none;
+    transition: all 0.15s ease;
+}
+
+.docs-sidebar .sidebar-links a:hover {
+    background: #F6F0E7;
+    color: #1F1B18;
+}
+
+.docs-sidebar .sidebar-links a:hover::before {
+    background: #C45A3D;
+    transform: scale(1.3);
+}
+
+.docs-sidebar .sidebar-links a.active {
+    background: rgba(196, 90, 61, 0.1);
+    color: #9E402B;
+    font-weight: 500;
+}
+
+.docs-sidebar .sidebar-links a.active::before {
+    background: #C45A3D;
+}
+
+/* 侧边栏遮罩 */
+.sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(31, 27, 24, 0.4);
+    z-index: 899;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* 侧边栏切换按钮 */
+.sidebar-toggle {
+    position: fixed;
+    top: calc(20px + var(--safe-top));
+    left: 16px;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid #E0D3C0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 950;
+    font-size: 16px;
+    color: #473F35;
+    transition: all 0.2s ease;
+}
+
+.sidebar-toggle:active {
+    transform: scale(0.95);
+}
+
+/* 小屏隐藏侧边栏切换，使用底部导航 */
+@media (min-width: 768px) {
+    .docs-bottom-nav {
+        display: none;
+    }
+}
+
+@media (max-width: 767px) {
+    .sidebar-toggle {
+        display: none;
+    }
+
+    .docs-sidebar {
+        display: none;
+    }
+
+    /* 小屏内容底部留出导航栏空间 */
+    body {
+        padding-bottom: calc(80px + var(--safe-bottom)) !important;
+    }
+}
+
+/* ============================================================
+ * 十二、印刷与暗色模式预留（可选扩展）
+ * ============================================================ */
+
+/* 暗色模式（如果未来支持） */
+@media (prefers-color-scheme: dark) {
+    /* 预留：暗色模式适配 */
+}
+
+/* 打印样式优化 */
+@media print {
+    .docs-bottom-nav,
+    .docs-sidebar,
+    .sidebar-toggle,
+    .sidebar-overlay,
+    .progress-bar {
+        display: none !important;
+    }
+}

@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2D 与 3D 转换 · CSS3 进阶 — 前端自习室</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23B8552F'/%3E%3Ctext x='16' y='22' font-size='16' font-family='serif' font-weight='700' fill='%23FFF7EF' text-anchor='middle'%3E学%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="../assets/learn.css">
+</head>
+<body data-page="04-CSS3进阶/05-2D与3D转换.html">
+    <main class="lx-main">
+        <article class="lx-article">
+
+            <nav class="lx-crumb">
+                <a href="../教程中心页.html">学习路线</a><span class="sep">›</span>
+                <a href="index.html">CSS3 进阶</a><span class="sep">›</span>
+                <span class="here">2D 与 3D 转换</span>
+            </nav>
+            <h1><span class="h-no">05</span>2D 与 3D 转换</h1>
+            <p class="lx-lead">
+                <code>transform</code> 让元素<strong class="hl">变形</strong>：挪、转、缩、斜，还能进 3D 空间翻跟头。
+                它是 CSS 动效的「关节」——先学会摆姿势，下一课再让姿势动起来。
+            </p>
+            <div class="lx-meta-row">
+                <span class="lx-chip">约 35 分钟</span>
+                <span class="lx-chip">9 个动手实验</span>
+                <span class="lx-chip">动效之关节</span>
+            </div>
+
+            <section>
+                <h2>一、transform 是什么：变形不改布局</h2>
+                <p>
+                    <code>transform</code> 把元素「拿起来重新摆放」，但<strong class="hl">不改变文档流</strong>：
+                    其他元素完全不知道它动了，该在哪还在哪。这和 <code>margin</code> 位移有本质区别——
+                    margin 是「推」，transform 是「飘」。
+                </p>
+                <div class="lab" data-lang="css" data-file="margin-vs-translate.css">
+                    <div class="lab-head"><span class="lab-cap">上面一行用 margin（红盒把兄弟 3 挤走），下面用 translate（绿盒压在 3 上）——把绿盒位移改成 <code>0</code> 看它回位</span></div>
+                    <template class="lab-html">
+                        <div class="fd-stage">
+                            <p class="note">margin 位移：占布局，兄弟被迫让位</p>
+                            <div class="row">
+                                <div class="box">1</div>
+                                <div class="box m">2</div>
+                                <div class="box">3</div>
+                            </div>
+                            <p class="note">translate 位移：不占布局，直接叠上去</p>
+                            <div class="row">
+                                <div class="box">1</div>
+                                <div class="box t">2</div>
+                                <div class="box">3</div>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.fd-stage { display: flex; flex-direction: column; gap: 18px; }
+.fd-stage .note { margin: 0; font-size: 12.5px; color: #6B6053; }
+.fd-stage .row { display: flex; gap: 10px; align-items: center; }
+.fd-stage .box {
+    width: 86px; height: 54px; border-radius: 10px;
+    background: linear-gradient(135deg, #8A4E63, #B3748A); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; flex: none;
+}
+.m { margin-left: 44px; background: linear-gradient(135deg, #B3472E, #C45A3D); }
+.t { transform: translateX(44px); background: linear-gradient(135deg, #6E8B6E, #4E7A52); }</script>
+                </div>
+                <div class="lx-warn"><span>这个特性是双刃剑：<b>做动效它是天赋</b>（动画不引起布局重排，性能极好）；
+                    做布局它是坑（想让别人让位时请用 margin / 定位）。</span></div>
+            </section>
+
+            <section>
+                <h2>二、2D 四将：挪、转、缩、斜</h2>
+                <p>
+                    2D 变换就四个基本动作，记住<strong class="hl">「挪转缩斜」</strong>四字诀：
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="transform-four.css">
+                    <script type="text/plain" class="lab-code">.tf-a { transform: translate(26px, 12px); }  /* 挪：x 右移 26，y 下移 12（负数反向） */
+.tf-b { transform: rotate(35deg); }          /* 转：正数顺时针 */
+.tf-c { transform: scale(1.25); }            /* 缩：1 原大，0.5 一半，2 翻倍 */
+.tf-d { transform: skewX(-18deg); }          /* 斜：skewX 横向拉 / skewY 纵向拉 */
+
+/* 单轴版本：translateX(26px) / translateY(12px) / scaleX(1.2) / skewY(6deg) */
+/* scale 还能两个参数：scale(1.2, 0.8) 横向拉宽、纵向压扁 */</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="transform-four-demo.css">
+                    <div class="lab-head"><span class="lab-cap">四种基本变形——把 <code>.b</code> 的 rotate 改成 <code>-35deg</code> 反向转、把 <code>.c</code> 的 scale 改成 <code>0.5</code> 缩小</span></div>
+                    <template class="lab-html">
+                        <div class="tf-stage">
+                            <div class="item"><div class="box a">translate<br>挪</div><span>translate(26px,12px)</span></div>
+                            <div class="item"><div class="box b">rotate<br>转</div><span>rotate(35deg)</span></div>
+                            <div class="item"><div class="box c">scale<br>缩</div><span>scale(1.25)</span></div>
+                            <div class="item"><div class="box d">skew<br>斜</div><span>skewX(-18deg)</span></div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.tf-stage {
+    display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; padding: 14px 0 18px;
+}
+.tf-stage .item { width: 130px; text-align: center; }
+.tf-stage .box {
+    width: 90px; height: 90px; margin: 12px auto 0; border-radius: 12px;
+    background: linear-gradient(135deg, #8A4E63, #B3748A); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11.5px; text-align: center; line-height: 1.5;
+}
+.tf-stage span { display: block; font-size: 11.5px; color: #6B6053; }
+.a { transform: translate(26px, 12px); }
+.b { transform: rotate(35deg); }
+.c { transform: scale(1.25); }
+.d { transform: skewX(-18deg); }</script>
+                </div>
+                <div class="lx-tip"><span>单位别写错：rotate / skew 用<strong class="hl">角度 deg</strong>，
+                    translate 用<strong class="hl">长度 px/%</strong>，scale 是<strong class="hl">纯数字</strong>。</span></div>
+            </section>
+
+            <section>
+                <h2>三、复合写法：顺序就是剧情</h2>
+                <p>
+                    多个函数<strong class="hl">空格连接</strong>写在一个 transform 里，浏览器<strong class="hl">从左往右依次执行</strong>。
+                    顺序不同、结果不同——因为每一步都在上一步的结果坐标系里进行：
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="order.css">
+                    <script type="text/plain" class="lab-code">/* 先转再挪：坐标系已经转了 30°，"向右" 52px 实际是往斜下方走 */
+.od-a { transform: rotate(30deg) translateX(52px); }
+
+/* 先挪再转：先水平走 52px，再原地转 30° */
+.od-b { transform: translateX(52px) rotate(30deg); }</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="order-demo.css">
+                    <div class="lab-head"><span class="lab-cap">把 <code>.a</code> 的顺序也改成 <code>translateX(52px) rotate(30deg)</code>，两个盒子就重叠了——顺序的魔力</span></div>
+                    <template class="lab-html">
+                        <div class="od-stage">
+                            <div class="item">
+                                <div class="pair">
+                                    <div class="ghost"></div>
+                                    <div class="box a">rotate 后<br>translate</div>
+                                </div>
+                                <span>斜着飞出去</span>
+                            </div>
+                            <div class="item">
+                                <div class="pair">
+                                    <div class="ghost"></div>
+                                    <div class="box b">translate 后<br>rotate</div>
+                                </div>
+                                <span>先横移再原地转</span>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.od-stage {
+    display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; padding: 8px 0;
+}
+.od-stage .item { text-align: center; }
+.od-stage .pair { position: relative; width: 100px; height: 100px; margin: 8px; }
+.od-stage .ghost {
+    position: absolute; inset: 0;
+    border: 1.5px dashed #C9A8B8; border-radius: 12px;
+}
+.od-stage .box {
+    width: 100px; height: 100px; border-radius: 12px;
+    background: linear-gradient(135deg, #C08A3E, #B3472E); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; text-align: center; line-height: 1.5;
+}
+.od-stage span { display: block; font-size: 11.5px; color: #6B6053; margin-top: 4px; }
+.od-a { transform: rotate(30deg) translateX(52px); }
+.od-b { transform: translateX(52px) rotate(30deg); }</script>
+                </div>
+            </section>
+
+            <section>
+                <h2>四、transform-origin：变形的支点</h2>
+                <p>
+                    所有变形都绕着一个<strong class="hl">支点</strong>发生，默认在元素<strong class="hl">正中心</strong>。
+                    <code>transform-origin</code> 可以挪动支点——旋转「看起来怪」时，九成是支点问题。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="origin.css">
+                    <script type="text/plain" class="lab-code">.og-a { transform: rotate(-16deg); transform-origin: left bottom; }   /* 左下角：门往上开 */
+.og-b { transform: rotate(-16deg); transform-origin: center center; } /* 中心：默认 */
+.og-c { transform: rotate(-16deg); transform-origin: right top; }     /* 右上角：另类的跷跷板 */
+
+/* 还能写具体坐标 / 百分比：transform-origin: 30px 50%; */</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="origin-demo.css">
+                    <div class="lab-head"><span class="lab-cap">同一角度 -16deg、三个支点三种感觉——把 <code>.a</code> 的 <code>left bottom</code> 改成 <code>center</code>，它就和 <code>.b</code> 一样了</span></div>
+                    <template class="lab-html">
+                        <div class="og-stage">
+                            <div class="item">
+                                <div class="pair">
+                                    <div class="ghost"></div>
+                                    <div class="box a">left bottom<br>开门感</div>
+                                </div>
+                                <span>支点：左下</span>
+                            </div>
+                            <div class="item">
+                                <div class="pair">
+                                    <div class="ghost"></div>
+                                    <div class="box b">center<br>默认</div>
+                                </div>
+                                <span>支点：中心</span>
+                            </div>
+                            <div class="item">
+                                <div class="pair">
+                                    <div class="ghost"></div>
+                                    <div class="box c">right top<br>跷跷板</div>
+                                </div>
+                                <span>支点：右上</span>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.og-stage {
+    display: flex; flex-wrap: wrap; gap: 26px; justify-content: center; padding: 8px 0;
+}
+.og-stage .item { text-align: center; }
+.og-stage .pair { position: relative; width: 116px; height: 78px; margin: 10px; }
+.og-stage .ghost {
+    position: absolute; inset: 0;
+    border: 1.5px dashed #C9A8B8; border-radius: 10px;
+}
+.og-stage .box {
+    width: 116px; height: 78px; border-radius: 10px;
+    background: linear-gradient(135deg, #6E8B6E, #4E7A52); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11.5px; text-align: center; line-height: 1.5;
+}
+.og-stage span { display: block; font-size: 11.5px; color: #6B6053; }
+.og-a { transform: rotate(-16deg); transform-origin: left bottom; }
+.og-b { transform: rotate(-16deg); transform-origin: center center; }
+.og-c { transform: rotate(-16deg); transform-origin: right top; }</script>
+                </div>
+                <div class="lx-note"><span>拟物动效的支点直觉：<b>门绕门轴（left）、天窗绕顶边（top）、指针绕圆心（center）</b>——
+                    想让动画「像真的」，先问自己：这东西现实里绕哪儿转？</span></div>
+            </section>
+
+            <section>
+                <h2>五、scale 的妙用：hover 放大卡片</h2>
+                <p>
+                    <code>scale</code> 最高频的用法是<strong class="hl">悬停微放大</strong>：
+                    卡片 hover 时 <code>scale(1.06)</code>，配合过渡就是电商列表、作品集的标配手感。
+                    这里的 <code>transition</code> 是下一课主角，先照抄感受一下。
+                </p>
+                <div class="lab" data-lang="css" data-file="scale-card.css">
+                    <div class="lab-head"><span class="lab-cap">悬停放大 6% + 阴影加深——把 <code>scale(1.06)</code> 改成 <code>scale(1.2)</code>，看放太大反而挡到邻居</span></div>
+                    <template class="lab-html">
+                        <div class="sc-stage">
+                            <div class="card">
+                                <h4>梅紫卡片</h4>
+                                <p>hover 放大 1.06</p>
+                            </div>
+                            <div class="card">
+                                <h4>为什么是 1.06</h4>
+                                <p>放大太多会挡到邻居，<br>6% 是「感觉到了但不吵」的甜点值</p>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.sc-stage {
+    display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; padding: 16px 0 22px;
+}
+.card {
+    width: 192px; padding: 18px; background: #fff;
+    border: 1.5px solid #E3D5C4; border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(108, 59, 76, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;   /* 平滑过渡 */
+}
+.card h4 { margin: 0 0 6px; font-size: 14px; color: #3A2E26; }
+.card p { margin: 0; font-size: 12.5px; color: #6B6053; line-height: 1.7; }
+.card:hover {
+    transform: scale(1.06);                                  /* 放大 6%：克制才高级 */
+    box-shadow: 0 14px 30px rgba(108, 59, 76, 0.2);          /* 阴影随之加深 */
+}</script>
+                </div>
+                <div class="lx-warn"><span>放大必然<strong class="hl">盖住邻居</strong>（变形不改布局），所以列表场景记得给卡片留间距，
+                    或给容器 <code>overflow: hidden</code> 防止溢出滚动条。</span></div>
+            </section>
+
+            <section>
+                <h2>六、3D 之门：perspective 视距</h2>
+                <p>
+                    进入 3D 前先装一个「镜头」：<code>perspective</code>（视距）表示
+                    <strong class="hl">你的眼睛离屏幕多远</strong>，<strong class="hl">写在父元素上</strong>。
+                    值越小 = 眼睛越近 = 透视越夸张（近大远小越明显）；值越大越接近「正视图」。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>perspective 值的感知：近镜头 vs 远镜头</caption>
+                        <thead>
+                            <tr><th>写法</th><th>含义</th><th>视觉效果</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">perspective: 220px</td><td>眼睛离屏幕很近</td><td>3D 感夸张，近大远小明显</td></tr>
+                            <tr><td class="td-val">perspective: 620px</td><td>日常身位</td><td>适中的立体感</td></tr>
+                            <tr><td class="td-val">perspective: 900px</td><td>眼睛离得远</td><td>含蓄，接近正视图</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lab" data-lang="css" data-file="perspective.css">
+                    <div class="lab-head"><span class="lab-cap">同一个 rotateY(45deg)，近镜头 vs 远镜头——把 <code>.near</code> 的 220px 改成 <code>140px</code>，透视更夸张</span></div>
+                    <template class="lab-html">
+                        <div class="pv-stage">
+                            <div class="item">
+                                <div class="scene near">
+                                    <div class="card">rotateY(45deg)</div>
+                                </div>
+                                <span>perspective: 220px（夸张）</span>
+                            </div>
+                            <div class="item">
+                                <div class="scene far">
+                                    <div class="card">rotateY(45deg)</div>
+                                </div>
+                                <span>perspective: 900px（含蓄）</span>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.pv-stage {
+    display: flex; flex-wrap: wrap; gap: 44px; justify-content: center; align-items: flex-start; padding: 10px 0;
+}
+.pv-stage .item { text-align: center; }
+.scene { perspective: 220px; }
+.scene.far { perspective: 900px; }
+.card {
+    width: 156px; height: 104px; border-radius: 12px; margin: 12px;
+    background: linear-gradient(135deg, #8A4E63, #B3748A); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-size: 12px;
+    transform: rotateY(45deg);
+}
+.pv-stage span { display: block; font-size: 11.5px; color: #6B6053; }</script>
+                </div>
+                <div class="lx-tip"><span>口诀：<b>「perspective 写在爸身上」</b>。写在元素自己身上是另一种语法
+                    （<code>transform: perspective(600px) rotateY(45deg)</code>），效果略有差别，入门先掌握父元素写法。</span></div>
+            </section>
+
+            <section>
+                <h2>七、rotateX/Y/Z 与 preserve-3d</h2>
+                <p>
+                    3D 空间有三根轴：<strong class="hl">X 横（左右）、Y 竖（上下）、Z 深浅（冲着你）</strong>。
+                    <code>rotateX</code> 像翻跟头、<code>rotateY</code> 像翻书、<code>rotateZ</code> 就是平面旋转。
+                    想让<strong class="hl">子元素保持真实 3D 位置关系</strong>，给容器加 <code>transform-style: preserve-3d</code>。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="rotate-x-y-z.css">
+                    <script type="text/plain" class="lab-code">.ax-stage .scene { perspective: 620px; }   /* 老规矩：爸爸管镜头 */
+
+.ax-x { transform: rotateX(58deg); }   /* 绕横轴：向后躺倒 */
+.ax-y { transform: rotateY(58deg); }   /* 绕竖轴：翻书 */
+.ax-z { transform: rotateZ(28deg); }   /* 绕深度轴：平面旋转 */
+
+/* 3D 平移 / 缩放：z 值把元素推近拉远（必须配合透视才有感觉） */
+.push  { transform: translate3d(0, 0, 60px); }   /* = translateX(0) translateY(0) translateZ(60px) */
+.deep  { transform: scale3d(1, 1, 1); }</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="rotate-demo.css">
+                    <div class="lab-head"><span class="lab-cap">绕三根轴旋转的同一张卡片——把 <code>.x</code> 的 <code>rotateX</code> 改成 <code>rotateY</code>，它就从躺倒变翻书</span></div>
+                    <template class="lab-html">
+                        <div class="ax-stage">
+                            <div class="item">
+                                <div class="scene"><div class="box x">rotateX(58deg)<br>翻跟头</div></div>
+                                <span>绕 X 轴</span>
+                            </div>
+                            <div class="item">
+                                <div class="scene"><div class="box y">rotateY(58deg)<br>翻书</div></div>
+                                <span>绕 Y 轴</span>
+                            </div>
+                            <div class="item">
+                                <div class="scene"><div class="box z">rotateZ(28deg)<br>平面转</div></div>
+                                <span>绕 Z 轴</span>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.ax-stage {
+    display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; padding: 8px 0;
+}
+.ax-stage .item { text-align: center; }
+.ax-stage .scene { perspective: 620px; }
+.ax-stage .box {
+    width: 124px; height: 86px; border-radius: 12px; margin: 14px;
+    background: linear-gradient(135deg, #6C3B4C, #B3748A); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-size: 11.5px;
+}
+.ax-stage span { display: block; font-size: 11.5px; color: #6B6053; }
+.x { transform: rotateX(58deg); }
+.y { transform: rotateY(58deg); }
+.z { transform: rotateZ(28deg); }</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="preserve3d.css">
+                    <div class="lab-head"><span class="lab-cap">三块薄板沿 Z 轴堆叠——把 <code>.p3</code> 的 <code>84px</code> 改成 <code>160px</code> 拉得更远；把容器的 <code>preserve-3d</code> 改成 <code>flat</code> 看它压扁成平面</span></div>
+                    <template class="lab-html">
+                        <div class="p3-stage">
+                            <div class="scene">
+                                <div class="stack">
+                                    <div class="plate p1">Z = 0</div>
+                                    <div class="plate p2">Z = 42px</div>
+                                    <div class="plate p3">Z = 84px</div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.p3-stage { display: flex; justify-content: center; padding: 6px 0; }
+.scene { perspective: 700px; }
+.stack {
+    position: relative; width: 150px; height: 96px; margin: 18px;
+    transform-style: preserve-3d;               /* 关键：共享 3D 空间 */
+    transform: rotateX(-16deg) rotateY(-26deg); /* 侧个身方便看 */
+}
+.stack .plate {
+    position: absolute; inset: 0; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11.5px; color: #fff;
+}
+.p1 { background: rgba(138, 78, 99, 0.92); transform: translateZ(0px); }
+.p2 { background: rgba(192, 138, 62, 0.92); transform: translateZ(42px); }
+.p3 { background: rgba(110, 139, 110, 0.92); transform: translateZ(84px); }</script>
+                </div>
+                <div class="lx-warn"><span>不加 <code>preserve-3d</code>，子元素的 Z 轴位移会被「压扁」回平面——
+                    这就是「明明写了 translateZ 却没反应」的头号原因。</span></div>
+            </section>
+
+            <section>
+                <h2>八、backface-visibility：3D 翻牌实战</h2>
+                <p>
+                    元素转到背面时，默认还能看见它（镜像的）。给正反两面都加
+                    <code>backface-visibility: hidden</code>，<strong class="hl">背对屏幕就隐身</strong>——
+                    翻牌效果的灵魂就在这一行。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="flip.css">
+                    <script type="text/plain" class="lab-code">.fl-scene { perspective: 900px; }             /* 1. 镜头 */
+.fl-card  {
+    position: relative;                          /* 2. 卡片容器：正反面叠在同一处 */
+    transform-style: preserve-3d;                /*    共享 3D 空间 */
+    transition: transform 0.8s cubic-bezier(0.4, 0.1, 0.2, 1);
+}
+.fl-card:hover { transform: rotateY(180deg); }   /* 3. hover 整体翻 180° */
+
+.fl-card .face {
+    position: absolute; inset: 0;                /* 4. 两面完全重叠 */
+    backface-visibility: hidden;                 /* 5. 背对屏幕就隐身 */
+}
+.fl-card .back { transform: rotateY(180deg); }   /* 6. 背面先预转 180°，翻完正好朝前 */</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="flip-demo.css">
+                    <div class="lab-head"><span class="lab-cap">鼠标悬停翻牌——把 <code>rotateY(180deg)</code> 全换成 <code>rotateX(180deg)</code> 变上下翻；把 perspective 的 900px 改成 300px 感受「镜头怼脸」</span></div>
+                    <template class="lab-html">
+                        <div class="fl-stage">
+                            <div class="scene">
+                                <div class="card">
+                                    <div class="face front">正面<small>悬停我，翻过去</small></div>
+                                    <div class="face back">背面<small>3D 翻牌完成</small></div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.fl-stage { display: flex; justify-content: center; padding: 8px 0; }
+.scene { perspective: 900px; }                             /* 1. 镜头 */
+.card {
+    position: relative; width: 190px; height: 238px;
+    transform-style: preserve-3d;                          /* 2. 共享 3D 空间 */
+    transition: transform 0.8s cubic-bezier(0.4, 0.1, 0.2, 1);
+    cursor: pointer;
+}
+.card:hover { transform: rotateY(180deg); }                 /* 3. 整体翻 180° */
+.card .face {
+    position: absolute; inset: 0; border-radius: 16px; padding: 16px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px; font-size: 15px; font-weight: 600; text-align: center;
+    backface-visibility: hidden;                           /* 4. 背对屏幕就隐身 */
+}
+.card .front { background: linear-gradient(135deg, #8A4E63, #B3748A); color: #fff; }
+.card .back {
+    background: #fff; color: #6C3B4C;
+    border: 2px solid #8A4E63;
+    transform: rotateY(180deg);                            /* 5. 背面预转 */
+}
+.card .face small { font-size: 12px; font-weight: 400; opacity: 0.85; }</script>
+                </div>
+                <div class="lx-note"><span>翻牌六步曲口诀：<b>「爸管镜头，卡开 3D，两面重叠，各自藏背，背面预转，hover 翻身」</b>。
+                    记不住就回来抄这六行注释。</span></div>
+            </section>
+
+            <section>
+                <h2>九、本章小结</h2>
+                <p>transform 函数总表（收藏级）：</p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>transform 常用函数总表：作用与示例</caption>
+                        <thead>
+                            <tr><th>函数</th><th>作用</th><th>示例</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">translate(x, y)</td><td>2D 平移</td><td><code>translate(20px, 10px)</code></td></tr>
+                            <tr><td class="td-val">translateX / translateY</td><td>单轴平移</td><td><code>translateX(20px)</code></td></tr>
+                            <tr><td class="td-val">scale(x, y)</td><td>缩放（纯数字）</td><td><code>scale(1.2)</code></td></tr>
+                            <tr><td class="td-val">scaleX / scaleY</td><td>单轴缩放</td><td><code>scaleX(1.5)</code></td></tr>
+                            <tr><td class="td-val">rotate(deg)</td><td>2D 旋转（顺时针为正）</td><td><code>rotate(45deg)</code></td></tr>
+                            <tr><td class="td-val">skew(x, y) / skewX / skewY</td><td>斜切</td><td><code>skewX(-15deg)</code></td></tr>
+                            <tr><td class="td-val">rotateX / rotateY / rotateZ</td><td>绕三轴 3D 旋转</td><td><code>rotateY(45deg)</code></td></tr>
+                            <tr><td class="td-val">translate3d(x, y, z) / translateZ</td><td>3D 平移（z 需透视）</td><td><code>translateZ(50px)</code></td></tr>
+                            <tr><td class="td-val">scale3d(x, y, z)</td><td>3D 缩放</td><td><code>scale3d(1, 1, 2)</code></td></tr>
+                            <tr><td class="td-val">matrix(...)</td><td>矩阵（了解，工具转换用）</td><td>—</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <ul>
+                    <li>transform <strong class="hl">不改变文档流</strong>：margin 推人、transform 叠人</li>
+                    <li>复合写法<strong class="hl">从左往右执行</strong>，顺序影响结果；<code>transform-origin</code> 决定支点（默认中心）</li>
+                    <li><code>perspective</code> 写在<strong class="hl">父元素</strong>：值越小越夸张；<code>preserve-3d</code> 让子元素共享 3D 空间</li>
+                    <li>翻牌 = 正反面重叠 + <code>backface-visibility: hidden</code> + 背面预转 180°</li>
+                    <li>动效首选 transform / opacity（GPU 加速），这也是下一课过渡反复强调的事</li>
+                </ul>
+                <div class="lx-note"><span><b>动手练习</b>：打开第八节的翻牌实验台做两个改造——
+                    ①把 <code>rotateY(180deg)</code> 全部换成 <code>rotateX(180deg)</code>（上下翻）；
+                    ②把 <code>perspective</code> 从 900px 改成 300px，感受「镜头怼脸」。
+                    再给第二节四将里的 rotate 加上 <code>transform-origin: left bottom</code>，看看旋转围绕哪里。</span></div>
+            </section>
+
+        </article>
+    </main>
+    <script src="../assets/learn.js" defer></script>
+</body>
+</html>

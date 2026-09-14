@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文本效果与字体 · CSS3 进阶 — 前端自习室</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23B8552F'/%3E%3Ctext x='16' y='22' font-size='16' font-family='serif' font-weight='700' fill='%23FFF7EF' text-anchor='middle'%3E学%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="../assets/learn.css">
+</head>
+<body data-page="04-CSS3进阶/04-文本效果与字体.html">
+    <main class="lx-main">
+        <article class="lx-article">
+
+            <nav class="lx-crumb">
+                <a href="../教程中心页.html">学习路线</a><span class="sep">›</span>
+                <a href="index.html">CSS3 进阶</a><span class="sep">›</span>
+                <span class="here">文本效果与字体</span>
+            </nav>
+            <h1><span class="h-no">04</span>文本效果与字体</h1>
+            <p class="lx-lead">
+                文字阴影给文字加「层次」，换行策略治好「长串撑破容器」，
+                <code>@font-face</code> 让网页用上系统里没有的字体——
+                <strong class="hl">排版质感的三块拼图</strong>。
+            </p>
+            <div class="lx-meta-row">
+                <span class="lx-chip">约 30 分钟</span>
+                <span class="lx-chip">5 个动手实验</span>
+                <span class="lx-chip">排版质感三拼图</span>
+            </div>
+
+            <section>
+                <h2>一、text-shadow：文字的影子</h2>
+                <p>
+                    语法和 <code>box-shadow</code> 是表亲：<strong class="hl">x 偏移 y 偏移 模糊 颜色</strong>，
+                    但<strong class="hl">没有扩散半径、没有 inset</strong>。
+                    同样支持逗号分隔的多层阴影——立体字、发光字、描边字全靠「叠加」这一个动作。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>text-shadow 与 box-shadow 语法对比</caption>
+                        <thead>
+                            <tr><th>对比项</th><th>text-shadow</th><th>box-shadow</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>参数</td><td><code>x 偏移 y 偏移 模糊 颜色</code></td><td><code>x 偏移 y 偏移 模糊 扩散 颜色</code></td></tr>
+                            <tr><td>扩散半径</td><td><b>没有</b></td><td>有（正外扩 / 负内收）</td></tr>
+                            <tr><td>inset 内阴影</td><td>没有</td><td>有</td></tr>
+                            <tr><td>多层叠加</td><td>逗号分隔</td><td>逗号分隔</td></tr>
+                            <tr><td>作用对象</td><td>文字的笔画</td><td>整个盒子的外沿</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lab" data-lang="css" data-file="text-shadow.css">
+                    <div class="lab-head"><span class="lab-cap">四种字效同台——把发光字的模糊半径改成 <code>8px / 20px / 36px</code> 看光晕扩散；把描边字的 4 个方向阴影改成纯色白边</span></div>
+                    <template class="lab-html">
+                        <div class="ts-stage">
+                            <p class="s a">基础投影<small>x=0 y=2 blur=4</small></p>
+                            <p class="s b">立体字<small>三层下移 + 环境影</small></p>
+                            <p class="s glow">发光字<small>0 偏移，纯模糊多层</small></p>
+                            <p class="s out">描边字<small>四向 1px 硬阴影</small></p>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.ts-stage {
+    background: linear-gradient(135deg, #3A2830, #6C3B4C);
+    border-radius: 14px; padding: 26px 18px; text-align: center;
+}
+.ts-stage .s { margin: 16px 0; font-size: 27px; font-weight: 700; color: #fff; }
+.ts-stage small {
+    display: block; font-size: 11px; color: #B99AA8; margin-top: 2px;
+    font-weight: 400; letter-spacing: 1px;
+}
+.a { text-shadow: 0 2px 4px rgba(0, 0, 0, 0.45); }
+.b { text-shadow: 0 2px 0 #B3748A, 0 4px 0 #8A4E63, 0 7px 14px rgba(0, 0, 0, 0.5); }
+.glow {
+    color: #fff;
+    text-shadow: 0 0 10px #E5C6D2, 0 0 24px #B3748A, 0 0 42px #8A4E63;
+}
+.out {
+    color: #3A2830;
+    text-shadow:
+        -1px -1px 0 #E5C6D2, 1px -1px 0 #E5C6D2,
+        -1px  1px 0 #E5C6D2, 1px  1px 0 #E5C6D2;
+}</script>
+                </div>
+                <div class="lx-tip"><span>浅色页面上的通用小技巧：<code>text-shadow: 0 1px 0 #fff</code>
+                    ——一道若有若无的白边，让文字在花哨背景上「浮」起来。</span></div>
+            </section>
+
+            <section>
+                <h2>二、word-break 与 overflow-wrap：长串怎么办</h2>
+                <p>
+                    默认换行规则里，<strong class="hl">一个完整的「词」不允许被拆开</strong>。
+                    中文没有这个问题（每个字都能断），但英文长单词、长 URL、哈希串会一根筋撑到底，
+                    把容器顶破。两个属性对症下药：
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>断词三大写法：行为与适用场景</caption>
+                        <thead>
+                            <tr><th>属性写法</th><th>行为</th><th>适用</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">word-break: break-all</td><td>无情拆词：一到边界就断，不管单词完不完整</td><td>URL、哈希串等「无词义」文本</td></tr>
+                            <tr><td class="td-val">overflow-wrap: break-word</td><td>先尝试整词换行，<b>实在放不下</b>才拆（旧名 word-wrap）</td><td>通用推荐，尊重词完整性</td></tr>
+                            <tr><td class="td-val">word-break: keep-all</td><td>连中日韩文字也不许断</td><td>特殊排版要求</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="break.css">
+                    <script type="text/plain" class="lab-code">.box   { word-break: normal; }              /* 默认：长串会溢出容器 */
+.wr-b  { word-break: break-all; }           /* 见缝就断 */
+.wr-c  { overflow-wrap: break-word; }       /* 仁慈拆词：先挪，挪不动再拆 */</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="break-demo.css">
+                    <div class="lab-head"><span class="lab-cap">同一串长 URL 三种策略——第一个盒子被撑破；把 <code>.c</code> 的 overflow-wrap 改成 <code>break-all</code>，看它和第二个盒子行为一样了</span></div>
+                    <template class="lab-html">
+                        <div class="wr-stage">
+                            <div class="box"><b>默认 normal</b>https://www.example.com/a/SupercalifragilisticExpialidocious.html</div>
+                            <div class="box c b"><b>break-all</b>https://www.example.com/a/SupercalifragilisticExpialidocious.html</div>
+                            <div class="box c c"><b>break-word</b>https://www.example.com/a/SupercalifragilisticExpialidocious.html</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.wr-stage {
+    display: flex; flex-wrap: wrap; gap: 14px;
+}
+.wr-stage .box {
+    width: 195px; padding: 12px; border: 1.5px dashed #C9A8B8;
+    border-radius: 10px; font-size: 12px; color: #473F35;
+    line-height: 1.6; word-break: normal;
+}
+.wr-stage b { display: block; margin-bottom: 6px; color: #6C3B4C; }
+.b { word-break: break-all; }
+.c { overflow-wrap: break-word; }</script>
+                </div>
+                <div class="lx-warn"><span>中文站点正文一般用 <code>overflow-wrap: break-word</code>（尊重词完整性）；
+                    <code>break-all</code> 会把英文单词拦腰斩断，仅用于 URL、编号这类无词义长串。</span></div>
+            </section>
+
+            <section>
+                <h2>三、white-space：换行总开关</h2>
+                <p>
+                    它管的是<strong class="hl">源码里的空格和换行怎么处理</strong>：
+                    默认（normal）全部折叠合并；<code>pre</code> 全部保留（像 <code>&lt;pre&gt;</code> 标签）；
+                    <code>nowrap</code> 一行到底不许换。五个值一张表：
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>white-space 五值全解：空格、换行、自动折行的组合</caption>
+                        <thead>
+                            <tr><th>值</th><th>空格</th><th>源码换行</th><th>自动换行</th><th>典型用途</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">normal（默认）</td><td>合并</td><td>忽略</td><td>是</td><td>正文段落</td></tr>
+                            <tr><td class="td-val">nowrap</td><td>合并</td><td>忽略</td><td>否</td><td>单行省略号的前置条件</td></tr>
+                            <tr><td class="td-val">pre</td><td>保留</td><td>保留</td><td>否</td><td>展示代码 / 格式化文本</td></tr>
+                            <tr><td class="td-val">pre-wrap</td><td>保留</td><td>保留</td><td>是</td><td>既要格式又能折行</td></tr>
+                            <tr><td class="td-val">pre-line</td><td>合并</td><td>保留</td><td>是</td><td>保留作者换行、折叠空格</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lab" data-lang="css" data-file="white-space.css">
+                    <div class="lab-head"><span class="lab-cap">注意 pre 盒子里「三个空格」和换行原样显示——把 <code>.pre</code> 改成 <code>pre-wrap</code>，看它放不下时会不会自动折行</span></div>
+                    <template class="lab-html">
+                        <div class="ws-stage">
+                            <div class="box"><b>normal：</b>床前   明月光，疑是地上霜。多个空格被合并成
+一个，源码换行也被当成普通空格。</div>
+                            <div class="box nowrap"><b>nowrap：</b>床前明月光，疑是地上霜。举头望明月，低头思故乡。写多长都不换行，超出部分会溢出。</div>
+                            <div class="box pre"><b>pre：</b>床前   明月光，
+  疑是地上霜。</div>
+                            <div class="box prewrap"><b>pre-wrap：</b>床前   明月光，
+  疑是地上霜。既能保留格式，放不下时又会自动折行。</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.ws-stage {
+    display: flex; flex-direction: column; gap: 12px;
+}
+.ws-stage .box {
+    width: 320px; max-width: 100%; padding: 12px 14px;
+    border: 1.5px dashed #C9A8B8; border-radius: 10px;
+    font-size: 13px; color: #473F35; line-height: 1.7;
+}
+.ws-stage .box b { color: #6C3B4C; }
+.nowrap { white-space: nowrap; }
+.pre { white-space: pre; font-family: Consolas, "Cascadia Code", monospace; }
+.prewrap { white-space: pre-wrap; }</script>
+                </div>
+            </section>
+
+            <section>
+                <h2>四、text-overflow：ellipsis 回顾</h2>
+                <p>
+                    在「布局 · 溢出处理」一课用过它，这里正式收编进文本效果家族。
+                    <strong class="hl">单行省略号是三件套</strong>，缺一不可——
+                    只写 <code>text-overflow: ellipsis</code> 是不生效的经典大坑：
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="ellipsis.css">
+                    <script type="text/plain" class="lab-code">/* 单行省略：三件套缺一不可 */
+.el-one {
+    white-space: nowrap;      /* ① 先不许换行 */
+    overflow: hidden;         /* ② 超出的剪掉 */
+    text-overflow: ellipsis;  /* ③ 剪掉的位置显示 … */
+}
+
+/* 多行省略（两行后加 …）：webkit 私有三件套，主流浏览器都认 */
+.el-two {
+    display: -webkit-box;          /* 弹性盒子旧版 */
+    -webkit-box-orient: vertical;  /* 垂直排布 */
+    -webkit-line-clamp: 2;         /* 最多 2 行 */
+    overflow: hidden;
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="ellipsis-demo.css">
+                    <div class="lab-head"><span class="lab-cap">单行省略 vs 两行截断——把第二个盒子的 <code>-webkit-line-clamp: 2</code> 改成 <code>3</code>，多看一行</span></div>
+                    <template class="lab-html">
+                        <div class="el-stage">
+                            <div class="box one"><b>单行省略：</b>这是一段很长很长的标题文本，用来演示单行省略号效果，超出容器的部分会变成三个点</div>
+                            <div class="box two"><b>两行截断：</b>这是一段更长更长的商品描述文本，列表页里经常出现。它最多显示两行，第二行结尾自动带上省略号，剩下的内容全部隐藏，既保住了排版整齐，又不至于信息全丢。</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.el-stage {
+    display: flex; flex-direction: column; gap: 12px;
+}
+.el-stage .box {
+    width: 330px; max-width: 100%; padding: 11px 14px;
+    border: 1.5px dashed #C9A8B8; border-radius: 10px;
+    font-size: 13px; color: #473F35; line-height: 1.7;
+}
+.el-stage b { color: #6C3B4C; }
+.one {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.two {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}</script>
+                </div>
+                <div class="lx-tip"><span>口诀：<b>「nowrap 圈住，hidden 剪掉，ellipsis 补刀」</b>。
+                    忘了前两步，省略号永远不出现。</span></div>
+            </section>
+
+            <section>
+                <h2>五、@font-face：注册自定义字体</h2>
+                <p>
+                    系统里没有的字体，可以<strong class="hl">把字体文件变成网页资源</strong>：
+                    用 <code>@font-face</code> 注册一个自定义名字，再在 <code>font-family</code> 里引用。
+                    它就是「给字体上户口」：
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="font-face.css">
+                    <script type="text/plain" class="lab-code">@font-face {
+    font-family: "MyBrandFont";       /* 自己起名：户口本上的名字 */
+    src: url("fonts/MyBrandFont.woff2") format("woff2"),   /* 首选：现代压缩格式 */
+         url("fonts/MyBrandFont.woff")  format("woff"),    /* 回退：更老的浏览器 */
+         local("PingFang SC");         /* 可选：先看用户电脑里有没有现成的 */
+    font-weight: normal;               /* 声明这份文件对应的字重（可注册多份） */
+    font-style: normal;
+    font-display: swap;                /* 加载期间先用回退字体显示，避免文字空白 */
+}
+
+/* 用法和系统字体一模一样，别忘了兜底链 */
+h1 { font-family: "MyBrandFont", "Microsoft YaHei", sans-serif; }</script>
+                </div>
+                <p>
+                    引用时的<strong class="hl">回退链</strong>机制值得亲眼看看——
+                    浏览器从左往右找，找到第一个「装了」的字体就用它：
+                </p>
+                <div class="lab" data-lang="css" data-file="font-stack.css">
+                    <div class="lab-head"><span class="lab-cap">同一句话、三种字体栈——把你电脑上没装的字体放最前面，看它回退到下一个；把情绪换成「黑体 / 宋体」看气质不同</span></div>
+                    <template class="lab-html">
+                        <div class="ff-stage">
+                            <div class="card"><em class="kai">春风又绿江南岸</em><b>KaiTi, serif</b></div>
+                            <div class="card"><em class="hei">春风又绿江南岸</em><b>SimHei, sans-serif</b></div>
+                            <div class="card"><em class="song">春风又绿江南岸</em><b>SimSun, serif</b></div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.ff-stage {
+    display: flex; flex-wrap: wrap; gap: 14px;
+}
+.ff-stage .card {
+    width: 200px; padding: 18px 12px 14px; text-align: center;
+    background: #fff; border: 1.5px solid #E3D5C4; border-radius: 12px;
+}
+.ff-stage .card em { font-style: normal; display: block; font-size: 23px; line-height: 1.5; }
+.ff-stage .card b {
+    display: block; font-size: 11.5px; color: #6B6053;
+    margin-top: 8px; font-family: Consolas, "Cascadia Code", monospace;
+}
+.kai  { font-family: "KaiTi", "Kaiti SC", "STKaiti", serif; color: #6C3B4C; }
+.hei  { font-family: "SimHei", "Heiti SC", sans-serif; color: #3A2E26; }
+.song { font-family: "SimSun", "Songti SC", serif; color: #8A4E63; }</script>
+                </div>
+                <div class="lx-warn"><span><code>src</code> 里 <code>url()</code> + <code>format()</code> 成对出现，
+                    浏览器跳过不认识的格式继续往下找——和第 1 课的「属性回退」是同一个思想。</span></div>
+            </section>
+
+            <section>
+                <h2>六、字体加载实践：快、省、稳</h2>
+                <p>
+                    字体好看，但<strong class="hl">每个字体文件都是一次网络请求</strong>。
+                    中文字体动辄几 MB（几万个字形），直接 <code>@font-face</code> 整包引入会让用户对着空白页面干等。实践三条路：
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>中文字体加载四大方案：做法与适用场景</caption>
+                        <thead>
+                            <tr><th>方案</th><th>做法</th><th>适用</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>系统字体栈（默认首选）</strong></td><td><code>font-family</code> 列一串系统字体</td><td>正文——零加载、零闪烁</td></tr>
+                            <tr><td><strong>web 字体子集化</strong></td><td>按页面实际用到的字符把大字体切成小包，按需加载</td><td>中文标题、品牌字</td></tr>
+                            <tr><td>在线字体库</td><td>「在线字体库」类服务已做好分包，一行引入</td><td>想省事地用中文字体</td></tr>
+                            <tr><td>字体图标</td><td><code>@font-face</code> 注册图标字体，图标即字形</td><td>小图标（如今更多用 SVG 方案）</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="font-loading.css">
+                    <script type="text/plain" class="lab-code">/* ① 系统字体栈：每个平台挑一个最好的，最后兜到通用族 */
+body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei",
+                 "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ② 子集化原理：unicode-range 只加载用到的那段字符对应的字体包 */
+@font-face {
+    font-family: "SubBrand";
+    src: url("sub-brand-p1.woff2") format("woff2");
+    unicode-range: U+4E00-9FFF;        /* 只管常用汉字区 */
+}
+
+/* ③ 字体图标原理：图标做成字体，content 写码位 */
+.icon-home::before {
+    font-family: "IconFont";
+    content: "\e600";                 /* 这个码位画的是一个房子 */
+}
+
+/* ④ 防「文字闪空」：加载期间先显示回退字体 */
+@font-face { font-family: "X"; src: url(x.woff2); font-display: swap; }</script>
+                </div>
+                <div class="lx-tip"><span>排版功底 = 细节克制：<b>字号不超过 3 档、行高 1.6~1.9、正文 14~16px</b>。
+                    你正在读的这套页面就是——衬线标题 + 无衬线正文 + <code>line-height: 1.8</code>。</span></div>
+            </section>
+
+            <section>
+                <h2>七、本章小结</h2>
+                <ul>
+                    <li><code>text-shadow</code>：x y 模糊 颜色（无扩散无 inset）；<strong class="hl">多层叠加</strong>出立体 / 发光 / 描边三种字效</li>
+                    <li><code>word-break: break-all</code> 见缝就断；<code>overflow-wrap: break-word</code> 仁慈拆词（正文推荐）</li>
+                    <li><code>white-space</code>：nowrap 不换行、pre 全保留、pre-wrap 保留 + 折行</li>
+                    <li>单行省略号<strong class="hl">三件套</strong>：nowrap + overflow: hidden + text-overflow: ellipsis；多行用 <code>-webkit-line-clamp</code></li>
+                    <li><code>@font-face</code>：font-family 起名 + src 多格式回退（+ font-display: swap 防闪空）</li>
+                    <li>字体策略：正文用系统字体栈，中文标题用子集化 web 字体；引用时永远带兜底链</li>
+                </ul>
+                <div class="lx-note"><span><b>动手练习</b>：把第一节实验台里的「发光字」改成你的专属霓虹——
+                    换成 <code>#C08A3E</code> 赭金色的三层光晕，再把模糊半径改成 <code>8px / 20px / 36px</code> 看光晕怎么扩散；
+                    然后给第二节的 URL 盒子加上省略号三件套，做一个「不撑破也不露馅」的长链接卡片。</span></div>
+            </section>
+
+        </article>
+    </main>
+    <script src="../assets/learn.js" defer></script>
+</body>
+</html>

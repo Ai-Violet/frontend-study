@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>认识 HTML · HTML 基础 — 前端自习室</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23B8552F'/%3E%3Ctext x='16' y='22' font-size='16' font-family='serif' font-weight='700' fill='%23FFF7EF' text-anchor='middle'%3E学%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="../assets/learn.css">
+    <style>
+        /* 本页专属图解：DOM 树、head/body 分工、版本时间线、DevTools 面板（静态插图） */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        .dom-tree {
+            font-family: var(--font-code); font-size: 13px; line-height: 2;
+            background: #FDFBF8; border: 1.5px solid var(--line-2);
+            border-radius: var(--r-card); padding: 14px 18px; margin: 12px 0;
+            color: var(--ink-2); box-shadow: var(--shadow-1);
+        }
+        .dom-tree .node { border-radius: 6px; padding: 1px 8px; }
+        .dom-tree .tag { color: var(--accent); font-weight: 600; }
+        .dom-tree .txt { color: #6B5D4A; }
+        .dom-tree .cur { background: rgba(184, 85, 47, .12); outline: 1px dashed #C9A284; }
+
+        .map-box {
+            border-radius: var(--r-card); padding: 12px 16px; margin: 10px 0;
+            font-size: 13.5px; line-height: 2; color: var(--ink-2);
+        }
+        .map-box b { display: block; margin-bottom: 4px; font-size: 14px; }
+        .map-head { background: #F6EBDD; border: 1.5px dashed #C9A284; }
+        .map-head b { color: var(--accent); }
+        .map-body { background: #F1EEE6; border: 1.5px dashed #A9B39B; }
+        .map-body b { color: #4E6B4A; }
+
+        .ver-tl { display: flex; flex-direction: column; gap: 8px; margin: 12px 0; }
+        .ver-item {
+            display: flex; align-items: center; gap: 12px;
+            background: #FDFBF8; border: 1.5px solid var(--line-2);
+            border-radius: 10px; padding: 8px 14px;
+        }
+        .ver-item .yr { flex: none; width: 60px; font-size: 12.5px; font-weight: 700; color: #8F7A5F; font-family: var(--font-code); }
+        .ver-item .nm { font-weight: 700; font-size: 13.5px; color: #3A2E26; width: 118px; flex: none; }
+        .ver-item .ds { font-size: 12.5px; color: #6B5D4A; }
+        .ver-item.now { border-color: var(--accent); background: rgba(184, 85, 47, .07); }
+        .ver-item.now .nm { color: var(--accent-deep); }
+
+        .dev-panel { border: 1.5px solid var(--line-2); border-radius: 10px; overflow: hidden; font-size: 12.5px; margin: 12px 0; box-shadow: var(--shadow-1); }
+        .dev-panel .dp-tabs { background: #F1E7D8; display: flex; gap: 4px; padding: 6px 8px; border-bottom: 1px solid #E0D3C0; }
+        .dev-panel .dp-tabs i { font-style: normal; padding: 2px 10px; border-radius: 5px; color: #8F7A5F; }
+        .dev-panel .dp-tabs i.on { background: #fff; color: var(--accent); font-weight: 600; }
+        .dev-panel .dp-body { background: #fff; padding: 12px 16px; font-family: var(--font-code); line-height: 1.9; color: #6B5D4A; }
+        .dev-panel .dp-body .t { color: var(--accent); }
+        .dev-panel .dp-body .a { color: #96652C; }
+        .dev-panel .dp-body em { font-style: normal; background: rgba(184, 85, 47, .12); outline: 1px dashed #C9A284; border-radius: 4px; padding: 0 4px; }
+    </style>
+</head>
+<body data-page="01-HTML基础/01-认识HTML.html">
+    <main class="lx-main">
+        <article class="lx-article">
+
+            <nav class="lx-crumb">
+                <a href="../教程中心页.html">学习路线</a><span class="sep">›</span>
+                <a href="index.html">HTML 基础</a><span class="sep">›</span>
+                <span class="here">认识 HTML</span>
+            </nav>
+            <h1><span class="h-no">01</span>认识 HTML</h1>
+            <p class="lx-lead">
+                HTML（HyperText Markup Language，超文本标记语言）不是编程语言，而是给内容贴标签的标记语言：
+                告诉浏览器「这段是标题、那段是段落、这里是图片」。先掌握文档骨架，再谈其它。
+            </p>
+            <div class="lx-meta-row">
+                <span class="lx-chip">约 12 分钟</span>
+                <span class="lx-chip">2 个动手实验</span>
+                <span class="lx-chip">HTML 第一课</span>
+            </div>
+
+            <section>
+                <h2>一、网页是怎么显示出来的</h2>
+                <p>
+                    浏览器打开一个网页的过程：<strong class="hl">下载 HTML 文件 → 解析成标签树（DOM）→ 一边解析一边渲染</strong>。
+                    HTML 负责结构和内容，CSS 负责样式，JavaScript 负责行为——三者各司其职。
+                </p>
+                <div class="lx-tip"><span>类比一栋房子：<b>HTML 是砖瓦钢筋（结构）</b>，CSS 是油漆装修（样式），
+                    JavaScript 是水电智能（行为）。先有结构，才有装修。</span></div>
+                <p>
+                    解析得到的「标签树」专业名叫 <strong class="hl">DOM 树</strong>：每个标签是一个节点，
+                    嵌套关系变成父子关系。后面学 CSS 选择器和 JS 操作页面，用的都是这棵树。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>前端三件套：谁管结构、谁管样式、谁管行为</caption>
+                        <thead>
+                            <tr><th>语言</th><th>职责</th><th>房子的比喻</th><th>负责的东西</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">HTML</td><td><b>结构 + 内容</b></td><td>砖瓦钢筋</td><td>标题、段落、图片、链接、表单</td></tr>
+                            <tr><td class="td-val">CSS</td><td><b>样式 + 外观</b></td><td>油漆装修</td><td>颜色、字体、边框、布局、动画</td></tr>
+                            <tr><td class="td-val">JavaScript</td><td><b>行为 + 交互</b></td><td>水电智能</td><td>点击响应、数据请求、动态更新页面</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="dom-tree">
+                    <div class="node"><span class="tag">&lt;html&gt;</span> ─ 根节点</div>
+                    <div class="node" style="padding-left:34px"><span class="tag">&lt;head&gt;</span></div>
+                    <div class="node" style="padding-left:58px"><span class="tag">&lt;title&gt;</span> <span class="txt">我的第一个页面</span></div>
+                    <div class="node" style="padding-left:34px"><span class="tag">&lt;body&gt;</span></div>
+                    <div class="node cur" style="padding-left:58px"><span class="tag">&lt;h1&gt;</span> <span class="txt">你好，世界！</span> ─ 当前选中节点</div>
+                    <div class="node" style="padding-left:58px"><span class="tag">&lt;p&gt;</span> <span class="txt">这是我的第一个</span> <span class="tag">&lt;a&gt;</span><span class="txt">网页</span><span class="tag">&lt;/a&gt;</span><span class="txt">。</span></div>
+                </div>
+                <p>上面这段就是把 HTML 变成标签树的样子。下面动手看「标记 → 渲染」到底发生了什么：</p>
+                <div class="lab" data-lang="html" data-file="hello.html">
+                    <div class="lab-head"><span class="lab-cap">一个最小的 HTML 页面：把 <code>&lt;h1&gt;</code> 里的文字改一改，右边立刻重渲染</span></div>
+                    <template class="lab-html"></template>
+                    <script type="text/plain" class="lab-code"><style>
+  .mini-page {
+    border: 2px solid #D9C3B5; border-radius: 12px; overflow: hidden;
+    background: #fff; max-width: 460px;
+  }
+  .mini-titlebar {
+    background: #B8552F; color: #fff; font-size: 12.5px;
+    padding: 7px 14px; display: flex; align-items: center; gap: 8px;
+  }
+  .mini-titlebar i { width: 9px; height: 9px; border-radius: 50%; background: rgba(255,255,255,.55); }
+  .mini-titlebar span { flex: 1; text-align: center; opacity: .9; }
+  .mini-canvas { padding: 18px 20px; }
+  .mini-canvas h1 { font-size: 22px; margin: 0 0 6px; color: #3A2E26; }
+  .mini-canvas a { color: #B8552F; }
+  .mini-canvas p { font-size: 14px; color: #6B5D4A; margin: 0; }
+</style>
+<div class="mini-page">
+  <div class="mini-titlebar"><i></i><i></i><i></i><span>我的第一个页面</span></div>
+  <div class="mini-canvas">
+    <h1>你好，世界！</h1>
+    <p>这是我的第一个 <a href="#">网页</a>。</p>
+  </div>
+</div></script>
+                </div>
+            </section>
+
+            <section>
+                <h2>二、文档骨架：每个页面都长这样</h2>
+                <p>
+                    任何 HTML 页面都由这五部分组成。<code>&lt;!DOCTYPE html&gt;</code> 声明文档类型（必须是第一行），
+                    <code>&lt;html&gt;</code> 是根元素，<code>&lt;head&gt;</code> 放「给浏览器看的」配置信息，
+                    <code>&lt;body&gt;</code> 放「给用户看的」页面内容。
+                </p>
+                <div class="lx-codeblock" data-lang="html" data-file="骨架.html">
+                    <script type="text/plain" class="lab-code"><!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <title>我的第一个页面</title>
+  </head>
+  <body>
+    <h1>你好，世界！</h1>
+    <p>这是我的第一个 <a href="#">网页</a>。</p>
+  </body>
+</html></script>
+                </div>
+                <p>把上面代码复制到编辑器里改改看（改 h1 文字试试）：</p>
+                <div class="lab" data-lang="html" data-file="骨架预览.html">
+                    <div class="lab-head"><span class="lab-cap">骨架五件套渲染出的页面：改 <code>&lt;h1&gt;</code>、<code>&lt;p&gt;</code>，或加一段 <code>&lt;img&gt;</code> 看结构如何长出来</span></div>
+                    <template class="lab-html"></template>
+                    <script type="text/plain" class="lab-code"><style>
+  .mini-page {
+    border: 2px solid #D9C3B5; border-radius: 12px; overflow: hidden;
+    background: #fff; max-width: 460px;
+  }
+  .mini-titlebar {
+    background: #B8552F; color: #fff; font-size: 12.5px;
+    padding: 7px 14px; display: flex; align-items: center; gap: 8px;
+  }
+  .mini-titlebar i { width: 9px; height: 9px; border-radius: 50%; background: rgba(255,255,255,.55); }
+  .mini-titlebar span { flex: 1; text-align: center; opacity: .9; }
+  .mini-canvas { padding: 18px 20px; }
+  .mini-canvas h1 { font-size: 22px; margin: 0 0 6px; color: #3A2E26; }
+  .mini-canvas p { font-size: 14px; color: #6B5D4A; margin: 0 0 8px; }
+</style>
+<div class="mini-page">
+  <div class="mini-titlebar"><i></i><i></i><i></i><span>我的第一个页面 ← 这是 title 的效果</span></div>
+  <div class="mini-canvas">
+    <h1>你好，世界！</h1>
+    <p>这是我的第一个 <a href="#">网页</a>。</p>
+  </div>
+</div></script>
+                </div>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>骨架五件套：谁负责什么、能不能省略</caption>
+                        <thead>
+                            <tr><th>骨架部分</th><th>作用</th><th>能省略吗</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>&lt;!DOCTYPE html&gt;</code></td><td>声明这是 HTML5 文档</td><td><b>不能</b>，省略会触发怪异模式</td></tr>
+                            <tr><td><code>&lt;html lang="zh-CN"&gt;</code></td><td>根元素；lang 声明语言（利于翻译、读屏）</td><td>建议写全</td></tr>
+                            <tr><td><code>&lt;head&gt;</code></td><td>配置区：编码、标题、样式、SEO 信息</td><td>内容不会显示在页面上</td></tr>
+                            <tr><td><code>&lt;meta charset="UTF-8"&gt;</code></td><td>字符编码，防中文乱码</td><td><b>不能省</b></td></tr>
+                            <tr><td><code>&lt;body&gt;</code></td><td>内容区：用户看到的一切都放这里</td><td>页面主体</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section>
+                <h2>三、head 里的常用元素</h2>
+                <p>
+                    <code>&lt;head&gt;</code> 里都是「幕后工作者」：告诉浏览器页面叫什么、用什么编码、
+                    手机上怎么缩放、要加载哪些样式和脚本。
+                </p>
+                <div class="lx-codeblock" data-lang="html" data-file="head.html">
+                    <script type="text/plain" class="lab-code"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="这是一个学习 HTML 的示例页面">
+  <meta name="keywords" content="HTML, 学习, 前端">
+  <title>页面标题（显示在浏览器标签页上）</title>
+  <link rel="stylesheet" href="style.css">
+  <style> /* 也可以把样式直接写在这里 */ </style>
+  &lt;script src="app.js" defer>&lt;/script>
+</head></script>
+                </div>
+                <p>head 与 body 的分工（左边是看不见的配置，右边是看见的内容）：</p>
+                <div class="map-box map-head">
+                    <b>head（浏览器看的）</b>
+                    <code>&lt;title&gt;</code> 标签页标题 · <code>&lt;meta charset&gt;</code> 编码 ·
+                    <code>&lt;meta viewport&gt;</code> 移动端缩放 · <code>&lt;link&gt;</code> 外部样式 ·
+                    <code>&lt;style&gt;</code> 内部样式 · <code>&lt;script&gt;</code> 脚本
+                </div>
+                <div class="map-box map-body">
+                    <b>body（用户看的）</b>
+                    <code>&lt;h1&gt;</code> 标题 · <code>&lt;p&gt;</code> 段落 · <code>&lt;img&gt;</code> 图片 ·
+                    <code>&lt;a&gt;</code> 链接 · <code>&lt;ul&gt;</code> 列表 · <code>&lt;table&gt;</code> 表格 …
+                </div>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>head 元素速查：每个幕后工作者管什么</caption>
+                        <thead>
+                            <tr><th>head 元素</th><th>关键属性</th><th>说明</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>&lt;title&gt;</code></td><td>无</td><td>标签页标题，也是搜索结果的大标题</td></tr>
+                            <tr><td><code>&lt;meta charset&gt;</code></td><td><code>charset="UTF-8"</code></td><td>字符编码，防乱码</td></tr>
+                            <tr><td><code>&lt;meta viewport&gt;</code></td><td><code>name</code> + <code>content</code></td><td>移动端适配必备：<code>width=device-width, initial-scale=1.0</code></td></tr>
+                            <tr><td><code>&lt;meta description&gt;</code></td><td><code>name="description"</code></td><td>页面描述，显示在搜索结果里</td></tr>
+                            <tr><td><code>&lt;link&gt;</code></td><td><code>rel</code> / <code>href</code></td><td>引入外部 CSS：<code>rel="stylesheet" href="..."</code></td></tr>
+                            <tr><td><code>&lt;style&gt;</code></td><td><code>media</code></td><td>内部样式表，写在标签对之间</td></tr>
+                            <tr><td><code>&lt;script&gt;</code></td><td><code>src</code> / <code>defer</code> / <code>async</code></td><td><code>defer</code>：下载不阻塞，DOM 就绪后执行</td></tr>
+                            <tr><td><code>&lt;base&gt;</code></td><td><code>href</code></td><td>统一页面相对路径基准（少用）</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section>
+                <h2>四、注释与书写规范</h2>
+                <p>
+                    注释是给自己和同事看的，浏览器不会渲染。<strong class="hl">规范</strong>能让代码更可读：
+                    标签名小写、属性值加引号、嵌套对齐缩进、结束标签不遗漏。
+                </p>
+                <div class="lx-codeblock" data-lang="html" data-file="注释.html">
+                    <script type="text/plain" class="lab-code"><!-- 这是一行注释，浏览器不渲染 -->
+
+<!-- 推荐写法：标签小写 + 双引号 + 缩进 -->
+<div class="card">
+  <p>内容对齐缩进，一眼看清嵌套关系</p>
+</div></script>
+                </div>
+                <div class="map-box map-body">
+                    <b>页面上只能看到这段文字。</b>
+                    <span style="color:#9C8E7B">（上面代码里的注释完全不可见）</span>
+                </div>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>书写规范：好习惯 vs 坏习惯</caption>
+                        <thead>
+                            <tr><th>做法</th><th>好习惯（要）</th><th>坏习惯（别）</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>标签名</td><td><code>&lt;div&gt;</code> 全小写</td><td><code>&lt;DIV&gt;</code> 大写</td></tr>
+                            <tr><td>属性值</td><td><code>class="card"</code> 加引号</td><td><code>class=card</code> 裸写</td></tr>
+                            <tr><td>嵌套</td><td>子标签缩进对齐</td><td>全挤一行、层级靠猜</td></tr>
+                            <tr><td>闭合</td><td>每个结束标签都不漏</td><td>漏掉 <code>&lt;/p&gt;</code>、<code>&lt;/div&gt;</code></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-warn"><span>VS Code 中按 <b>Ctrl + /</b> 快速注释/取消注释当前行。
+                    注释不能嵌套注释：<code>&lt;!-- &lt;!-- --&gt; --&gt;</code> 是错的。</span></div>
+            </section>
+
+            <section>
+                <h2>五、HTML 的前世今生</h2>
+                <p>
+                    HTML 从 1991 年诞生至今经历了几次大版本更替。今天说的「HTML」默认指
+                    <strong class="hl">HTML5（2014 年定稿的现行标准）</strong>——标签更简洁、语义更丰富、
+                    还自带视频音频画布等能力。看懂这张演进表，读老代码时就不会懵。
+                </p>
+                <div class="ver-tl">
+                    <div class="ver-item">
+                        <span class="yr">1991</span><span class="nm">HTML 1.0</span>
+                        <span class="ds">初代：只有 18 个标签，纯文本 + 链接</span>
+                    </div>
+                    <div class="ver-item">
+                        <span class="yr">1997</span><span class="nm">HTML 3.2 / 4.0</span>
+                        <span class="ds">加入表格、表单、样式支持，页面开始「好看」</span>
+                    </div>
+                    <div class="ver-item">
+                        <span class="yr">2000</span><span class="nm">XHTML 1.0</span>
+                        <span class="ds">严格版 HTML：标签必须小写、必须闭合（老教程常见）</span>
+                    </div>
+                    <div class="ver-item now">
+                        <span class="yr">2014</span><span class="nm">HTML5（现行）</span>
+                        <span class="ds">DOCTYPE 一行搞定；新增语义标签 / 视频 / 音频 / 画布</span>
+                    </div>
+                </div>
+                <div class="lx-tip"><span>看旧教程时认准区别：XHTML 时代的 <code>&lt;br/&gt;</code> 自闭合写法，
+                    在 HTML5 里简写为 <code>&lt;br&gt;</code> 即可；本路线全部按 HTML5 标准书写。</span></div>
+            </section>
+
+            <section>
+                <h2>六、动手环境：编辑器与 DevTools</h2>
+                <p>
+                    写 HTML 只需要两样东西：<strong class="hl">一个文本编辑器 + 一个浏览器</strong>。
+                    推荐组合是 VS Code（编辑）+ Chrome/Edge（预览调试）。文件保存为
+                    <code>.html</code> 后双击即可打开；改完代码按 <code>Ctrl + S</code> 保存，再回浏览器按 <code>F5</code> 刷新。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>入门三件套：编辑器 / Live Server / DevTools</caption>
+                        <thead>
+                            <tr><th>工具</th><th>用途</th><th>关键操作</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>VS Code</td><td>写代码：语法高亮、自动补全、格式化</td><td><code>!</code> + Tab 快速生成骨架；<code>Alt + Shift + F</code> 格式化</td></tr>
+                            <tr><td>Live Server 插件</td><td>保存即自动刷新浏览器，免手动 F5</td><td>右下角 <code>Go Live</code> / 右键 <code>Open with Live Server</code></td></tr>
+                            <tr><td>浏览器 DevTools</td><td>看 DOM、查样式、找错</td><td><code>F12</code> 打开；<code>Ctrl + Shift + C</code> 点选元素</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>F12 打开后 Elements 面板长这样（点左上角箭头可选中页面元素）：</p>
+                <div class="dev-panel">
+                    <div class="dp-tabs"><i class="on">Elements</i><i>Console</i><i>Sources</i><i>Network</i></div>
+                    <div class="dp-body">
+                        <div>&lt;<span class="t">body</span>&gt;</div>
+                        <div style="padding-left:22px">&lt;<span class="t">h1</span>&gt;你好，世界！&lt;/<span class="t">h1</span>&gt;</div>
+                        <div style="padding-left:22px"><em>&lt;<span class="t">p</span> <span class="a">class</span>="intro"&gt;这是我的第一个网页。&lt;/<span class="t">p</span>&gt;</em></div>
+                        <div>&lt;/<span class="t">body</span>&gt;</div>
+                        <div style="color:#9C8E7B; font-family:inherit; margin-top:6px">└─ 虚线框 = 被选中的元素，右下角可看它的盒模型与样式</div>
+                    </div>
+                </div>
+                <div class="lx-note"><span>现在就试试：在这个页面按 <code>F12</code>，用左上角的箭头点一下本页任意文字——
+                    Elements 面板会跳到对应标签，这就是「代码 ↔ 页面」的实时对照。</span></div>
+            </section>
+
+            <section>
+                <h2>七、本章小结</h2>
+                <ul>
+                    <li>HTML 是<b>标记语言</b>：标签 + 内容 = 网页结构；浏览器解析成 DOM 树再渲染。</li>
+                    <li>骨架五件套：<code>DOCTYPE</code> → <code>html</code> → <code>head</code> → <code>meta charset</code> → <code>body</code>。</li>
+                    <li><code>head</code> 给浏览器看（title / meta / link / style / script），<code>body</code> 给用户看。</li>
+                    <li>现行标准是 HTML5：DOCTYPE 一行、标签可简写、语义更丰富。</li>
+                    <li>环境就绪：VS Code 写 + 浏览器看，<code>F12</code> DevTools 是终身的调试伙伴。</li>
+                    <li>规范书写：小写标签、双引号、缩进嵌套。</li>
+                </ul>
+                <div class="lx-note"><span><b>动手作业</b>：新建 <code>hello.html</code>，在 VS Code 里输入 <code>!</code> + Tab 生成骨架，
+                    在 body 里放一个 <code>h1</code> 标题和一段自我介绍，双击用浏览器打开，
+                    再按 <code>F12</code> 找到你写的那行代码。</span></div>
+            </section>
+
+        </article>
+    </main>
+    <script src="../assets/learn.js" defer></script>
+</body>
+</html>

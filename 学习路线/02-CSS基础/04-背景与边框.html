@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>背景与边框 · CSS 基础 — 前端自习室</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23B8552F'/%3E%3Ctext x='16' y='22' font-size='16' font-family='serif' font-weight='700' fill='%23FFF7EF' text-anchor='middle'%3E学%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="../assets/learn.css">
+</head>
+<body data-page="02-CSS基础/04-背景与边框.html">
+    <main class="lx-main">
+        <article class="lx-article">
+
+            <nav class="lx-crumb">
+                <a href="../教程中心页.html">学习路线</a><span class="sep">›</span>
+                <a href="index.html">CSS 基础</a><span class="sep">›</span>
+                <span class="here">背景与边框</span>
+            </nav>
+            <h1><span class="h-no">04</span>背景与边框</h1>
+            <p class="lx-lead">
+                背景是墙面的「装修」，边框是盒子的「相框」。这一章把
+                <strong>background</strong> 一族（颜色、图片、平铺、位置、尺寸、简写）和
+                <strong>border / border-radius / outline</strong> 一网打尽。
+            </p>
+            <div class="lx-meta-row">
+                <span class="lx-chip">约 25 分钟</span>
+                <span class="lx-chip">13 个动手实验</span>
+                <span class="lx-chip">属性值全家桶</span>
+            </div>
+
+            <section>
+                <h2>一、background-color：背景色与透明度</h2>
+                <p>
+                    <code>background-color</code> 属性用于设置元素的背景颜色。这是 CSS 中最基础的背景属性之一，
+                    可以接受任何有效的 CSS 颜色值，包括颜色关键字、十六进制值、RGB、HSL 等格式。
+                </p>
+                <div class="lx-tip"><span><b>属性详解</b>：<code>background-color</code> 会填充元素的整个内容区域和内边距区域，
+                    但不包括边框和外边距。如果元素有圆角，背景色也会跟随圆角形状。</span></div>
+
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>background-color 常用值：从纯色到半透明</caption>
+                        <thead>
+                            <tr><th>值</th><th>效果</th><th>使用场景</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">#C08A3E</td><td>十六进制色，不透明纯色背景，最常用</td><td>卡片、按钮、页面的基础底色</td></tr>
+                            <tr><td class="td-val">rgb(192, 138, 62)</td><td>与十六进制等价的十进制写法</td><td>需要按通道读数值、做 JS 计算时</td></tr>
+                            <tr><td class="td-val">rgba(150, 101, 44, 0.35)</td><td>第 4 位控制透明度，只透明背景、不影响文字</td><td>图片上的彩色蒙层、半透明底色</td></tr>
+                            <tr><td class="td-val">hsl(30, 60%, 50%)</td><td>按色相 / 饱和度 / 亮度取色，同色系调色方便</td><td>做一套深浅主题色板</td></tr>
+                            <tr><td class="td-val">coral 等关键字</td><td>浏览器内置的 140+ 个命名颜色</td><td>快速打草稿、教学演示</td></tr>
+                            <tr><td class="td-val">transparent（默认值）</td><td>完全透明，露出下层内容</td><td>需要「看穿」元素时显式声明</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="lab" data-lang="css" data-file="background-color.css">
+                    <div class="lab-head"><span class="lab-cap">五种写法各来一块：把 rgba 的第 4 位改成 <code>0.8</code>，看半透明变浓</span></div>
+                    <template class="lab-html">
+                        <div class="stage">
+                            <div class="bg-solid">十六进制：#C08A3E（土金色）</div>
+                            <div class="bg-alpha">RGBA：rgba(150, 101, 44, 0.35)（半透明，透出底层条纹）</div>
+                            <div class="bg-hsl">HSL：hsl(30, 60%, 50%)</div>
+                            <div class="bg-name">颜色关键字：coral（珊瑚色）</div>
+                            <div class="bg-trans">关键字：transparent（完全透明，只剩虚线框）</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">/* 底层条纹舞台：方便看出「透明 / 半透明」的差别 */
+.stage {
+    background: repeating-linear-gradient(45deg, #F3E9D8 0 12px, #EFE2CC 12px 24px);
+    border-radius: 10px;
+    padding: 12px;
+}
+
+.stage div {
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.bg-solid { background-color: #C08A3E; color: #fff; }           /* 十六进制：土金色 */
+.bg-alpha { background-color: rgba(150, 101, 44, 0.35); }       /* RGBA：第 4 位是透明度 */
+.bg-hsl   { background-color: hsl(30, 60%, 50%); color: #fff; } /* HSL：色相 饱和度 亮度 */
+.bg-name  { background-color: coral; }                          /* 颜色关键字：珊瑚色 */
+.bg-trans {
+    background-color: transparent;                              /* 完全透明（默认值） */
+    border: 1.5px dashed #96652C;
+}</script>
+                </div>
+
+                <div class="lx-note"><span><b>使用场景</b>：<br>
+                    1. <b>纯色背景</b>：为卡片、按钮、输入框等元素设置基础背景色<br>
+                    2. <b>半透明蒙层</b>：在图片上叠加彩色蒙层，增强文字可读性<br>
+                    3. <b>状态指示</b>：通过背景色变化表示元素的不同状态（悬停、激活、禁用等）<br>
+                    4. <b>分层设计</b>：使用不同透明度的背景色创建视觉层次</span></div>
+                <div class="lx-warn"><span><b>注意事项</b>：<br>
+                    1. <code>background-color</code> 不会被子元素继承，但会透过子元素的透明区域显示<br>
+                    2. 使用 <code>rgba()</code> 或 <code>hsla()</code> 设置透明度时，只影响背景色，不影响内容文字<br>
+                    3. 透明度值范围：0（完全透明）到 1（完全不透明）<br>
+                    4. 在响应式设计中，背景色通常与文字颜色形成足够对比度以满足无障碍标准</span></div>
+            </section>
+
+            <section>
+                <h2>二、background-image：背景图与默认平铺</h2>
+                <p>
+                    <code>background-image</code> 属性用于为元素设置背景图像。这是创建视觉层次、
+                    添加纹理和实现复杂背景效果的核心属性。
+                </p>
+                <div class="lx-tip"><span><b>属性详解</b>：<code>background-image</code> 可以接受多种类型的图像值——
+                    <code>url()</code> 引用图像文件、三种渐变函数现场「画图」、<code>none</code> 表示不设置。详见下表。</span></div>
+
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>background-image 常用值：引用图片，或者用渐变「画」一张</caption>
+                        <thead>
+                            <tr><th>值</th><th>效果</th><th>使用场景</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">url("images/hero.jpg")</td><td>引用外部 / 内联图像文件，路径相对于 CSS 文件</td><td>照片、纹理、图标背景</td></tr>
+                            <tr><td class="td-val">linear-gradient()</td><td>线性渐变，浏览器现场画出来的图</td><td>渐变 banner、条纹图案</td></tr>
+                            <tr><td class="td-val">radial-gradient()</td><td>径向渐变，从圆心向外扩散</td><td>光晕、圆点纹理</td></tr>
+                            <tr><td class="td-val">conic-gradient()</td><td>锥形渐变，绕圆心转一圈（CSS3 新增）</td><td>饼图、色轮</td></tr>
+                            <tr><td class="td-val">none（默认值）</td><td>不设置背景图像</td><td>覆盖掉别人写过的背景图</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="lx-codeblock" data-lang="css" data-file="background-image.css">
+                    <script type="text/plain" class="lab-code">/* 基本语法 */
+background-image: <image> | none;
+
+/* 外部图像引用：路径相对于 CSS 文件 */
+.hero {
+    background-image: url("images/hero.jpg");
+}
+
+/* 多背景图像：逗号分隔，先写的盖在上层 */
+.multi-bg {
+    background-image:
+        url("images/pattern.png"),              /* 第一层：图案 */
+        linear-gradient(to bottom, #fff, #000); /* 第二层：渐变 */
+    background-size: 20px 20px, 100% 100%;      /* 尺寸也按同样顺序一一对应 */
+}</script>
+                </div>
+
+                <p>
+                    <strong class="hl">重要特性</strong>：背景图默认会像铺瓷砖一样重复铺满整个元素。
+                    为了离线可演示，下面用渐变生成一块 28px 的「瓷砖」代替图片，平铺现象一目了然：
+                </p>
+
+                <div class="lab" data-lang="css" data-file="tile.css">
+                    <div class="lab-head"><span class="lab-cap">渐变当「瓷砖」：把 <code>background-size</code> 改成 <code>56px 56px</code>，看每块瓷砖变大</span></div>
+                    <template class="lab-html">
+                        <div class="tile"></div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.tile {
+    height: 110px;
+    border: 1.5px solid #E3D5C4;
+    border-radius: 10px;
+    /* 真实项目写 url("tile.png")；这里用渐变画图案，离线也能看 */
+    background-image: linear-gradient(135deg, #E8C39E 25%, #C08A3E 25%,
+                       #C08A3E 50%, #E8C39E 50%, #E8C39E 75%, #C08A3E 75%);
+    background-size: 28px 28px;   /* 每块"瓷砖"28px，默认 repeat 铺满 */
+}</script>
+                </div>
+
+                <div class="lx-note"><span><b>使用场景</b>：<br>
+                    1. <b>全屏头图</b>：使用 <code>background-size: cover</code> 实现响应式全屏背景<br>
+                    2. <b>纹理图案</b>：使用小尺寸图片平铺创建重复图案<br>
+                    3. <b>渐变背景</b>：使用渐变函数创建平滑的颜色过渡效果<br>
+                    4. <b>图标背景</b>：为按钮、链接等元素添加图标背景<br>
+                    5. <b>多层背景</b>：叠加多个背景图像创建复杂视觉效果</span></div>
+                <div class="lx-warn"><span><b>注意事项</b>：<br>
+                    1. <code>background-image</code> 不会被子元素继承<br>
+                    2. 背景图像会覆盖在 <code>background-color</code> 之上<br>
+                    3. 如果图像加载失败，会显示 <code>background-color</code> 作为后备<br>
+                    4. 渐变也是 <code>background-image</code> 的一种值——它让「一张图」不依赖任何图片文件<br>
+                    5. 在移动端要注意背景图像的加载性能，特别是大尺寸图像</span></div>
+            </section>
+
+            <section>
+                <h2>三、repeat / position / size / attachment：精细控制</h2>
+                <p>
+                    这四个属性共同控制背景图像的显示方式。它们可以单独使用，也可以组合使用，
+                    为开发者提供了精细控制背景图像的能力。
+                </p>
+                <div class="lx-tip"><span><b>属性关系</b>：<code>background-repeat</code> 控制平铺方向，
+                    <code>background-position</code> 控制位置，<code>background-size</code> 控制尺寸，
+                    <code>background-attachment</code> 控制滚动行为。这四个属性通常与 <code>background-image</code> 配合使用。</span></div>
+
+                <h3>3.1 background-repeat：平铺方式</h3>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>background-repeat 六个值：同一块瓷砖，六种铺法</caption>
+                        <thead>
+                            <tr><th>值</th><th>效果</th><th>使用场景</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">repeat（默认值）</td><td>水平和垂直方向都平铺，边缘处裁切</td><td>纹理壁纸、铺底图案</td></tr>
+                            <tr><td class="td-val">repeat-x</td><td>只在水平方向平铺</td><td>顶部装饰条、横向分隔带</td></tr>
+                            <tr><td class="td-val">repeat-y</td><td>只在垂直方向平铺</td><td>左右侧栏的阴影条</td></tr>
+                            <tr><td class="td-val">no-repeat</td><td>不平铺，只显示一张</td><td>图标、logo，常配合 position 定位</td></tr>
+                            <tr><td class="td-val">space</td><td>平铺并均匀分布空隙，两端的图不被裁剪</td><td>要求每块图案完整出现的图案墙</td></tr>
+                            <tr><td class="td-val">round</td><td>平铺并自动缩放图像，凑整数铺满不留缝</td><td>对图案比例不敏感的铺底</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="lab" data-lang="css" data-file="background-repeat.css">
+                    <div class="lab-head"><span class="lab-cap">同一块瓷砖六种铺法：把 <code>repeat-x</code> 改成 <code>repeat-y</code>，看铺法转向</span></div>
+                    <template class="lab-html">
+                        <div class="rdemo r-repeat">repeat：横竖都铺满（默认）</div>
+                        <div class="rdemo r-repeat-x">repeat-x：只横向铺</div>
+                        <div class="rdemo r-repeat-y">repeat-y：只纵向铺</div>
+                        <div class="rdemo r-norepeat">no-repeat：只显示一张</div>
+                        <div class="rdemo r-space">space：均匀分布，两端不裁</div>
+                        <div class="rdemo r-round">round：自动缩放凑整数</div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.rdemo {
+    height: 76px;
+    border: 1.5px solid #E3D5C4;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background-image: linear-gradient(135deg, #E8C39E 25%, #C08A3E 25%,
+                       #C08A3E 50%, #E8C39E 50%, #E8C39E 75%, #C08A3E 75%);
+    background-size: 22px 22px;
+    font-size: 12px;
+    color: #6B5D4A;
+    padding: 4px 10px;
+}
+
+.r-repeat   { background-repeat: repeat; }    /* 默认：横竖都铺 */
+.r-repeat-x { background-repeat: repeat-x; }  /* 只横向铺 */
+.r-repeat-y { background-repeat: repeat-y; }  /* 只纵向铺 */
+.r-norepeat { background-repeat: no-repeat; } /* 只显示一张 */
+.r-space    { background-repeat: space; }     /* 平铺并均匀分布，图像不被裁剪 */
+.r-round    { background-repeat: round; }     /* 平铺并自动缩放以适应容器 */</script>
+                </div>
+
+                <h3>3.2 background-position：定位方式</h3>
+                <p>
+                    两个值<strong class="hl">先横后纵</strong>。关键是百分比的语义：
+                    <code>50%</code> 并不是「图的左缘放在容器 50% 处」，而是<strong class="hl">图的 50% 处对齐容器的 50% 处</strong>——
+                    所以 <code>center</code>（即 50% 50%）恰好居中，<code>100% 100%</code> 等价于 <code>right bottom</code>。
+                    像素值则是从左上角起算的精确偏移。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>background-position 常用写法：关键字、百分比、像素可以混用</caption>
+                        <thead>
+                            <tr><th>值</th><th>效果</th><th>使用场景</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">center</td><td>水平、垂直都居中（等价 50% 50%）</td><td>头图、头像裁切的安全位</td></tr>
+                            <tr><td class="td-val">right bottom</td><td>关键字九方位任选，顺序可交换</td><td>贴在角落的装饰图</td></tr>
+                            <tr><td class="td-val">15% 20%</td><td>「对齐点」语义：图的 15% 处对齐容器 15% 处</td><td>跟随容器缩放的响应式定位</td></tr>
+                            <tr><td class="td-val">20px 30px</td><td>从左上角落点精确偏移</td><td>雪碧图（精灵图）取单个图标</td></tr>
+                            <tr><td class="td-val">center 20px</td><td>水平居中，垂直距顶 20px，混合写法</td><td>居中但需微调的装饰图</td></tr>
+                            <tr><td class="td-val">right 20px bottom 10px</td><td>四值语法：先指定边，再写相对该边的偏移</td><td>「距右 20、距底 10」的固定角标</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="lab" data-lang="css" data-file="background-position.css">
+                    <div class="lab-head"><span class="lab-cap">红圆就是那张「背景图」：把 <code>15% 20%</code> 改成 <code>50% 50%</code>，看它跳到正中央</span></div>
+                    <template class="lab-html">
+                        <div class="pdemo p1">center</div>
+                        <div class="pdemo p2">right bottom</div>
+                        <div class="pdemo p3">15% 20%</div>
+                        <div class="pdemo p4">20px 30px</div>
+                        <div class="pdemo p5">center 20px（横居中，纵 20px）</div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.pdemo {
+    height: 76px;
+    border: 1.5px solid #E3D5C4;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    /* 用径向渐变画一个红圆，充当"背景图" */
+    background-image: radial-gradient(circle, #B3472E 0 28%, transparent 29%);
+    background-repeat: no-repeat;
+    font-size: 12px;
+    color: #8B7E6C;
+    padding: 4px 10px;
+}
+
+.p1 { background-position: center; }       /* 水平和垂直都居中 */
+.p2 { background-position: right bottom; } /* 水平靠右，垂直靠底 */
+.p3 { background-position: 15% 20%; }      /* 水平15%，垂直20% */
+.p4 { background-position: 20px 30px; }    /* 水平20px，垂直30px */
+.p5 { background-position: center 20px; }  /* 水平居中，垂直20px */</script>
+                </div>
+
+                <h3>3.3 background-size：尺寸控制</h3>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>background-size 常用值：cover 铺满裁边，contain 完整留白</caption>
+                        <thead>
+                            <tr><th>值</th><th>效果</th><th>使用场景</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">auto（默认值）</td><td>保持图像原始尺寸</td><td>小图标、纹理瓷砖</td></tr>
+                            <tr><td class="td-val">cover</td><td>等比缩放到铺满容器，超出部分裁掉</td><td>全屏头图、封面图</td></tr>
+                            <tr><td class="td-val">contain</td><td>等比缩放到完整装进容器，可能留白</td><td>必须看全图的展示位</td></tr>
+                            <tr><td class="td-val">90px 60px</td><td>强制拉成指定宽高，比例可能变形</td><td>严格控制占位的缩略图</td></tr>
+                            <tr><td class="td-val">50% 80%</td><td>相对容器的宽和高分别缩放</td><td>跟随容器伸缩的背景</td></tr>
+                            <tr><td class="td-val">100%（单值）</td><td>宽撑满、高度 auto 等比</td><td>通栏横幅背景</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="lab" data-lang="css" data-file="background-size.css">
+                    <div class="lab-head"><span class="lab-cap">同一张 120×80「照片」五种尺寸：把 <code>cover</code> 改成 <code>contain</code>，看裁切变留白</span></div>
+                    <template class="lab-html">
+                        <div class="photo s-cover">cover：铺满，裁掉多余</div>
+                        <div class="photo s-contain">contain：完整显示，可能留白</div>
+                        <div class="photo s-px">90px 60px：指定宽高</div>
+                        <div class="photo s-pct">50% 80%：相对容器</div>
+                        <div class="photo s-auto">auto：原始尺寸 120×80</div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.photo {
+    height: 96px;
+    border: 1.5px solid #E3D5C4;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    /* 一张 120×80 的内联 SVG 充当"照片"，离线也能看 */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='80'%3E%3Crect width='120' height='80' fill='%23C08A3E'/%3E%3Ccircle cx='42' cy='34' r='20' fill='%23F7F1E6'/%3E%3Cpath d='M0 80 L48 34 L78 62 L100 44 L120 64 L120 80 Z' fill='%236E8B6E'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    font-size: 12px;
+    color: #8B7E6C;
+    padding: 4px 10px;
+}
+
+.s-cover   { background-size: cover; }      /* 等比缩放，铺满容器，可能裁剪 */
+.s-contain { background-size: contain; }    /* 等比缩放，完整显示，可能留白 */
+.s-px      { background-size: 90px 60px; }  /* 指定宽度和高度 */
+.s-pct     { background-size: 50% 80%; }    /* 相对于容器的宽度和高度 */
+.s-auto    { background-size: auto; }       /* 保持原始尺寸 */</script>
+                </div>
+
+                <h3>3.4 background-attachment：滚动行为</h3>
+                <div class="lx-codeblock" data-lang="css" data-file="background-attachment.css">
+                    <script type="text/plain" class="lab-code">/* 基本语法 */
+background-attachment: scroll | fixed | local;
+
+.scroll-demo { background-attachment: scroll; } /* 默认值：背景随元素滚动 */
+.fixed-demo  { background-attachment: fixed; }  /* 背景固定，不随滚动条滚动 */
+.local-demo  { background-attachment: local; }  /* 背景随元素内容滚动 */</script>
+                </div>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>background-attachment 三个值：背景「钉」在哪</caption>
+                        <thead>
+                            <tr><th>值</th><th>效果</th><th>使用场景</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">scroll（默认值）</td><td>背景钉在元素上，元素滚动它跟着走</td><td>绝大多数普通背景</td></tr>
+                            <tr><td class="td-val">fixed</td><td>背景钉在视口上，滚动时内容从图上「滑过」</td><td>视差滚动头图（移动端慎用）</td></tr>
+                            <tr><td class="td-val">local</td><td>背景钉在元素内容上，内部滚动时图随内容走</td><td>可滚动面板里的背景</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-warn"><span><b>注意事项</b>：<br>
+                    1. <code>background-attachment: fixed</code> 在移动端 Safari 中支持较差，慎用<br>
+                    2. <code>fixed</code> 会让背景固定在视口中，创建视差滚动效果<br>
+                    3. <code>local</code> 值在移动端支持较好，但兼容性不如 <code>scroll</code><br>
+                    4. 在性能敏感的页面中，避免同时使用多个 <code>fixed</code> 背景</span></div>
+
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>背景四兄弟速查总表</caption>
+                        <thead>
+                            <tr><th>属性</th><th>常用值</th><th>说明</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>background-repeat</code></td><td><code>repeat / no-repeat / repeat-x / repeat-y / space / round</code></td><td>平铺方向，默认 repeat</td></tr>
+                            <tr><td><code>background-position</code></td><td><code>center</code> / <code>right bottom</code> / <code>15% 20%</code> / <code>12px 12px</code></td><td>图片位置，先横后纵</td></tr>
+                            <tr><td><code>background-size</code></td><td><code>cover / contain / 100px / 100% / auto</code></td><td>cover 铺满裁边，contain 完整留白</td></tr>
+                            <tr><td><code>background-attachment</code></td><td><code>scroll（默认）/ fixed / local</code></td><td>fixed 让背景固定不动，滚动时内容「从图上滑过」，常做视差头图；移动端 Safari 支持差，慎用</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-note"><span><b>全屏头图三件套</b>（背下来）：<br>
+                    <code>background-size: cover; background-position: center; background-repeat: no-repeat;</code><br>
+                    ——任何尺寸的屏幕都能得到一张居中、铺满、不重复的头图。</span></div>
+            </section>
+
+            <section>
+                <h2>四、background 简写：顺序与陷阱</h2>
+                <p>
+                    <code>background</code> 是背景属性的简写形式，可以一次性设置所有背景相关属性。
+                    这是 CSS 中最常用的简写属性之一，但使用时需要注意顺序和陷阱。
+                </p>
+                <div class="lx-tip"><span><b>简写语法</b>：<code>background: [颜色] [图片] [平铺] [位置] / [尺寸] [滚动] [原点] [裁剪];</code><br>
+                    注意：斜杠 <code>/</code> 用于分隔 <code>background-position</code> 和 <code>background-size</code>。</span></div>
+
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>background 简写推荐顺序：没写的位置用默认值补上</caption>
+                        <thead>
+                            <tr><th>顺位</th><th>子属性</th><th>省略时默认值</th><th>备注</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1</td><td><code>background-color</code></td><td class="td-def">transparent</td><td>一层背景只能有一个颜色，建议放最前</td></tr>
+                            <tr><td>2</td><td><code>background-image</code></td><td class="td-def">none</td><td>url() 或渐变函数</td></tr>
+                            <tr><td>3</td><td><code>background-repeat</code></td><td class="td-def">repeat</td><td>—</td></tr>
+                            <tr><td>4</td><td><code>background-position</code></td><td class="td-def">0% 0%</td><td>和尺寸之间必须用 <code>/</code> 分隔</td></tr>
+                            <tr><td>5</td><td><code>background-size</code></td><td class="td-def">auto</td><td>只能紧跟在 position 的斜杠后面</td></tr>
+                            <tr><td>6</td><td><code>background-attachment</code></td><td class="td-def">scroll</td><td>—</td></tr>
+                            <tr><td>7</td><td><code>background-origin</code></td><td class="td-def">padding-box</td><td>背景从哪一层开始铺</td></tr>
+                            <tr><td>8</td><td><code>background-clip</code></td><td class="td-def">border-box</td><td>背景画到哪一层为止</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="lab" data-lang="css" data-file="background.css">
+                    <div class="lab-head"><span class="lab-cap">简写一次到位：颜色 图片 平铺 位置 / 尺寸——把斜杠后的 <code>80px</code> 改成 <code>40px</code>，看圆点变小</span></div>
+                    <template class="lab-html">
+                        <div class="hero"></div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.hero {
+    height: 120px;
+    border-radius: 10px;
+    border: 1.5px solid #E3D5C4;
+    /*          颜色        图片                                              平铺       位置   /  尺寸      */
+    background: #FDF9F4 radial-gradient(circle, #C08A3E 0 30%, transparent 31%) no-repeat center / 80px 80px;
+}</script>
+                </div>
+
+                <div class="lx-codeblock" data-lang="css" data-file="background-more.css">
+                    <script type="text/plain" class="lab-code">/* 多背景简写：逗号分隔多层，先写的在上层 */
+.multi-bg {
+    background:
+        url("images/overlay.png") no-repeat center / 100% 100%,
+        linear-gradient(135deg, #E8C39E 25%, #C08A3E 25%) repeat;
+}
+
+/* 简化写法：省略 size，使用默认值 auto */
+.simple-bg {
+    background: #FDF9F4 url("images/pattern.png") repeat center;
+}
+
+/* 最简写法：只设置颜色，其他属性全部用默认值 */
+.minimal-bg {
+    background: #FDF9F4;
+}</script>
+                </div>
+
+                <div class="lx-warn"><span><b>重要陷阱</b>：<br>
+                    1. <b>斜杠分隔符</b>：位置和尺寸之间必须写 <code>/</code>，写成空格整条声明作废<br>
+                    2. <b>属性重置</b>：简写会<b>重置所有没写的子属性</b>——先写 <code>background: url(a.png)</code>
+                    再补 <code>background-color: #fff</code> 没问题，但反过来简写会把颜色冲掉<br>
+                    3. <b>顺序重要</b>：虽然大多数浏览器能容忍顺序变化，但遵循推荐顺序可以确保兼容性<br>
+                    4. <b>省略规则</b>：可以省略任何值，省略的值使用默认值，但斜杠不能省略<br>
+                    5. <b>建议</b>：要么全用简写，要么全用分写，别混着来</span></div>
+                <div class="lx-note"><span><b>使用建议</b>：<br>
+                    1. <b>简单背景</b>：使用简写，代码更简洁<br>
+                    2. <b>复杂背景</b>：使用分写，更易维护和调试<br>
+                    3. <b>多背景</b>：必须使用简写，用逗号分隔多个背景<br>
+                    4. <b>渐变背景</b>：通常使用简写，将渐变函数作为背景图像<br>
+                    5. <b>响应式设计</b>：建议使用分写，便于媒体查询中单独修改某个属性</span></div>
+            </section>
+
+            <section>
+                <h2>五、border：三件套、简写与八种样式</h2>
+                <p>
+                    <code>border</code> 属性用于设置元素的边框。边框由三个核心属性组成：
+                    <code>border-width</code>（粗细）、<code>border-style</code>（线型）、
+                    <code>border-color</code>（颜色）。这三个属性可以单独设置，也可以通过简写属性一次性设置。
+                </p>
+                <div class="lx-tip"><span><b>属性详解</b>：<code>border</code> 是简写属性，语法为
+                    <code>border: [粗细] [线型] [颜色];</code>。
+                    其中 <strong class="hl">border-style 是必须的</strong>，如果省略，边框将不会显示。
+                    其他属性可以省略，省略时使用默认值：<code>border-width: medium</code>、
+                    <code>border-color: 元素的 color 值</code>。</span></div>
+
+                <div class="lab" data-lang="css" data-file="border-style.css">
+                    <div class="lab-head"><span class="lab-cap">八种线型同台：把 <code>double</code> 那行的粗细改成 <code>2px</code>，看「双线」挤成一条</span></div>
+                    <template class="lab-html">
+                        <div class="demo b-solid">solid 实线</div>
+                        <div class="demo b-dashed">dashed 虚线</div>
+                        <div class="demo b-dotted">dotted 点线</div>
+                        <div class="demo b-double">double 双线</div>
+                        <div class="demo b-groove">groove 凹槽</div>
+                        <div class="demo b-ridge">ridge 凸脊</div>
+                        <div class="demo b-inset">inset 内嵌</div>
+                        <div class="demo b-outset">outset 外凸</div>
+                        <div class="short">简写 border: 5px solid #B3472E</div>
+                    </template>
+                    <script type="text/plain" class="lab-code">/* 公共底座：只给粗细和颜色，线型由各 class 单独指定 */
+.demo {
+    border-width: 5px;
+    border-color: #C08A3E;
+    background: #FDF9F4;
+    padding: 6px 12px;
+    margin-bottom: 6px;
+    border-radius: 4px;
+}
+
+.b-solid  { border-style: solid; }
+.b-dashed { border-style: dashed; }
+.b-dotted { border-style: dotted; }
+.b-double { border-style: double; }
+.b-groove { border-style: groove; }
+.b-ridge  { border-style: ridge; }
+.b-inset  { border-style: inset; }
+.b-outset { border-style: outset; }
+
+/* 简写形式：粗细 线型 颜色，一条顶三条 */
+.short {
+    border: 5px solid #B3472E;
+    background: #fff;
+    padding: 8px 12px;
+    border-radius: 6px;
+}</script>
+                </div>
+
+                <h3>5.1 border-style 属性详解</h3>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>border-style 全家桶：不写 style 就没有边框</caption>
+                        <thead>
+                            <tr><th>值</th><th>效果</th><th>使用场景</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">none（默认值）</td><td>无边框——忘了写 style 时边框完全不显示</td><td>主动去除边框</td></tr>
+                            <tr><td class="td-val">hidden</td><td>同 none，但在表格边框冲突时优先级更高</td><td>处理表格边框冲突</td></tr>
+                            <tr><td class="td-val">solid</td><td>实线</td><td><b>最常用</b>：卡片、按钮、输入框</td></tr>
+                            <tr><td class="td-val">dashed</td><td>虚线</td><td>占位区、待上传的虚线框</td></tr>
+                            <tr><td class="td-val">dotted</td><td>点线</td><td>柔和的提示框、装饰线</td></tr>
+                            <tr><td class="td-val">double</td><td>双线，宽度至少 3px 才能看出效果</td><td>复古证书、票据风</td></tr>
+                            <tr><td class="td-val">groove</td><td>3D 凹槽，阴影色由 border-color 决定</td><td>拟物风界面</td></tr>
+                            <tr><td class="td-val">ridge</td><td>3D 凸脊，阴影色由 border-color 决定</td><td>拟物风界面</td></tr>
+                            <tr><td class="td-val">inset</td><td>3D 内嵌，元素像「陷进去」</td><td>拟物风界面</td></tr>
+                            <tr><td class="td-val">outset</td><td>3D 外凸，元素像「浮出来」</td><td>拟物风界面</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>复合值同样按顺时针展开：<code>border-style: solid dashed dotted double;</code> = 上实线、右虚线、下点线、左双线。</p>
+
+                <h3>5.2 border-width 属性详解</h3>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>border-width 常用值：关键字三个，长度随意，还能四边分开</caption>
+                        <thead>
+                            <tr><th>值</th><th>效果</th><th>使用场景</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">thin</td><td>细边框（通常 1px，具体由浏览器决定）</td><td>发丝级分隔线</td></tr>
+                            <tr><td class="td-val">medium（默认值）</td><td>中等边框（通常 3px）</td><td>一般不明写，知道默认是它即可</td></tr>
+                            <tr><td class="td-val">thick</td><td>粗边框（通常 5px）</td><td>需要强调的框</td></tr>
+                            <tr><td class="td-val">2px / 0.5em 等长度</td><td>精确控制，日常工作主力</td><td>一切日常边框</td></tr>
+                            <tr><td class="td-val">2px 4px 6px 8px</td><td>1~4 个值，上右下左顺时针，缺省找对面补齐</td><td>四边粗细不同时</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>5.3 border-color 属性详解</h3>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>border-color 常用值：不写时跟随文字颜色</caption>
+                        <thead>
+                            <tr><th>值</th><th>效果</th><th>使用场景</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">#C08A3E 等颜色值</td><td>任意合法 CSS 颜色</td><td>日常边框配色</td></tr>
+                            <tr><td class="td-val">rgba(150, 101, 44, 0.5)</td><td>半透明边框，会透出下层背景</td><td>叠加层次的轻边框</td></tr>
+                            <tr><td class="td-val">currentColor（默认值）</td><td>跟随元素的 color 值，文字变色边框跟着变</td><td>边框想与文字同色时（省略不写即可）</td></tr>
+                            <tr><td class="td-val">transparent</td><td>透明边框：看不见但占位置</td><td>hover 才显示边框，提前占位防抖动</td></tr>
+                            <tr><td class="td-val">金 棕 绿 红（1~4 值）</td><td>四边异色，顺时针：上 右 下 左</td><td>彩色拼接装饰</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="lx-codeblock" data-lang="css" data-file="border-mixed.css">
+                    <script type="text/plain" class="lab-code">/* 三件套分开写 */
+.border-separated {
+    border-width: 5px;           /* 粗细：thin | medium | thick | 长度 */
+    border-style: solid;         /* 线型：必须值 */
+    border-color: #C08A3E;       /* 颜色：默认跟随元素的 color 值 */
+}
+
+/* 四边不同样式：上 右 下 左，顺时针 */
+.border-mixed {
+    border-width: 2px 4px 6px 8px;
+    border-style: solid dashed dotted double;
+    border-color: #C08A3E #96652C #4E7A52 #8A4E63;
+}
+
+/* 三边相同，一边不同：先简写四边，再单独覆盖 */
+.border-three-same {
+    border: 2px solid #C08A3E;
+    border-bottom: 4px dashed #96652C;  /* 底边不同 */
+}</script>
+                </div>
+
+                <div class="lx-warn"><span><b>新手最常踩的坑</b>：写了 <code>border-width</code> 和 <code>border-color</code>
+                    却忘了 <code>border-style</code>——<b>边框完全不见</b>，因为 style 默认是 none。
+                    「没边框」先查 style。</span></div>
+                <div class="lx-note"><span><b>使用场景</b>：<br>
+                    1. <b>卡片边框</b>：使用 <code>border: 1px solid #e0e0e0</code> 创建卡片容器<br>
+                    2. <b>输入框边框</b>：使用不同边框状态表示输入框的聚焦、错误等状态<br>
+                    3. <b>分隔线</b>：使用 <code>border-bottom</code> 创建列表项之间的分隔线<br>
+                    4. <b>装饰边框</b>：使用不同线型和颜色创建装饰性边框效果<br>
+                    5. <b>响应式边框</b>：在媒体查询中调整边框粗细或样式</span></div>
+            </section>
+
+            <section>
+                <h2>六、单边边框与实战：选项卡指示线</h2>
+                <p>
+                    CSS 允许为元素的四条边分别设置边框。这提供了极大的灵活性，
+                    可以创建各种复杂的边框效果，如单边强调线、选项卡指示器等。
+                </p>
+                <div class="lx-tip"><span><b>单边边框属性</b>：<code>border-top</code> / <code>border-right</code> /
+                    <code>border-bottom</code> / <code>border-left</code>。
+                    每个都是简写属性，一条里同时设置宽度、样式和颜色；也可以再拆成
+                    <code>border-top-width</code> 等九个分写属性。</span></div>
+
+                <div class="lab" data-lang="css" data-file="border-sides.css">
+                    <div class="lab-head"><span class="lab-cap">四条边各上一色：把 <code>border-top</code> 改成 <code>border-left</code>，看强调条换边</span></div>
+                    <template class="lab-html">
+                        <div class="side s-top">只有顶边是红棕粗线</div>
+                        <div class="side s-right">只有右边是赭金粗线</div>
+                        <div class="side s-bottom">只有底边是灰绿粗线</div>
+                        <div class="side s-left">只有左边是土金粗线</div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.side {
+    background: #fff;
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    border-radius: 6px;
+}
+
+.s-top    { border-top: 4px solid #B3472E; }    /* 顶部：4px 实线 红棕色 */
+.s-right  { border-right: 4px solid #C08A3E; }  /* 右侧：4px 实线 赭金色 */
+.s-bottom { border-bottom: 4px solid #6E8B6E; } /* 底部：4px 实线 灰绿色 */
+.s-left   { border-left: 4px solid #96652C; }   /* 左侧：4px 实线 土金色 */</script>
+                </div>
+
+                <h3>6.1 实战：选项卡（Tab）选中指示</h3>
+                <p>
+                    实战名场面——<strong class="hl">选项卡（tab）的选中指示</strong>：
+                    选中的标签用 <code>border-bottom: none</code> 摘掉底边，
+                    再用 <code>margin-bottom: -2px</code> 往下压 2 像素，盖住内容区的上边框，
+                    视觉上「标签与面板连成一体」：
+                </p>
+
+                <div class="lab" data-lang="css" data-file="tabs.css">
+                    <div class="lab-head"><span class="lab-cap">选中态 = 去底边 + 负 margin 下压：把 <code>-2px</code> 改成 <code>0</code>，看标签与面板之间「裂开」一条线</span></div>
+                    <template class="lab-html">
+                        <div>
+                            <span class="tab">推荐</span>
+                            <span class="tab tab-active">前端课程</span>
+                            <span class="tab">后端课程</span>
+                        </div>
+                        <div class="panel">选中的「前端课程」标签没有底边，还向下压了 2px，把面板上边框盖住了一段——这就是手写选项卡的经典技巧。</div>
+                    </template>
+                    <script type="text/plain" class="lab-code">/* 标签：inline-block 排一排，底边摘掉，上圆角 */
+.tab {
+    display: inline-block;
+    padding: 8px 18px;
+    margin-right: 4px;
+    border: 2px solid #E3D5C4;
+    border-bottom: none;              /* 底边不要，留给面板 */
+    border-radius: 10px 10px 0 0;
+    background: #F7F1E6;
+    color: #6B5D4A;
+}
+
+/* 选中态：下压 2px 盖住面板的上边框，背景换成面板同色 */
+.tab-active {
+    margin-bottom: -2px;              /* 关键：往下压，盖住面板顶边 */
+    padding-bottom: 10px;
+    background: #fff;
+    color: #754C1F;
+    font-weight: 600;
+}
+
+/* 面板：上边框会被选中的标签盖住一段 */
+.panel {
+    border: 2px solid #E3D5C4;
+    border-radius: 0 0 10px 10px;
+    background: #fff;
+    padding: 14px 16px;
+    color: #6B5D4A;
+}</script>
+                </div>
+
+                <p>如果项目里标签用 flex 布局，同样的思路换一副骨架——透明边框占位、选中时换成白色底边盖住分隔线：</p>
+                <div class="lx-codeblock" data-lang="css" data-file="tabs-flex.css">
+                    <script type="text/plain" class="lab-code">/* 选项卡容器 */
+.tab-container {
+    display: flex;
+    gap: 2px;
+    border-bottom: 2px solid #E3D5C4;  /* 底部分隔线 */
+}
+
+/* 选项卡标签 */
+.tab-item {
+    padding: 12px 24px;
+    border: 2px solid transparent;      /* 基础透明边框：占位防抖动 */
+    border-bottom: none;                /* 移除底部边框 */
+    border-radius: 8px 8px 0 0;         /* 上圆角 */
+    background: #F7F1E6;
+    color: #6B5D4A;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* 选中状态 */
+.tab-item.active {
+    border-color: #E3D5C4;              /* 显示边框 */
+    border-bottom: 2px solid #fff;      /* 用白色覆盖底部分隔线 */
+    margin-bottom: -2px;                /* 下移2px，覆盖底部分隔线 */
+    background: #fff;                   /* 与面板同色 */
+    color: #754C1F;
+    font-weight: 600;
+}
+
+/* 选项卡面板 */
+.tab-panel {
+    border: 2px solid #E3D5C4;
+    border-top: none;                   /* 移除顶部边框，与选项卡连接 */
+    border-radius: 0 0 8px 8px;         /* 下圆角 */
+    padding: 20px;
+    background: #fff;
+}
+
+/* HTML 结构：
+<div class="tab-container">
+    <div class="tab-item active">推荐</div>
+    <div class="tab-item">前端课程</div>
+    <div class="tab-item">后端课程</div>
+</div>
+<div class="tab-panel">……面板内容……</div> */</script>
+                </div>
+
+                <div class="lx-note"><span><b>单边边框的日常用法</b>：<br>
+                    1. <b>消息提示条</b>：左边 4px 强调线，表示不同类型的信息（成功、警告、错误）<br>
+                    2. <b>表格分隔线</b>：使用 <code>border-bottom</code> 创建表格行之间的分隔线<br>
+                    3. <b>导航吸底阴影</b>：在导航栏底部添加边框或阴影<br>
+                    4. <b>列表项分隔</b>：在列表项之间添加底部分隔线<br>
+                    5. <b>表单字段分组</b>：使用左边框为相关字段添加视觉分组<br>
+                    6. <b>卡片装饰</b>：在卡片顶部添加彩色边框作为装饰</span></div>
+                <div class="lx-warn"><span><b>注意事项</b>：<br>
+                    1. 单边边框会增加元素的尺寸，可能影响布局<br>
+                    2. 使用 <code>box-sizing: border-box</code> 可以避免边框撑大元素<br>
+                    3. 在响应式设计中，可能需要在不同屏幕尺寸下调整边框<br>
+                    4. 过多的边框可能会让界面显得杂乱，应适度使用</span></div>
+            </section>
+
+            <section>
+                <h2>七、border-radius：圆角、圆与胶囊</h2>
+                <p>
+                    <code>border-radius</code> 属性用于设置元素的圆角。这是 CSS3 中最常用的属性之一，
+                    可以创建从轻微圆角到完全圆形的各种效果。
+                </p>
+                <div class="lx-tip"><span><b>属性详解</b>：<code>border-radius</code> 是一个简写属性，可以设置一到四个值，
+                    按<strong class="hl">左上 → 右上 → 右下 → 左下</strong>顺时针展开，缺的值「对角补齐」。
+                    值可以是长度单位（px、em、rem）或百分比。</span></div>
+
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>border-radius 写法速查：从常规圆角到斜杠椭圆弧</caption>
+                        <thead>
+                            <tr><th>写法</th><th>效果</th><th>使用场景</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">border-radius: 10px</td><td>一个值：四个角相同</td><td>卡片、输入框的常规圆角</td></tr>
+                            <tr><td class="td-val">border-radius: 10px 20px</td><td>两个值：左上右下一组，右上左下一组</td><td>对角呼应的错落设计</td></tr>
+                            <tr><td class="td-val">border-radius: 10px 20px 30px</td><td>三个值：左上 | 右上左下 | 右下</td><td>较少用，知道规则即可</td></tr>
+                            <tr><td class="td-val">border-radius: 10px 20px 30px 40px</td><td>四个值：顺时针各角独立</td><td>四角各不同的异形卡</td></tr>
+                            <tr><td class="td-val">border-top-left-radius: 40px</td><td>单角属性，只圆一个角</td><td>选项卡、聊天气泡</td></tr>
+                            <tr><td class="td-val">50%（正方形元素）</td><td>完美的圆</td><td>头像、圆形徽章</td></tr>
+                            <tr><td class="td-val">50%（长方形元素）</td><td>椭圆</td><td>椭圆形装饰</td></tr>
+                            <tr><td class="td-val">999px</td><td>半径超过半高即胶囊，一劳永逸不用算</td><td>按钮、标签的胶囊形</td></tr>
+                            <tr><td class="td-val">70px 30px / 35px 60px</td><td>斜杠分隔水平 / 垂直半径，角变成椭圆弧</td><td>不规则有机形状</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="lab" data-lang="css" data-file="border-radius.css">
+                    <div class="lab-head"><span class="lab-cap">七种圆角形态：把「圆」的 <code>50%</code> 改成 <code>30%</code>，看正圆变圆角方</span></div>
+                    <template class="lab-html">
+                        <div class="br s1">10px</div>
+                        <div class="br s2">30 0 30 0</div>
+                        <div class="br s3">左上 40</div>
+                        <div class="br s4">圆</div>
+                        <div class="br s5">胶囊</div>
+                        <div class="br s6">椭圆</div>
+                        <div class="br s7">斜杠</div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.br {
+    display: inline-block;
+    vertical-align: middle;
+    text-align: center;
+    margin: 0 10px 10px 0;
+    background: linear-gradient(135deg, #C08A3E, #B3472E);
+    color: #fff;
+    font-size: 12.5px;
+}
+
+.s1 { width: 122px; height: 56px; line-height: 56px; border-radius: 10px; }
+.s2 { width: 122px; height: 56px; line-height: 56px; border-radius: 30px 0 30px 0; }
+.s3 { width: 122px; height: 56px; line-height: 56px; border-top-left-radius: 40px; }
+.s4 { width: 80px;  height: 80px; line-height: 80px; border-radius: 50%; }  /* 正方形 + 50% = 圆 */
+.s5 { width: 130px; height: 56px; line-height: 56px; border-radius: 999px; } /* 半径过半高 = 胶囊 */
+.s6 { width: 140px; height: 62px; line-height: 62px; border-radius: 50%; }  /* 长方形 + 50% = 椭圆 */
+
+/* 斜杠语法：水平半径 / 垂直半径，角变成椭圆弧 */
+.s7 { width: 150px; height: 70px; line-height: 70px; border-radius: 70px 30px 60px 30px / 35px 60px 30px 60px; }</script>
+                </div>
+
+                <div class="lx-note"><span><b>口诀</b>：<br>
+                    1. <b>「正方形配 50% 是圆」</b>：宽度和高度相等时，50% 的圆角会创建完美的圆形<br>
+                    2. <b>「胶囊要半径盖过半高」</b>：圆角值大于或等于高度的一半时，会创建胶囊形状<br>
+                    3. <b>「长方形配 50% 是椭圆」</b>：宽度和高度不等时，50% 的圆角会创建椭圆形<br>
+                    4. <b>「999px 一劳永逸」</b>：实际写胶囊不必算数，直接使用很大的值（如 999px）</span></div>
+                <div class="lx-warn"><span><b>使用场景</b>：<br>
+                    1. <b>卡片圆角</b>：为卡片容器添加轻微圆角（如 8px、12px）<br>
+                    2. <b>按钮圆角</b>：为按钮添加圆角，通常使用胶囊形状<br>
+                    3. <b>头像圆形</b>：使用 50% 圆角创建用户头像的圆形效果<br>
+                    4. <b>徽章胶囊</b>：使用胶囊形状创建标签、徽章等元素<br>
+                    5. <b>图片圆角</b>：为图片添加圆角，使其更融入设计<br>
+                    6. <b>输入框圆角</b>：为输入框添加轻微圆角，提升用户体验</span></div>
+                <div class="lx-tip"><span><b>高级技巧</b>：<br>
+                    1. <b>水平/垂直半径</b>：可以使用斜杠 <code>/</code> 分隔水平和垂直半径，创建更复杂的圆角形状<br>
+                    2. <b>动画圆角</b>：可以使用 CSS 过渡或动画来平滑地改变圆角值<br>
+                    3. <b>响应式圆角</b>：使用相对单位（如 em、rem）或百分比来创建响应式圆角<br>
+                    4. <b>边框圆角</b>：圆角会同时影响边框和背景，保持视觉一致性</span></div>
+            </section>
+
+            <section>
+                <h2>八、outline：不占布局的轮廓线</h2>
+                <p>
+                    <code>outline</code> 属性用于设置元素的轮廓。轮廓与边框类似，但有一些关键区别：
+                    轮廓不占用空间，不会影响元素的尺寸和布局，通常用于表示元素的聚焦状态。
+                </p>
+                <div class="lx-tip"><span><b>outline vs border</b>：<br>
+                    • <b>位置</b>：outline 画在边框外侧，border 是元素的一部分<br>
+                    • <b>空间</b>：outline 不占空间，border 会占用空间<br>
+                    • <b>圆角</b>：outline 跟随 border-radius，但可能不完全贴合<br>
+                    • <b>单边</b>：border 可以设置单边，outline 只能四边统一<br>
+                    • <b>用途</b>：outline 通常用于 :focus 状态，border 用于装饰和布局</span></div>
+
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>outline 一族：写法和 border 几乎一样，多一个 offset</caption>
+                        <thead>
+                            <tr><th>属性 / 值</th><th>效果</th><th>使用场景</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">outline: 3px solid #C08A3E</td><td>简写：粗细 线型 颜色，style 同样是灵魂</td><td>焦点圈一把梭</td></tr>
+                            <tr><td class="td-val">outline-width</td><td>同 border-width：thin / medium / thick / 长度</td><td>需要更粗的焦点指示</td></tr>
+                            <tr><td class="td-val">outline-style</td><td>与 border-style 同一套值，默认 none</td><td>虚线焦点圈等个性样式</td></tr>
+                            <tr><td class="td-val">outline-color</td><td>任意颜色，默认 currentColor</td><td>与背景形成高对比的焦点色</td></tr>
+                            <tr><td class="td-val">outline-offset: 3px</td><td>轮廓与元素边缘之间的空隙，可正可负</td><td>让焦点圈「悬空」不贴边，更精致</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="lab" data-lang="css" data-file="outline-focus.css">
+                    <div class="lab-head"><span class="lab-cap">点击预览区里的按钮 / 输入框（或按 Tab 切换焦点），观察轮廓与 <code>outline-offset</code> 的空隙</span></div>
+                    <template class="lab-html">
+                        <button class="btn" type="button">点我或按 Tab</button>
+                        <button class="btn" type="button">再按一次 Tab</button>
+                        <p><input class="ipt" type="text" placeholder="点我聚焦看轮廓"></p>
+                    </template>
+                    <script type="text/plain" class="lab-code">.btn {
+    padding: 10px 22px;
+    border: none;
+    border-radius: 10px;
+    background: #96652C;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+/* 按钮聚焦：3px 轮廓 + 3px 空隙 */
+.btn:focus {
+    outline: 3px solid #C08A3E;
+    outline-offset: 3px;
+}
+
+.ipt {
+    padding: 9px 12px;
+    border: 2px solid #E3D5C4;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+/* 输入框聚焦：更细、更贴身的轮廓 */
+.ipt:focus {
+    outline: 2px solid #B3472E;
+    outline-offset: 2px;
+}</script>
+                </div>
+
+                <div class="lx-codeblock" data-lang="css" data-file="outline-props.css">
+                    <script type="text/plain" class="lab-code">/* 分写形式 */
+.outline-separated {
+    outline-width: 3px;        /* 粗细 */
+    outline-style: solid;      /* 线型：与 border-style 同一套值 */
+    outline-color: #C08A3E;    /* 颜色 */
+}
+
+/* 偏移量：轮廓与元素之间的空隙 */
+.outline-offset {
+    outline: 3px solid #C08A3E;
+    outline-offset: 3px;
+}</script>
+                </div>
+
+                <h3>8.1 outline 与 border 的对比</h3>
+                <p>再用两个同尺寸盒子直观对比「占不占布局」（特意用 <code>content-box</code>，下一章会讲为什么）：</p>
+
+                <div class="lab" data-lang="css" data-file="outline-vs-border.css">
+                    <div class="lab-head"><span class="lab-cap">border 把盒子撑宽 12px 还得多给 34px 外边距；outline 画在外面、布局纹丝不动——量量两个盒子的占位宽度</span></div>
+                    <template class="lab-html">
+                        <div class="vs vb">border 6px</div>
+                        <div class="vs vo">outline 6px</div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.vs {
+    box-sizing: content-box;   /* 特意用默认盒模型，下一章细讲 */
+    width: 150px;
+    height: 54px;
+    line-height: 54px;
+    text-align: center;
+    background: #F7F1E6;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* border：向外挤占 6px，盒子实际变宽 */
+.vb {
+    border: 6px solid #B3472E;
+    margin-right: 34px;        /* 需要额外间距 */
+}
+
+/* outline：向外画 6px，布局分毫不动 */
+.vo {
+    outline: 6px solid #6E8B6E;
+    /* 不需要额外间距，因为 outline 不占空间 */
+}</script>
+                </div>
+
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>border 与 outline 全方位对比</caption>
+                        <thead>
+                            <tr><th>对比项</th><th>border</th><th>outline</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>是否占布局</td><td><strong>占</strong>：撑大盒子、推开邻居</td><td><strong>不占</strong>：悬浮在外侧</td></tr>
+                            <tr><td>能否只设单边</td><td>能（border-top 等）</td><td>不能，四边一体</td></tr>
+                            <tr><td>跟随圆角</td><td>天然跟随 border-radius</td><td>现代浏览器也跟随圆角</td></tr>
+                            <tr><td>典型用途</td><td>卡片描边、分隔线、装饰</td><td><b>:focus 聚焦框</b>、调试看边界</td></tr>
+                            <tr><td>性能影响</td><td>重绘和回流</td><td>通常只触发重绘</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="lx-warn"><span><b>无障碍红线</b>：<b>别为了好看随手 <code>outline: none</code></b>——
+                    键盘用户会瞬间失去「我在哪」的指示。要美化聚焦态，正确做法是像上面那样
+                    自定义 <code>:focus</code> 的 outline 样式，而不是删掉它。</span></div>
+                <div class="lx-note"><span><b>使用场景</b>：<br>
+                    1. <b>聚焦状态</b>：为可交互元素（按钮、链接、输入框）添加聚焦轮廓<br>
+                    2. <b>调试布局</b>：临时添加 outline 来查看元素的实际边界<br>
+                    3. <b>无障碍设计</b>：确保键盘导航时有清晰的焦点指示<br>
+                    4. <b>高亮显示</b>：在特定状态下（如选中、激活）显示轮廓<br>
+                    5. <b>表单验证</b>：在输入框验证失败时显示红色轮廓</span></div>
+                <div class="lx-tip"><span><b>最佳实践</b>：<br>
+                    1. <b>始终提供焦点指示</b>：对于可交互元素，必须提供可见的焦点状态<br>
+                    2. <b>自定义样式</b>：使用 <code>:focus-visible</code> 伪类，在键盘导航时显示焦点<br>
+                    3. <b>对比度</b>：确保焦点轮廓与背景有足够的对比度<br>
+                    4. <b>一致性</b>：在整个网站中保持焦点样式的统一<br>
+                    5. <b>偏移量</b>：使用 <code>outline-offset</code> 避免轮廓紧贴元素边缘</span></div>
+            </section>
+
+            <section>
+                <h2>九、本章小结</h2>
+                <ul>
+                    <li><b>背景五虎将</b>：<code>background-color / image / repeat / position / size</code>，简写顺序「<strong class="hl">颜色 图片 平铺 位置 / 尺寸</strong>」</li>
+                    <li><b>背景图默认平铺</b>；全屏头图三件套：<code>cover + center + no-repeat</code></li>
+                    <li><code>rgba</code> 第 4 位做半透明背景；渐变也是一种 background-image</li>
+                    <li><b>边框三件套</b>缺一不可，<strong class="hl">不写 border-style 就没有边框</strong></li>
+                    <li><b>单边边框</b>做指示线；选项卡选中态 = 去底边 + 负 margin 下压</li>
+                    <li><b>圆角口诀</b>：<strong class="hl">正方形 50% 成圆，半径过半高成胶囊</strong></li>
+                    <li><b>outline</b> 不占布局，专职 <code>:focus</code> 聚焦框；删 outline 前请三思</li>
+                    <li><b>背景附件</b>：<code>background-attachment: fixed</code> 创建视差滚动效果</li>
+                    <li><b>简写陷阱</b>：位置和尺寸之间必须写 <code>/</code>，简写会重置未写的子属性</li>
+                </ul>
+                <div class="lx-note"><span><b>动手练习</b>：做一张「音乐专辑卡」——卡片白底圆角 16px 带 1.5px 边框；
+                    顶部用 <code>linear-gradient</code> 画 120px 高的封面区（两种你喜欢的颜色）；
+                    右上角一个 50% 圆形的「Hi-Res」小徽章；歌名加粗，歌手用半透明色；
+                    底部一条胶囊形「播放」按钮。每个属性都在编辑器里改值验证过再往下走。</span></div>
+            </section>
+
+            <section>
+                <h2>十、章节练习</h2>
+                <p>使用本章学到的背景和边框知识，创建一个个人资料卡片。要求如下：</p>
+
+                <h3>练习：创建个人资料卡片</h3>
+                <h4>基本要求：</h4>
+                <ol>
+                    <li>卡片容器：白色背景，圆角 12px，2px 实线边框（颜色自选）</li>
+                    <li>头像区域：100px × 100px 的圆形头像，使用 50% 圆角</li>
+                    <li>用户名：加粗，使用半透明背景色（rgba）</li>
+                    <li>简介文字：使用较小的字号，颜色稍浅</li>
+                    <li>关注按钮：胶囊形状，使用渐变背景</li>
+                </ol>
+                <h4>进阶要求：</h4>
+                <ol>
+                    <li>为卡片添加轻微的阴影效果（box-shadow，下一章会详细讲）</li>
+                    <li>为按钮添加聚焦状态的 outline 样式</li>
+                    <li>使用背景图或渐变为卡片顶部添加装饰条</li>
+                    <li>为卡片添加悬停效果（如轻微放大或边框颜色变化）</li>
+                </ol>
+                <h4>提示：</h4>
+                <ul>
+                    <li>使用 <code>border-radius: 50%</code> 创建圆形头像</li>
+                    <li>使用 <code>background: linear-gradient(...)</code> 创建渐变按钮</li>
+                    <li>使用 <code>background-color: rgba(...)</code> 创建半透明背景</li>
+                    <li>使用 <code>outline</code> 为按钮添加聚焦样式</li>
+                    <li>使用 <code>background-image</code> 和 <code>background-size</code> 创建装饰条</li>
+                </ul>
+
+                <h4>参考实现（可以直接改着玩）：</h4>
+                <div class="lab" data-lang="css" data-file="profile-card.css">
+                    <div class="lab-head"><span class="lab-cap">参考答案实跑版：把 <code>::before</code> 装饰条的渐变换成你喜欢的三种颜色</span></div>
+                    <template class="lab-html">
+                        <div class="profile-card">
+                            <div class="profile-avatar"></div>
+                            <div class="profile-name">林小满</div>
+                            <p class="profile-bio">前端学徒 · 咖啡与代码双料爱好者，正在把盒模型刻进 DNA。</p>
+                            <button class="profile-button" type="button">+ 关注</button>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">/* 个人资料卡片样式 */
+.profile-card {
+    width: 300px;
+    background: #fff;
+    border: 2px solid #E3D5C4;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    margin: 0 auto;
+}
+
+/* 头像：正方形 + 50% = 圆 */
+.profile-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #C08A3E, #96652C);
+    margin: 0 auto 15px;
+}
+
+/* 用户名：半透明背景 */
+.profile-name {
+    font-weight: bold;
+    font-size: 18px;
+    background-color: rgba(150, 101, 44, 0.1);
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+/* 简介 */
+.profile-bio {
+    font-size: 14px;
+    color: #6B6053;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+/* 关注按钮：胶囊形状 + 渐变背景 */
+.profile-button {
+    display: inline-block;
+    padding: 10px 30px;
+    background: linear-gradient(135deg, #C08A3E, #96652C);
+    color: white;
+    border: none;
+    border-radius: 999px;
+    font-size: 14px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.profile-button:focus {
+    outline: 3px solid #C08A3E;
+    outline-offset: 3px;
+}
+
+.profile-button:hover {
+    transform: scale(1.05);
+}
+
+/* 顶部装饰条 */
+.profile-card::before {
+    content: "";
+    display: block;
+    height: 8px;
+    background: linear-gradient(90deg, #C08A3E, #96652C, #6E8B6E);
+    border-radius: 12px 12px 0 0;
+    margin: -20px -20px 20px -20px;
+}</script>
+                </div>
+
+                <h4>挑战任务：</h4>
+                <ol>
+                    <li>使用 <code>background-attachment: fixed</code> 为卡片添加视差滚动效果</li>
+                    <li>使用 <code>background-size: cover</code> 为卡片添加全屏背景图</li>
+                    <li>使用 <code>border-image</code> 为卡片添加图片边框</li>
+                    <li>使用 <code>background-blend-mode</code> 创建混合模式效果</li>
+                </ol>
+            </section>
+
+        </article>
+    </main>
+    <script src="../assets/learn.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS 是什么 · CSS 基础 — 前端自习室</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23B8552F'/%3E%3Ctext x='16' y='22' font-size='16' font-family='serif' font-weight='700' fill='%23FFF7EF' text-anchor='middle'%3E学%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="../assets/learn.css">
+    <style>
+        /* 本页专属图解：语法解剖 + 渲染流水线 */
+        .anatomy {
+            background: #FFFDF8; border: 1.5px solid var(--line); border-radius: var(--r-card);
+            padding: 20px 24px; font-family: var(--font-code);
+            font-size: 16px; line-height: 2.15; margin: 16px 0 12px;
+            box-shadow: var(--shadow-1);
+        }
+        .anatomy .sel { color: #B0472A; font-weight: 700; background: rgba(184, 85, 47, .12); border-radius: 6px; padding: 2px 10px; }
+        .anatomy .br { color: #A99A85; }
+        .anatomy .prop { color: #3F7350; font-weight: 600; background: rgba(95, 127, 82, .13); border-radius: 6px; padding: 2px 8px; }
+        .anatomy .val { color: #8F6A20; font-weight: 600; background: rgba(176, 122, 42, .15); border-radius: 6px; padding: 2px 8px; }
+        .anatomy .line { padding-left: 38px; }
+        .anatomy .cm { color: var(--ink-3); font-size: 12.5px; font-family: var(--font-ui); }
+        .anatomy-legend { display: flex; gap: 18px; justify-content: center; flex-wrap: wrap; font-size: 12.5px; color: var(--ink-3); margin-bottom: 8px; }
+        .anatomy-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+
+        .flow { display: flex; align-items: stretch; gap: 6px; flex-wrap: wrap; margin: 16px 0; }
+        .flow .step {
+            flex: 1; min-width: 126px; background: #FFFDF8; border: 1.5px solid var(--line);
+            border-radius: var(--r-ctrl); padding: 12px 13px; font-size: 12.5px; color: var(--ink-3);
+            line-height: 1.6; text-align: center; box-shadow: var(--shadow-1);
+            transition: transform .25s var(--ease-out), border-color .25s;
+        }
+        .flow .step:hover { transform: translateY(-3px); border-color: var(--accent); }
+        .flow .step b { display: block; font-size: 13.5px; color: var(--ink); margin-bottom: 2px; }
+        .flow .step em { font-style: normal; display: block; font-family: var(--font-code); font-size: 11.5px; color: var(--accent); }
+        .flow .arr { align-self: center; color: var(--line-2); font-size: 16px; flex: none; }
+    </style>
+</head>
+<body data-page="02-CSS基础/01-CSS是什么.html">
+    <main class="lx-main">
+        <article class="lx-article">
+
+            <nav class="lx-crumb">
+                <a href="../教程中心页.html">学习路线</a><span class="sep">›</span>
+                <a href="index.html">CSS 基础</a><span class="sep">›</span>
+                <span class="here">CSS 是什么</span>
+            </nav>
+            <h1><span class="h-no">01</span>CSS 是什么</h1>
+            <p class="lx-lead">
+                CSS（层叠样式表）是专门负责网页「长相」的语言：HTML 搭结构，CSS 做装修。
+                本课认识它的语法长相、生效过程，以及名字里「层叠」「继承」两个关键词的真正含义。
+            </p>
+            <div class="lx-meta-row">
+                <span class="lx-chip">约 15 分钟</span>
+                <span class="lx-chip">6 个动手实验</span>
+                <span class="lx-chip">概念奠基课</span>
+            </div>
+
+            <section>
+                <h2>一、CSS 是什么：给毛坯房做装修</h2>
+                <p>
+                    HTML 交付的是一栋<strong class="hl">毛坯房</strong>：墙是墙、门是门，能用，但灰头土脸——
+                    黑字白底、默认字体、没有间距。CSS 就是装修队：
+                    <strong class="hl">刷墙（背景）、挑灯（颜色）、铺地板（边框）、摆家具（间距）</strong>。
+                    一句话记住分工：
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <thead>
+                            <tr><th>技术</th><th>负责什么</th><th>毛坯房类比</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>HTML</code></td><td>结构与内容：标题、段落、图片、按钮</td><td>墙体、门窗、房间划分</td></tr>
+                            <tr><td><code>CSS</code></td><td>外观：颜色、字体、间距、边框、布局</td><td>装修：刷漆、地板、窗帘、家具</td></tr>
+                            <tr><td><code>JavaScript</code></td><td>行为：点击响应、数据交互</td><td>智能电器：开灯、门铃、报警</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>同一个 HTML，加不加 CSS，观感天差地别。下面的实验台左边是代码、右边是实时渲染结果——直接改代码，右侧立刻变化：</p>
+
+                <div class="lab" data-lang="html" data-file="card.html">
+                    <div class="lab-head"><span class="lab-cap">装修前 vs 装修后：把 <code>border-radius</code> 改成 <code>40px</code>，圆角立刻变大</span></div>
+                    <script type="text/plain" class="lab-code"><p>毛坯房：我没有 class，长什么样全凭浏览器默认样式。</p>
+
+<style>
+    .card {
+        background: #fff;                      /* 白色墙面 */
+        border: 1.5px solid #E3D5C4;           /* 一圈浅色边框 */
+        border-radius: 12px;                   /* 圆角 */
+        padding: 16px 18px;                    /* 内容与边框留出呼吸感 */
+        max-width: 380px;
+    }
+    .card h3 { margin: 0 0 6px; color: #754C1F; }
+    .card p  { margin: 0; color: #6B5D4A; }
+</style>
+
+<div class="card">
+    <h3>秋日读书会</h3>
+    <p>时间：本周六 15:00 · 地点：老城区转角咖啡馆</p>
+</div></script>
+                </div>
+                <div class="lx-note"><span>右侧预览就是「HTML + 代码里的 CSS」渲染出的真实页面。整个实验台的代码都可以直接修改，改错也不怕，点右上「重置」即可还原。</span></div>
+            </section>
+
+            <section>
+                <h2>二、语法解剖：一条规则的五脏六腑</h2>
+                <p>
+                    CSS 的语法只有一种句式：<strong class="hl">选择器 { 属性: 值; }</strong>。
+                    选择器回答「给<strong>谁</strong>穿」，声明回答「穿<strong>什么</strong>」。
+                    先把下面这条规则拆开看清楚：
+                </p>
+                <div class="anatomy">
+                    <div><span class="sel">p</span> <span class="br">{</span></div>
+                    <div class="line"><span class="prop">color</span><span class="br">:</span> <span class="val">#B3472E</span><span class="br">;</span> <span class="cm">← 一条声明</span></div>
+                    <div class="line"><span class="prop">font-size</span><span class="br">:</span> <span class="val">18px</span><span class="br">;</span></div>
+                    <div><span class="br">}</span></div>
+                </div>
+                <div class="anatomy-legend">
+                    <span><i style="background:#B0472A"></i>选择器：选中谁</span>
+                    <span><i style="background:#3F7350"></i>属性：改什么</span>
+                    <span><i style="background:#B07A2A"></i>值：改成什么样</span>
+                </div>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>一条规则的术语表：名字记住了，后面章节才不迷路</caption>
+                        <thead>
+                            <tr><th>术语</th><th>是什么</th><th>例子</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>规则（rule）</td><td>一整段：选择器 + 声明块</td><td>上面全部内容</td></tr>
+                            <tr><td>选择器（selector）</td><td>花括号前的部分，决定样式给谁</td><td><code>p</code></td></tr>
+                            <tr><td>声明（declaration）</td><td>一条「属性: 值;」，以分号结尾</td><td><code>color: #B3472E;</code></td></tr>
+                            <tr><td>属性（property）</td><td>要修改的样式维度</td><td><code>color</code></td></tr>
+                            <tr><td>值（value）</td><td>该维度改成什么样</td><td><code>#B3472E</code></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>把这条规则放进实验台，让它真的生效——改改字号和颜色试试：</p>
+
+                <div class="lab" data-lang="css" data-file="selector.css">
+                    <div class="lab-head"><span class="lab-cap">元素选择器 <code>p</code> 的效果：选中页面上所有段落</span></div>
+                    <template class="lab-html">
+                        <p>我正在被上面这条规则改变样子。</p>
+                        <p>同一个选择器，管着页面里所有的 p 元素。</p>
+                    </template>
+                    <script type="text/plain" class="lab-code">p {
+    color: #B3472E;      /* 页面里所有 p 都变成红棕色 */
+    font-size: 18px;     /* 字号 18 像素 */
+}</script>
+                </div>
+                <div class="lx-tip"><span>口诀：<b>选择器挑人，属性定项目，值定结果，分号收尾</b>。花括号、冒号、分号，一个都不能少。</span></div>
+            </section>
+
+            <section>
+                <h2>三、注释与书写规范</h2>
+                <p>
+                    CSS 的注释只有一种写法：<code>/* 注释内容 */</code>，可以独占一行、跟在声明后、也能跨多行。
+                    注释是给「三个月后的自己」看的，写清「为什么这么写」比「写了什么」更有价值。
+                </p>
+
+                <div class="lx-codeblock" data-lang="css" data-file="comments.css">
+                    <script type="text/plain" class="lab-code">/* CSS 注释：斜杠 + 星号开头，星号 + 斜杠结尾 */
+
+.poster {
+    color: #754C1F;        /* 注释也可以跟在声明后面解释这一条 */
+    font-size: 16px;
+}
+
+/*
+   多行注释常用来给样式分区，方便大文件里快速定位：
+   ---------- 页头 ----------
+   ---------- 正文 ----------
+   ---------- 页脚 ----------
+ */
+
+/* 注意：CSS 没有双斜杠单行注释 // ，那样写整段规则会失效 */</script>
+                </div>
+                <p>几条业界通行的书写规范，从第一天就养成：</p>
+                <ul>
+                    <li><strong class="hl">每条声明都以分号结尾</strong>——包括最后一条，删改时不容易出错</li>
+                    <li>属性名一律<strong class="hl">小写</strong>，冒号后面加一个空格</li>
+                    <li>一条声明占一行，块内缩进 4 个空格，规则之间空一行</li>
+                    <li>颜色值统一小写十六进制（<code>#b3472e</code> 或 <code>#B3472E</code>，团队统一即可）</li>
+                </ul>
+                <div class="lx-warn"><span>经典事故：忘写分号。浏览器会把「出错的这一条 + 下一条」一起丢弃，而且<b>不报任何错</b>——页面某处样式突然少了，先检查分号。</span></div>
+            </section>
+
+            <section>
+                <h2>四、规则是如何生效的</h2>
+                <p>
+                    写下的 CSS 并不会「原地显灵」，浏览器在幕后走了一条流水线。
+                    大致五个环节，了解它们，以后排查「样式怎么没生效」就有章法：
+                </p>
+                <div class="flow">
+                    <div class="step"><b>1. 解析 HTML</b><em>DOM 树</em>把标签变成节点树</div>
+                    <div class="arr">→</div>
+                    <div class="step"><b>2. 解析 CSS</b><em>样式表</em>读取行内 / 内部 / 外部样式</div>
+                    <div class="arr">→</div>
+                    <div class="step"><b>3. 匹配</b><em>选择器</em>每条规则找它管的元素</div>
+                    <div class="arr">→</div>
+                    <div class="step"><b>4. 计算</b><em>层叠 + 继承</em>算出每个元素的最终样式</div>
+                    <div class="arr">→</div>
+                    <div class="step"><b>5. 绘制</b><em>渲染</em>按计算结果画到屏幕上</div>
+                </div>
+                <p>
+                    其中第 3 步「匹配」最常出问题：选择器写错一个字母，规则就匹配不到任何元素，
+                    样式无声无息地不生效。<strong class="hl">CSS 没有报错机制</strong>，
+                    它只是安静地忽略看不懂的部分——这是它与 HTML 一样「宽容」、也比大多数语言更需要细心的地方。
+                </p>
+                <div class="lx-warn"><span>排查口诀：<b>样式没生效，先问三个问题</b>——选择器拼对了吗？规则被更靠后 / 更高优先级的规则覆盖了吗？属性值本身合法吗？</span></div>
+            </section>
+
+            <section>
+                <h2>五、层叠与继承：名字里的两个关键词</h2>
+                <p>
+                    CSS 全称 Cascading Style Sheets，Cascading（层叠）是它的灵魂。
+                    <strong class="hl">层叠</strong>：多条规则选中同一个元素的同一个属性时，必须决出胜负；
+                    在来源与优先级都相同的前提下，<strong class="hl">写在后面的覆盖写在前面的</strong>——「后到的说了算」。
+                </p>
+
+                <div class="lab" data-lang="css" data-file="cascade.css">
+                    <div class="lab-head"><span class="lab-cap">层叠：两条规则打架，后面的赢。试试改第一条的颜色——纹丝不动</span></div>
+                    <template class="lab-html">
+                        <div class="box">
+                            我身上有两条规则在打架：前一条想让我是红棕色，后一条想让我是灰绿色。
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">/* 两条规则选中同一个盒子，打架了 */
+.box {
+    background: #FDF3EC;
+    border: 2px solid #B3472E;
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: #B3472E;
+}
+
+.box {
+    background: #F0F4EE;      /* 生效：后写的覆盖先写的 */
+    border-color: #6E8B6E;    /* 生效：同上 */
+    color: #4E7A52;           /* 生效：同上 */
+}</script>
+                </div>
+
+                <p>
+                    <strong class="hl">继承</strong>则是「子承父业」：一部分属性（主要是文字类）会自动从父元素传给后代，
+                    不需要每个子元素都写一遍。但<strong class="hl">盒模型类属性一律不继承</strong>，各归各。
+                </p>
+
+                <div class="lab" data-lang="css" data-file="inherit.css">
+                    <div class="lab-head"><span class="lab-cap">继承：子级没写 color，却有了颜色；虚线边框则没有传下去</span></div>
+                    <template class="lab-html">
+                        <div class="parent">
+                            我是父级：自己设置了文字颜色和虚线边框。
+                            <div class="child">
+                                我是子级：一行 color 都没写，文字颜色却是继承来的；
+                                但父级的虚线边框、内边距都没有传给我。
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">/* 父级只设置了自己，孩子却"白捡"了文字颜色 */
+.parent {
+    color: #754C1F;                  /* 文字颜色：会被子级继承 */
+    border: 2px dashed #C9A284;      /* 边框：不会被继承 */
+    border-radius: 10px;
+    padding: 14px 16px;
+}
+
+.child {
+    /* 注意：这里一行 color 都没写 */
+    background: #FDF9F4;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-top: 10px;
+}</script>
+                </div>
+
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>继承速查：文字类大多会继承，盒子类一律不继承</caption>
+                        <thead>
+                            <tr><th>会继承（多是文字类）</th><th>不继承（多是盒子类）</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>color</code>、<code>font-family</code>、<code>font-size</code>、<code>font-weight</code>、<code>line-height</code>、<code>text-align</code>、<code>letter-spacing</code>、<code>cursor</code></td>
+                                <td><code>border</code>、<code>padding</code>、<code>margin</code>、<code>background</code>、<code>width</code>、<code>height</code>、<code>display</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-tip"><span>继承的价值：<b>在 body 上设一次字体和文字颜色，全页默认生效</b>，个别地方再单独覆盖。这是「少写代码」的第一课。</span></div>
+            </section>
+
+            <section>
+                <h2>六、第一个完整例子：样式化一张小卡片</h2>
+                <p>
+                    把本课学到的概念串起来：用「选择器 + 声明 + 继承 + 层叠」的组合拳，
+                    从零样式化一张活动卡片。下面的 CSS 每一行都加了注释，建议在编辑器里逐条改值感受效果。
+                </p>
+
+                <div class="lab" data-lang="css" data-file="first-card.css">
+                    <div class="lab-head"><span class="lab-cap">第一张完整的小卡片：把 <code>padding</code> 改成 <code>40px</code>、边框改成 <code>dashed</code> 试试</span></div>
+                    <template class="lab-html">
+                        <div class="event-card">
+                            <h3>周末茶话会</h3>
+                            <p>时间：周日 14:00 - 16:30</p>
+                            <p>地点：城南 · 梧桐书屋二楼</p>
+                            <span class="tag">仅剩 3 个名额</span>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">/* 卡片容器 */
+.event-card {
+    background: #FFFDF9;
+    border: 1.5px solid #E3D5C4;
+    border-radius: 14px;
+    padding: 18px 20px;
+    max-width: 340px;
+}
+
+/* 后代选择器：卡片里的标题（第 2 课细讲） */
+.event-card h3 {
+    margin: 0 0 8px;
+    font-size: 18px;
+    color: #754C1F;
+}
+
+/* 卡片里的段落：字号小一点，颜色浅一点 */
+.event-card p {
+    margin: 0 0 6px;
+    font-size: 13.5px;
+    color: #6B5D4A;
+}
+
+/* 小标签：胶囊形状 */
+.tag {
+    display: inline-block;
+    background: #96652C;
+    color: #fff;
+    font-size: 12px;
+    border-radius: 999px;
+    padding: 3px 14px;
+    margin-top: 6px;
+}</script>
+                </div>
+                <div class="lx-tip"><span>动手练习：在上面实验台里改到 <b>背景色、圆角、内边距、标签颜色</b> 四处，并在预览里确认每一处都生效。</span></div>
+            </section>
+
+            <section>
+                <h2>七、本课小结</h2>
+                <ul>
+                    <li>CSS 负责<strong class="hl">外观</strong>，HTML 负责结构——毛坯房与装修的关系</li>
+                    <li>语法唯一句式：<code>选择器 { 属性: 值; }</code>，分号结尾，注释用 <code>/* */</code></li>
+                    <li>浏览器流水线：解析 HTML → 解析 CSS → <strong class="hl">匹配</strong> → 计算（层叠 + 继承）→ 绘制</li>
+                    <li>CSS <strong class="hl">不报错</strong>：写错只会静默失效，排查靠「选择器、覆盖、合法性」三问</li>
+                    <li>层叠：同级冲突时<strong class="hl">后写的赢</strong>；继承：文字类属性自动传给后代，盒子类不传</li>
+                    <li>在 <code>body</code> 上统一设置字体与文字颜色，是利用继承减少重复代码的第一招</li>
+                </ul>
+                <div class="lx-note"><span><b>课后小实验</b>：新建一个 HTML 文件，写两个段落和一个标题，只用一个 <code>&lt;style&gt;</code> 块：先让所有段落变成 18px 深棕色；再写第二条 p 规则把颜色改成土金色，验证「后者覆盖前者」；最后在 body 上设置字体，体会继承。把观察到的三次变化记在笔记里。</span></div>
+            </section>
+
+        </article>
+    </main>
+    <script src="../assets/learn.js" defer></script>
+</body>
+</html>

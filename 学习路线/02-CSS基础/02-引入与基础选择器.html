@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>引入与基础选择器 · CSS 基础 — 前端自习室</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23B8552F'/%3E%3Ctext x='16' y='22' font-size='16' font-family='serif' font-weight='700' fill='%23FFF7EF' text-anchor='middle'%3E学%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="../assets/learn.css">
+</head>
+<body data-page="02-CSS基础/02-引入与基础选择器.html">
+    <main class="lx-main">
+        <article class="lx-article">
+
+            <nav class="lx-crumb">
+                <a href="../教程中心页.html">学习路线</a><span class="sep">›</span>
+                <a href="index.html">CSS 基础</a><span class="sep">›</span>
+                <span class="here">引入与基础选择器</span>
+            </nav>
+            <h1><span class="h-no">02</span>引入与基础选择器</h1>
+            <p class="lx-lead">
+                学 CSS 要先解决两件事：样式「写在哪儿」（三种引入方式），
+                以及「写给谁」（基础选择器）。选对了选择器，样式才不会跑偏。
+            </p>
+            <div class="lx-meta-row">
+                <span class="lx-chip">约 20 分钟</span>
+                <span class="lx-chip">8 个动手实验</span>
+                <span class="lx-chip">选择器入门课</span>
+            </div>
+
+            <section>
+                <h2>一、行内样式：写在标签上的 style</h2>
+                <p>
+                    行内样式把 CSS 直接写进 HTML 标签的 <code>style</code> 属性里，只作用于这一个元素。
+                    因为已经「点名」了元素，所以不需要选择器，引号里直接写声明：
+                </p>
+
+                <div class="lab" data-lang="html" data-file="inline.html">
+                    <div class="lab-head"><span class="lab-cap">行内样式：<code>style</code> 写在标签上。改第一个 p 的颜色，只有它会变</span></div>
+                    <script type="text/plain" class="lab-code"><p style="color: #B3472E; font-size: 18px;">
+    行内样式：颜色和字号直接写在标签上。
+</p>
+
+<p>
+    普通段落：我不带任何样式，用浏览器默认外观。
+</p></script>
+                </div>
+                <p>
+                    它的<strong class="hl">优先级是三种引入方式里最高的</strong>（后面的优先级专题会量化），
+                    但这也是它最大的问题：
+                </p>
+                <ul>
+                    <li>样式和结构搅在一起，<strong class="hl">违背「结构与样式分离」</strong>的初心</li>
+                    <li>无法复用：十个按钮要加粗，就得写十遍</li>
+                    <li>难维护：想统一改个颜色，得满页面找 <code>style</code></li>
+                </ul>
+                <div class="lx-warn"><span>结论：<b>日常开发几乎不用行内样式</b>。看到它出现，多半是邮件模板、
+                    某些组件库的内部实现，或临时救急的覆盖。</span></div>
+            </section>
+
+            <section>
+                <h2>二、内部样式表与外部样式表：推荐的两种写法</h2>
+                <p>
+                    <strong class="hl">内部样式表</strong>：把 CSS 写进 <code>&lt;head&gt;</code> 里的
+                    <code>&lt;style&gt;</code> 标签，整个页面共用一套规则——本站课程里的演示用的都是它。
+                    完整的页面结构长这样：
+                </p>
+                <div class="lx-codeblock" data-lang="html" data-file="index.html">
+                    <script type="text/plain" class="lab-code"><!-- 方式二：内部样式表，写在 head 里 -->
+<head>
+    <style>
+        .note {
+            color: #754C1F;
+            background: #F7F1E6;
+            border-left: 4px solid #C08A3E;
+            padding: 10px 14px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <p class="note">内部样式：定义一次，本页处处可用。</p>
+</body></script>
+                </div>
+                <p>把 <code>&lt;style&gt;</code> 块放进实验台，亲手感受「定义一次，处处可用」：</p>
+
+                <div class="lab" data-lang="html" data-file="style-tag.html">
+                    <div class="lab-head"><span class="lab-cap">内部样式表：改 <code>.note</code> 的背景色，两个提示条同时变化——这就是复用</span></div>
+                    <script type="text/plain" class="lab-code"><style>
+    .note {
+        color: #754C1F;
+        background: #F7F1E6;
+        border-left: 4px solid #C08A3E;
+        padding: 10px 14px;
+        border-radius: 8px;
+    }
+</style>
+
+<p class="note">内部样式：定义一次，本页处处可用。</p>
+<p class="note">第二个提示条复用同一个类，一行 CSS 都不用加。</p></script>
+                </div>
+                <p>
+                    <strong class="hl">外部样式表</strong>：CSS 单独存成 <code>.css</code> 文件，
+                    页面用 <code>&lt;link&gt;</code> 引入。这是<strong class="hl">正式项目的标配</strong>：
+                    结构与样式彻底分离、多页面共享一份样式、浏览器还能缓存它加快二次访问。
+                </p>
+                <div class="lx-codeblock" data-lang="html" data-file="index.html">
+                    <script type="text/plain" class="lab-code"><!-- 方式三：外部样式表，最推荐 -->
+<head>
+    <link rel="stylesheet" href="css/style.css">
+</head></script>
+                </div>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>三种引入方式对比：行内救急、内部练习、外部标配</caption>
+                        <thead>
+                            <tr><th>引入方式</th><th>写在哪</th><th>优先级</th><th>优点</th><th>缺点</th><th>使用建议</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>行内样式</td><td>标签 <code>style</code> 属性</td><td>最高</td><td>精准、临时</td><td>不能复用、难维护</td><td>基本不用</td></tr>
+                            <tr><td>内部样式表</td><td><code>&lt;style&gt;</code> 标签</td><td>中</td><td>单页方便、零额外文件</td><td>跨页面无法复用</td><td>练习、单页、演示</td></tr>
+                            <tr><td>外部样式表</td><td>独立 <code>.css</code> + <code>&lt;link&gt;</code></td><td>中</td><td>分离、复用、可缓存</td><td>多一次文件请求</td><td>项目标配</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-tip"><span>记忆点：<b>link 放 head 里、rel="stylesheet"、href 指向 css 文件</b>，
+                    三样齐了样式才能挂上。忘写 rel 是新手常踩的坑。</span></div>
+            </section>
+
+            <section>
+                <h2>三、元素选择器：按标签名一网打尽</h2>
+                <p>
+                    写标签名就是元素选择器：<code>p {}</code> 选中页面上<strong class="hl">所有</strong> <code>&lt;p&gt;</code>，
+                    <code>h2 {}</code> 选中所有二级标题。它是最「一刀切」的选择器——优点是批量统一，缺点是难以个性化。
+                </p>
+
+                <div class="lab" data-lang="css" data-file="element.css">
+                    <div class="lab-head"><span class="lab-cap">元素选择器：改 <code>h2</code> 的颜色试试，标题和段落各听各的规则</span></div>
+                    <template class="lab-html">
+                        <h2>我是标题，被 h2 选中</h2>
+                        <p>我是段落一，被 p 选中。</p>
+                        <p>我是段落二，同样被 p 选中——元素选择器一网打尽。</p>
+                    </template>
+                    <script type="text/plain" class="lab-code">h2 {
+    color: #B3472E;            /* 所有 h2 都变红棕色 */
+    border-left: 4px solid #C08A3E;
+    padding-left: 10px;
+}
+p {
+    color: #473F35;
+    line-height: 1.8;          /* 所有段落行高 1.8 */
+}</script>
+                </div>
+                <div class="lx-tip"><span>实战用法：元素选择器适合打「底妆」——比如全站段落统一行高、
+                    全站链接去掉下划线；个性化装饰交给下一节的 class。</span></div>
+            </section>
+
+            <section>
+                <h2>四、class 选择器：样式复用的主力军</h2>
+                <p>
+                    class（类）选择器用点号 <code>.</code> 开头，匹配挂着对应类名的元素。
+                    它是 CSS 里<strong class="hl">最常用</strong>的选择器：一个类写一次，
+                    想给多少元素用就给多少元素用。
+                </p>
+
+                <div class="lab" data-lang="css" data-file="class.css">
+                    <div class="lab-head"><span class="lab-cap">class 复用 + 多 class 叠加：改 <code>.tag-hot</code> 的颜色，两颗「热门」标签同时变</span></div>
+                    <template class="lab-html">
+                        <span class="tag">前端</span>
+                        <span class="tag">CSS</span>
+                        <span class="tag tag-hot">热门</span>
+                        <span class="tag">入门</span>
+                        <span class="tag tag-hot">推荐</span>
+                    </template>
+                    <script type="text/plain" class="lab-code">/* 一个 class，随便多少元素复用 */
+.tag {
+    display: inline-block;
+    background: #F7F1E6;
+    border: 1.5px solid #C9A284;
+    border-radius: 999px;      /* 胶囊形 */
+    padding: 4px 14px;
+    margin: 0 6px 6px 0;
+    color: #754C1F;
+    font-size: 13px;
+}
+
+/* 一个元素可同时挂多个 class：空格分隔，各管各的 */
+.tag-hot {
+    background: #B3472E;
+    border-color: #B3472E;
+    color: #fff;
+}</script>
+                </div>
+                <ul>
+                    <li>HTML 写法：<code>class="tag tag-hot"</code>——<strong class="hl">多个类名用空格分隔</strong>，顺序无所谓</li>
+                    <li>两个类的规则<strong class="hl">同时生效</strong>，冲突的属性按「后面的规则 / 更高优先级」决出（优先级专题细讲）</li>
+                    <li>命名建议：见名知义（<code>.tag</code> 而不是 <code>.red</code>），英文小写 + 连字符（kebab-case）</li>
+                </ul>
+                <div class="lx-warn"><span>类名不要以数字开头（<code>.2col</code> 非法），不要用中文和特殊符号；
+                    大小写敏感：<code>.Tag</code> 和 <code>.tag</code> 是两个不同的类。</span></div>
+            </section>
+
+            <section>
+                <h2>五、id 选择器：独一无二的身份牌</h2>
+                <p>
+                    id 选择器用井号 <code>#</code> 开头，匹配 <code>id</code> 属性对应的元素。
+                    id 是<strong class="hl">身份证</strong>：整页只能出现一次；class 是<strong class="hl">校服</strong>：谁都能穿。
+                </p>
+
+                <div class="lab" data-lang="css" data-file="id.css">
+                    <div class="lab-head"><span class="lab-cap">id 选择器样式化的横幅：把渐变角度 <code>135deg</code> 改成 <code>45deg</code> 试试</span></div>
+                    <template class="lab-html">
+                        <div id="banner">页面横幅：整页只有一个我，用 id 名正言顺。</div>
+                    </template>
+                    <script type="text/plain" class="lab-code">#banner {
+    background: linear-gradient(135deg, #96652C, #C08A3E);
+    color: #fff;
+    border-radius: 12px;
+    padding: 16px 20px;
+    font-size: 15px;
+    letter-spacing: 1px;
+}</script>
+                </div>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>class 与 id 的取舍：样式交给 class，id 留给身份标识</caption>
+                        <thead>
+                            <tr><th>对比项</th><th>class（类）</th><th>id（身份）</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>CSS 写法</td><td><code>.box</code>（点号）</td><td><code>#header</code>（井号）</td></tr>
+                            <tr><td>HTML 写法</td><td><code>class="box"</code></td><td><code>id="header"</code></td></tr>
+                            <tr><td>页面允许数量</td><td>无限个元素共用</td><td><strong>只能出现一次</strong></td></tr>
+                            <tr><td>一个元素能挂几个</td><td>多个（空格分隔）</td><td>仅一个</td></tr>
+                            <tr><td>优先级权重</td><td>10 分</td><td>100 分（高出十倍）</td></tr>
+                            <tr><td>典型用途</td><td>样式复用、组件</td><td>JS 定位、页内锚点</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-warn"><span>工程习惯：<b>写样式尽量用 class，id 留给 JS（getElementById）和锚点跳转</b>。
+                    id 的 100 分优先级太高，样式一旦用 id 写，后面想覆盖就得跟着堆砝码。</span></div>
+            </section>
+
+            <section>
+                <h2>六、通配符 * 与分组选择器</h2>
+                <p>
+                    <strong class="hl">通配符 <code>*</code></strong> 匹配所有元素，最经典的用法是项目开头的「全局重置」：
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="reset.css">
+                    <script type="text/plain" class="lab-code">/* 全局重置：抹平浏览器默认的内外边距 —— 几乎每个项目的开场白 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}</script>
+                </div>
+                <p>
+                    下面这个演示把通配符的作用范围限定在一个容器里（写成 <code>.wild *</code>），
+                    让每个被选中的元素都「现形」——你会看到标题、段落、div、span 一个都没跑掉：
+                </p>
+
+                <div class="lab" data-lang="css" data-file="wildcard.css">
+                    <div class="lab-head"><span class="lab-cap">通配符选中范围内的所有元素：把 <code>*</code> 改成 <code>p</code>，选中面立刻收窄</span></div>
+                    <template class="lab-html">
+                        <div class="wild">
+                            <h4>标题 h4 被选中</h4>
+                            <p>段落 p 被选中</p>
+                            <div>div 被选中，<span>里面的 span 也没跑掉</span></div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">/* * 匹配所有元素：让 .wild 里的每个元素都现出原形 */
+.wild * {
+    background: #FDF9F4;
+    border: 1.5px dashed #C08A3E;
+    padding: 6px 10px;
+    margin: 4px 0;
+}</script>
+                </div>
+                <p>
+                    <strong class="hl">分组选择器</strong>用逗号把多个选择器捆在一起，一套样式群发：
+                </p>
+
+                <div class="lab" data-lang="css" data-file="group.css">
+                    <div class="lab-head"><span class="lab-cap">分组选择器：公共样式群发 + 各自小灶。把逗号分组里的 <code>letter-spacing</code> 改大，两行一起变</span></div>
+                    <template class="lab-html">
+                        <div class="grp-title">大标题：吃到分组样式 + 自己的小灶</div>
+                        <div class="grp-sub">副标题：同样吃到分组样式，字号颜色按自己的来</div>
+                    </template>
+                    <script type="text/plain" class="lab-code">/* 逗号分组：一套样式同时发给标题和副标题 */
+.grp-title,
+.grp-sub {
+    color: #754C1F;
+    letter-spacing: 1px;
+}
+
+/* 公共样式之外，再各开小灶 */
+.grp-title { font-size: 19px; font-weight: 700; }
+.grp-sub { font-size: 13px; color: #9C8E7B; }</script>
+                </div>
+                <div class="lx-tip"><span>口诀：<b>星号管全部，逗号管群发</b>。分组是「抽取公共样式」的手段，
+                    能有效减少重复代码。</span></div>
+            </section>
+
+            <section>
+                <h2>七、后代选择器：只在指定范围内动手</h2>
+                <p>
+                    选择器之间用<strong class="hl">空格</strong>连接就是后代选择器：
+                    <code>.menu a</code> 读作「menu <strong>里面的</strong> a」，
+                    隔多少层都算，但范围外的元素一概不理。它让样式有了「作用域」。
+                </p>
+
+                <div class="lab" data-lang="css" data-file="descendant.css">
+                    <div class="lab-head"><span class="lab-cap">菜单里的链接被改样式，菜单外的原封不动。鼠标悬停菜单链接试试 <code>:hover</code></span></div>
+                    <template class="lab-html">
+                        <div class="menu">
+                            <a href="#">首页</a>
+                            <a href="#">课程</a>
+                            <a href="#">关于</a>
+                        </div>
+                        <p>菜单外的链接：<a href="#">我还是默认样式（蓝色 + 下划线）</a></p>
+                    </template>
+                    <script type="text/plain" class="lab-code">/* 空格 = 后代：只选中 .menu 里面的 a */
+.menu {
+    background: #F7F1E6;
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 10px;
+}
+
+.menu a {
+    color: #754C1F;
+    text-decoration: none;     /* 去掉下划线 */
+    margin-right: 16px;
+}
+
+.menu a:hover {                /* 悬停变色，后面的伪类课细讲 */
+    color: #B3472E;
+}</script>
+                </div>
+                <div class="lx-tip"><span>「.菜单 a」的写法是组件化样式的雏形：<b>先圈住一块区域，再对区域内的小元素动手</b>。
+                    后面的选择器进阶课会解锁 &gt;、+、~ 三种更精确的组合方式。</span></div>
+            </section>
+
+            <section>
+                <h2>八、本章小结</h2>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>基础选择器速查：语法、含义与常用度</caption>
+                        <thead>
+                            <tr><th>选择器</th><th>语法</th><th>含义</th><th>常用度</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>元素选择器</td><td><code>p { }</code></td><td>所有该标签的元素</td><td>⭐⭐⭐⭐</td></tr>
+                            <tr><td>class 选择器</td><td><code>.box { }</code></td><td>挂着该类名的元素，可复用、可叠加</td><td>⭐⭐⭐⭐⭐</td></tr>
+                            <tr><td>id 选择器</td><td><code>#header { }</code></td><td>唯一元素，优先级高，样式少用</td><td>⭐⭐</td></tr>
+                            <tr><td>通配符</td><td><code>* { }</code></td><td>所有元素，常用于全局重置</td><td>⭐⭐⭐</td></tr>
+                            <tr><td>分组选择器</td><td><code>h1, h2, p { }</code></td><td>多个选择器共享一套样式</td><td>⭐⭐⭐⭐</td></tr>
+                            <tr><td>后代选择器</td><td><code>.menu a { }</code></td><td>某范围内所有后代元素</td><td>⭐⭐⭐⭐⭐</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <ul>
+                    <li>三种引入方式：<strong class="hl">行内（基本不用）、内部（练习）、外部（项目标配）</strong></li>
+                    <li>class 是校服（人人可穿、可多穿），id 是身份证（一页一张）——<strong class="hl">样式交给 class</strong></li>
+                    <li>多个类名<strong class="hl">空格分隔</strong>，规则同时生效</li>
+                    <li>通配符做全局重置，逗号做样式群发，空格做范围圈定</li>
+                </ul>
+                <div class="lx-note"><span><b>动手练习</b>：写一个含有导航（3 个链接）、一段正文、一张卡片的页面，
+                    外部建一个 <code>style.css</code> 用 <code>&lt;link&gt;</code> 引入。
+                    要求：用<strong>元素选择器</strong>统一正文行高，用<strong>class</strong>做卡片样式，
+                    用<strong>后代选择器</strong>只给导航里的链接去下划线，id 留给横幅。</span></div>
+            </section>
+
+        </article>
+    </main>
+    <script src="../assets/learn.js" defer></script>
+</body>
+</html>

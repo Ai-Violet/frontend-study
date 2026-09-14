@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>选择器进阶 · CSS 基础 — 前端自习室</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23B8552F'/%3E%3Ctext x='16' y='22' font-size='16' font-family='serif' font-weight='700' fill='%23FFF7EF' text-anchor='middle'%3E学%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="../assets/learn.css">
+</head>
+<body data-page="02-CSS基础/07-选择器进阶.html">
+    <main class="lx-main">
+        <article class="lx-article">
+
+            <nav class="lx-crumb">
+                <a href="../教程中心页.html">学习路线</a><span class="sep">›</span>
+                <a href="index.html">CSS 基础</a><span class="sep">›</span>
+                <span class="here">选择器进阶</span>
+            </nav>
+            <h1><span class="h-no">07</span>选择器进阶</h1>
+            <p class="lx-lead">
+                基础篇学会了「点名」：标签、class、id。这一课把点名的功夫练到出神入化——
+                按「亲戚关系」找（组合选择器）、按「随身证件」找（属性选择器）、按「排行」找（结构伪类）、
+                按「此刻状态」找（状态伪类），甚至凭空造零件（伪元素）。
+                最后用「优先级」一锤定音：规则打架时，到底听谁的。
+            </p>
+            <div class="lx-meta-row">
+                <span class="lx-chip">约 25 分钟</span>
+                <span class="lx-chip">6 个动手实验</span>
+                <span class="lx-chip">核心功力课</span>
+            </div>
+
+            <section>
+                <h2>一、组合选择器：四种「亲戚关系」</h2>
+                <p>
+                    单独一个选择器只能描述「是谁」，组合选择器描述<strong class="hl">「和谁是什么关系」</strong>。
+                    四个符号——空格、<code>&gt;</code>、<code>+</code>、<code>~</code>——就是四种亲戚关系，
+                    再加一个逗号管「分组」。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>四种组合器 + 逗号分组，一张表认全</caption>
+                        <thead>
+                            <tr><th>写法</th><th>名称</th><th>选中的是谁</th><th>记忆口诀</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>A B</code>（空格）</td><td>后代选择器</td><td>A 里面<strong>任意层级</strong>的 B，隔多少层都算</td><td>「A 家里所有叫 B 的」</td></tr>
+                            <tr><td><code>A &gt; B</code></td><td>子代选择器</td><td>A 的<strong>直接孩子</strong> B，孙子免谈</td><td>「A 的亲儿子」</td></tr>
+                            <tr><td><code>A + B</code></td><td>相邻兄弟</td><td>紧跟在 A 后面的<strong>第一个</strong>同级 B</td><td>「A 身后紧跟的那位」</td></tr>
+                            <tr><td><code>A ~ B</code></td><td>通用兄弟</td><td>A 后面的<strong>所有</strong>同级 B</td><td>「A 身后全体兄弟」</td></tr>
+                            <tr><td><code>A, B</code>（逗号）</td><td>分组选择器</td><td>A 和 B 一起选中，共用一套样式</td><td>「你们俩一起上」</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="lab" data-lang="css" data-file="combinators.css">
+                    <div class="lab-head"><span class="lab-cap">关系地图：上半场比「空格 vs <code>&gt;</code>」，下半场比「<code>+</code> vs <code>~</code>」。试试把 <code>.box &gt; p</code> 的 <code>&gt;</code> 删掉，看孙子级 p 也被染绿</span></div>
+                    <template class="lab-html">
+                        <h4>上半场：后代（空格）选所有层级，子代（&gt;）只选直接子级</h4>
+                        <div class="box">
+                            <p>① 直接子级 p —— 空格 ✓ 且 &gt; ✓ → 绿色</p>
+                            <div class="inner">
+                                <p>② 孙子级 p —— 只有空格 ✓ → 琥珀色</p>
+                                <div class="inner">
+                                    <p>③ 曾孙级 p —— 还是只有空格 ✓ → 琥珀色</p>
+                                </div>
+                            </div>
+                        </div>
+                        <h4>下半场：+ 只选紧邻的第一个，~ 选后面全部</h4>
+                        <div class="sib">
+                            <h5>参照物 h5</h5>
+                            <p>④ 紧邻的 p —— + ✓ 且 ~ ✓ → 紫底 + 紫左边框</p>
+                            <p>⑤ 第二个 p —— 只 ~ ✓ → 紫左边框</p>
+                            <p>⑥ 第三个 p —— 只 ~ ✓ → 紫左边框</p>
+                            <div>
+                                <p>⑦ div 里套着的 p —— 兄弟关系看的是 div，不是我 → 无命中</p>
+                            </div>
+                        </div>
+                        <p class="legend">
+                            绿 = 两代选择器都命中 · 琥珀 = 仅空格命中 · 紫底 = + 命中 · 紫左边框 = ~ 命中
+                        </p>
+                    </template>
+                    <script type="text/plain" class="lab-code">/* ── 底座：盒子和段落的默认长相 ── */
+h4 { margin: 0 0 6px; font-size: 13px; color: #6B5D4A; }
+.box, .inner {
+    border: 1.5px dashed #C9B995; border-radius: 10px; padding: 10px 12px;
+}
+.inner { margin-top: 8px; border-color: #D8C7AC; }
+p {
+    margin: 4px 0; padding: 6px 10px; border-radius: 6px;
+    font-size: 13px; background: #F6F1E7; color: #4A3F33;
+}
+
+/* 后代（空格）：box 里所有的 p，隔多少层都算 */
+.box p { background: #F3E9D8; border: 1px solid #E0C48F; color: #8F6A2E; }
+
+/* 子代（>）：只选 box 的直接孩子 p（后写覆盖上面的琥珀） */
+.box > p { background: #EAF0E4; border: 1px solid #7B9B6B; color: #4E6A3F; }
+
+/* ── 下半场 ── */
+.sib {
+    border: 1.5px dashed #C9B995; border-radius: 10px;
+    padding: 10px 12px; margin-top: 12px;
+}
+.sib h5 { margin: 2px 0 6px; font-size: 13.5px; color: #96652C; }
+
+/* 相邻兄弟（+）：紧挨着 h5 的那一个 p */
+h5 + p { background: #EFE4EC; border: 1px solid #A67899; color: #7A4E6D; font-weight: 600; }
+
+/* 通用兄弟（~）：h5 后面所有的同级 p */
+h5 ~ p { border-left: 4px solid #A67899; }
+
+/* 分组（逗号）：标题们共用一套样式 */
+h4, h5 { color: #96652C; }
+
+.legend { font-size: 12px; color: #A08C72; margin-top: 10px; line-height: 1.9; }</script>
+                </div>
+                <div class="lx-tip"><span>能用 <code>&gt;</code> 就别用空格：一是<b>意图更明确</b>（读者一眼知道只影响子级），二是<b>性能更好</b>（浏览器不用一层层往下翻）。改别人代码时，空格选择器改错一个层级，样式就会「莫名感染」。</span></div>
+            </section>
+
+            <section>
+                <h2>二、属性选择器：不用 class 也能精准点名</h2>
+                <p>
+                    元素身上的属性——<code>href</code>、<code>type</code>、<code>src</code>、自定义的 <code>data-*</code>——
+                    本身就是现成的「证件」。方括号 <code>[ ]</code> 就是查证件的窗口：
+                    <strong class="hl">查得越细，选得越准</strong>，一个 class 都不用加。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>属性选择器六类写法逐项分析</caption>
+                        <thead>
+                            <tr><th>写法</th><th>命中条件</th><th>典型用途</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>[href]</code></td><td>有这个属性就行</td><td>所有带链接的 a</td></tr>
+                            <tr><td><code>[type="text"]</code></td><td>属性值<strong>完全相等</strong></td><td>只选文本框，跳过按钮和勾选框</td></tr>
+                            <tr><td><code>[href^="https"]</code></td><td>值以 https <strong>开头</strong></td><td>挑出所有外部链接</td></tr>
+                            <tr><td><code>[href$=".pdf"]</code></td><td>值以 .pdf <strong>结尾</strong></td><td>给文件下载链接加图标</td></tr>
+                            <tr><td><code>[href*="runoob"]</code></td><td>值里<strong>包含</strong> runoob</td><td>关键词模糊匹配</td></tr>
+                            <tr><td><code>[data-tags~="css"]</code></td><td>值包含<strong>独立词</strong> css（空格分隔的完整单词）</td><td>标签系统：一个属性塞多个标签</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="lab" data-lang="css" data-file="attr-selectors.css">
+                    <div class="lab-head"><span class="lab-cap">同一页链接按 href 特征自动分组染色：第一条同时命中两条规则，样式叠加。把 <code>^="https"</code> 改成 <code>$=".com"</code> 看命中变化</span></div>
+                    <template class="lab-html">
+                        <h4>按 href 特征挑链接</h4>
+                        <a href="https://www.runoob.com" target="_blank" rel="noopener">
+                            <span class="u">https://www.runoob.com</span>
+                            <i>^="https" ✓ · *="runoob" ✓</i>
+                        </a>
+                        <a href="https://developer.mozilla.org" target="_blank" rel="noopener">
+                            <span class="u">https://developer.mozilla.org</span>
+                            <i>^="https" ✓</i>
+                        </a>
+                        <a href="css-cheatsheet.pdf" target="_blank">
+                            <span class="u">css-cheatsheet.pdf</span>
+                            <i>$=".pdf" ✓</i>
+                        </a>
+                        <a href="mailto:hi@example.com">
+                            <span class="u">mailto:hi@example.com</span>
+                            <i>都不命中 → 保持默认</i>
+                        </a>
+                        <h4>~=（整词匹配）vs *=（任意包含）</h4>
+                        <div class="tags-demo">
+                            <span data-tags="前端 css 入门">前端 css 入门 <i>~="css" ✓</i></span>
+                            <span data-tags="前端 进阶">前端 进阶 <i>~="css" ✗ · *="进阶" ✓</i></span>
+                            <span data-tags="css3 进阶 实战">css3 进阶 实战 <i>~="css" ✗（css3 ≠ css）· *="进阶" ✓</i></span>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">/* ── 底座 ── */
+h4 { margin: 0 0 6px; font-size: 13px; color: #6B5D4A; }
+a {
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    padding: 8px 12px; margin: 5px 0; border-radius: 8px; text-decoration: none;
+    background: #F6F1E7; border: 1.5px solid #E3D5C4; color: #6B5D4A;
+}
+a .u { font-family: "Cascadia Code", Consolas, monospace; font-size: 12.5px; overflow-wrap: anywhere; }
+a i { font-style: normal; font-size: 11.5px; color: #A08C72; flex: none; }
+
+/* https 开头的外链 → 琥珀高亮 */
+a[href^="https"] { background: #FDF4E3; border-color: #C08A3E; color: #8F6A2E; font-weight: 600; }
+
+/* .pdf 结尾 → 红色 + 用 ::before 生成 PDF 小徽章 */
+a[href$=".pdf"] { background: #FBEBE4; border-color: #B3472E; color: #B3472E; }
+a[href$=".pdf"]::before {
+    content: "PDF"; font-size: 10px; font-weight: 700; flex: none;
+    background: #B3472E; color: #fff; border-radius: 4px; padding: 1px 6px;
+}
+
+/* 值里包含 runoob → 左边再加一条琥珀竖线（和上面那条叠加） */
+a[href*="runoob"] { border-left: 4px solid #C08A3E; }
+
+/* ── 标签药丸 ── */
+.tags-demo { margin-top: 14px; }
+[data-tags] {
+    display: inline-flex; align-items: center; gap: 6px; margin: 4px 8px 0 0;
+    padding: 5px 12px; border-radius: 999px; font-size: 12.5px;
+    background: #F6F1E7; border: 1.5px solid transparent; color: #6B5D4A;
+}
+
+/* data-tags 里含独立词 css → 紫色药丸 */
+[data-tags~="css"] { background: #EFE4EC; border-color: #A67899; color: #7A4E6D; font-weight: 600; }
+
+/* 值里包含"进阶"两个字 → 红色虚线边框 */
+[data-tags*="进阶"] { border-style: dashed; border-color: #B3472E; }
+
+[data-tags] i { font-style: normal; font-size: 11px; color: #A08C72; font-weight: 400; }</script>
+                </div>
+                <div class="lx-warn"><span>符号记忆：<code>^</code> 像钉子钉在<b>开头</b>，<code>$</code> 像尾巴收在<b>结尾</b>，<code>*</code> 是通配符表示<b>随便包含</b>。<code>~=</code> 最容易踩坑：它只认「空格分隔的完整单词」——标签写 <code>css3</code> 时，<code>~="css"</code> 选不中它，<code>*="css"</code> 却能。做标签筛选时想清楚要哪种。</span></div>
+            </section>
+
+            <section>
+                <h2>三、结构伪类：第几个孩子我说了算</h2>
+                <p>
+                    「第 3 个 li」「偶数行」「每种类型的第一个」……<strong class="hl">结构伪类专管排行</strong>。
+                    冒号开头，跟在选择器屁股后面，专治「不方便挨个加 class」的批量场景。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>高频结构伪类速查</caption>
+                        <thead>
+                            <tr><th>伪类</th><th>含义</th><th>高频场景</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>:first-child</code></td><td>是父亲的第一个孩子</td><td>导航第一项去分隔线</td></tr>
+                            <tr><td><code>:last-child</code></td><td>是父亲的最后一个孩子</td><td>列表末项去底边框</td></tr>
+                            <tr><td><code>:nth-child(n)</code></td><td>第 n 个（从 1 数起）</td><td>点名任意一位</td></tr>
+                            <tr><td><code>:nth-child(odd)</code> / <code>(even)</code></td><td>奇数 / 偶数位</td><td>表格斑马纹</td></tr>
+                            <tr><td><code>:nth-child(3n+1)</code></td><td>公式：第 1、4、7… 个</td><td>每 3 个换一组</td></tr>
+                            <tr><td><code>:nth-last-child(n)</code></td><td>从后往前数第 n 个</td><td>倒数第几条</td></tr>
+                            <tr><td><code>:first-of-type</code></td><td>同类型里的第一个</td><td>混排容器的救星（见下方坑）</td></tr>
+                            <tr><td><code>:nth-of-type(n)</code></td><td>同类型里的第 n 个</td><td>每隔 2 张图片加边距</td></tr>
+                            <tr><td><code>:only-child</code></td><td>独生子：父亲只有它一个孩子</td><td>单条数据特殊排版</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>:nth-child 的 an+b 公式口算</h3>
+                <p>
+                    <code>an+b</code> 里 <code>n</code> 从 0 开始自动递增（0、1、2、3…），把 n 逐个代进去，
+                    算出来是几就选第几个。背下这几个常用公式就够应付八成场景：
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>nth-child(an+b) 常用公式逐项分析</caption>
+                        <thead>
+                            <tr><th>公式</th><th>展开后是哪些（n = 0,1,2,3…）</th><th>使用场景</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">odd / 2n+1</td><td>第 1、3、5、7… 个</td><td>斑马纹的奇数行</td></tr>
+                            <tr><td class="td-val">even / 2n</td><td>第 2、4、6、8… 个</td><td>斑马纹的偶数行</td></tr>
+                            <tr><td class="td-val">3n</td><td>第 3、6、9… 个</td><td>每行第 3 张卡片去掉右外边距</td></tr>
+                            <tr><td class="td-val">3n+1</td><td>第 1、4、7、10… 个</td><td>三列布局的每行开头</td></tr>
+                            <tr><td class="td-val">n+4</td><td>第 4、5、6… 个（前 3 个不要）</td><td>跳过前几条精选，选中其余</td></tr>
+                            <tr><td class="td-val">-n+3</td><td>第 3、2、1 个（只选前 3 个）</td><td>排行榜前三甲特殊样式</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="lab" data-lang="css" data-file="nth-child.css">
+                    <div class="lab-head"><span class="lab-cap">命中地图：条纹来自 odd/even，边框来自 first/last，虚线圈是 nth-child(3)。把 <code>odd</code> 改成 <code>3n+1</code> 看斑马纹变规律；下半场是 :first-child 的经典坑</span></div>
+                    <template class="lab-html">
+                        <h4>命中地图：条纹来自 odd/even，边框来自 first/last，虚线圈是 nth-child(3)</h4>
+                        <ul class="nth-list">
+                            <li><span>第 1 项</span><i>first-child · odd</i></li>
+                            <li><span>第 2 项</span><i>even</i></li>
+                            <li><span>第 3 项</span><i>nth-child(3) · odd</i></li>
+                            <li><span>第 4 项</span><i>even</i></li>
+                            <li><span>第 5 项</span><i>odd</i></li>
+                            <li><span>第 6 项</span><i>even</i></li>
+                            <li><span>第 7 项</span><i>last-child · odd</i></li>
+                        </ul>
+                        <h4>经典坑：混排容器里，:first-child 认「总排行」，:first-of-type 认「分类型」</h4>
+                        <div class="mix">
+                            <p>① 我是容器的第一个孩子 → p:first-child ✓（紫）</p>
+                            <h5>② 我是第一个 h5 → h5:first-of-type ✓（绿），但 h5:first-child ✗</h5>
+                            <p>③ 普通 p → 谁都不选</p>
+                            <h5>④ 第二个 h5 → 谁都不选</h5>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">/* ── 上半场：命中地图 ── */
+h4 { margin: 0 0 6px; font-size: 13px; color: #6B5D4A; }
+.nth-list { list-style: none; padding: 0; max-width: 460px; margin: 8px 0 4px; }
+.nth-list li {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 7px 12px; margin: 3px 0; border-radius: 7px; font-size: 13px;
+    background: #F6F1E7; border-left: 4px solid transparent; color: #4A3F33;
+}
+.nth-list li i {
+    font-style: normal; font-size: 11.5px; color: #A08C72;
+    font-family: "Cascadia Code", Consolas, monospace;
+}
+
+li:nth-child(odd)  { background: #FDF4E3; }              /* 奇数行 → 斑马纹 */
+li:nth-child(even) { background: #F1EDE4; }              /* 偶数行 */
+li:first-child { border-left: 4px solid #C08A3E; color: #8F6A2E; font-weight: 700; }  /* 第 1 项强调 */
+li:last-child  { border-left: 4px solid #7B9B6B; color: #4E6A3F; font-weight: 700; }  /* 最后一项强调 */
+li:nth-child(3)  { outline: 2px dashed #B3472E; outline-offset: -2px; }               /* 点名第 3 个 */
+
+/* ── 下半场：坑的解药（容器里第一个是 p，后面才是 h5） ── */
+.mix {
+    border: 1.5px dashed #C9B995; border-radius: 10px;
+    padding: 10px 14px; max-width: 460px; margin-top: 10px;
+}
+.mix > p, .mix > h5 {
+    margin: 5px 0; padding: 5px 10px; border-radius: 6px;
+    font-size: 13px; background: #F6F1E7; color: #4A3F33;
+}
+.mix > p:first-child    { background: #EFE4EC; color: #7A4E6D; font-weight: 600; }  /* ✓ p 真的是第一个孩子 */
+.mix > h5:first-of-type { background: #EAF0E4; color: #4E6A3F; font-weight: 600; }  /* ✓ 换成分类型计数 */</script>
+                </div>
+                <div class="lx-warn"><span><code>:first-child</code> 的意思是「<b>恰好是父亲的第一个孩子</b>」，不是「第一个这种元素」。写了 <code>h5:first-child</code> 却死活不生效，先检查：h5 前面是不是还站着别的标签？是的话换 <code>h5:first-of-type</code>。<code>nth-child</code> 和 <code>nth-of-type</code> 同理：前者混着数，后者分开数。</span></div>
+            </section>
+
+            <section>
+                <h2>四、状态伪类：元素此刻的心情</h2>
+                <p>
+                    同一个元素，不同时刻不同待遇：鼠标悬停时、正被按住时、获得焦点时、被勾选时、被禁用时……
+                    <strong class="hl">状态伪类让 CSS 能「看心情」办事</strong>，是交互反馈的地基。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>高频状态伪类速查</caption>
+                        <thead>
+                            <tr><th>伪类</th><th>什么时候命中</th><th>典型用法</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>:hover</code></td><td>鼠标悬停在上面</td><td>按钮/链接变色、上浮</td></tr>
+                            <tr><td><code>:active</code></td><td>正被按住的那一下</td><td>按下缩小、加深，像真的压下去</td></tr>
+                            <tr><td><code>:focus</code></td><td>获得输入焦点（点击 / Tab 切入）</td><td>输入框亮起描边</td></tr>
+                            <tr><td><code>:focus-within</code></td><td><strong>自己或后代</strong>有焦点</td><td>表单里任意框被点，整个表单高亮</td></tr>
+                            <tr><td><code>:checked</code></td><td>勾选框 / 单选被选中</td><td>配合兄弟选择器做纯 CSS 开关</td></tr>
+                            <tr><td><code>:disabled</code></td><td>表单控件被禁用</td><td>置灰 + 禁止光标</td></tr>
+                            <tr><td><code>:link</code> / <code>:visited</code></td><td>没点过 / 已经点过的链接</td><td>已读链接变淡</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="lab" data-lang="css" data-file="state-pseudo.css">
+                    <div class="lab-head"><span class="lab-cap">交互全家桶：点输入框看 <code>:focus</code> 和 <code>:focus-within</code>，悬停/按住按钮，勾选勾选框看 <code>:checked + span</code> 组合拳</span></div>
+                    <template class="lab-html">
+                        <div class="fw-form">
+                            <input type="text" placeholder="点我 → 我自己亮（:focus）">
+                            <input type="text" placeholder="点我 → 整个卡片边框一起亮（:focus-within）">
+                            <input type="text" value="我被禁用了（:disabled）" disabled>
+                            <div class="row">
+                                <button type="button">悬停 / 按住我</button>
+                                <label class="switch">
+                                    <input type="checkbox">
+                                    <span>勾选我（:checked）</span>
+                                </label>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">/* ── 底座 ── */
+.fw-form {
+    max-width: 430px;
+    border: 1.5px solid #E3D5C4; border-radius: 12px; padding: 14px 16px;
+    background: #FDFBF8; transition: border-color .25s, box-shadow .25s;
+}
+input[type="text"] {
+    display: block; width: 100%; padding: 9px 12px; margin: 0 0 10px;
+    border-radius: 8px; border: 1.5px solid #D3B9A4; font-size: 13.5px;
+    color: #3A2E26; background: #fff; font-family: inherit;
+    transition: border-color .2s, box-shadow .2s;
+}
+input[type="text"]::placeholder { color: #B3A48D; font-size: 12.5px; }
+.row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+button {
+    padding: 9px 20px; border-radius: 999px; border: 1.5px solid #96652C;
+    background: #F7F1E6; color: #754C1F; font-size: 13.5px; cursor: pointer;
+    font-family: inherit; transition: all .15s ease;
+}
+.switch { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; cursor: pointer; color: #6B5D4A; }
+.switch input { width: 17px; height: 17px; accent-color: #96652C; cursor: pointer; }
+
+/* 输入框获得焦点：亮起琥珀描边（外面一圈光晕） */
+input[type="text"]:focus {
+    outline: none;
+    border-color: #C08A3E;
+    box-shadow: 0 0 0 3px rgba(192, 138, 62, .2);
+}
+
+/* 容器里任何输入框有焦点，整个容器跟着高亮 */
+.fw-form:focus-within { border-color: #C08A3E; box-shadow: 0 0 0 4px rgba(192, 138, 62, .14); }
+
+/* 被禁用：置灰 + 禁止光标 */
+input:disabled { background: #EFE9DE; color: #A99A82; border-color: #E3D5C4; cursor: not-allowed; }
+
+/* 悬停上浮、按住下压 —— 一套完整的按钮手感 */
+button:hover  { background: #96652C; color: #fff; transform: translateY(-1px); box-shadow: 0 4px 10px rgba(150, 101, 44, .25); }
+button:active { transform: translateY(1px) scale(.97); background: #6E4517; box-shadow: none; }
+
+/* 勾选后，紧跟着的兄弟 span 变红加勾（伪元素提前出场） */
+.switch input:checked + span { color: #9E402B; font-weight: 700; }
+.switch input:checked + span::after { content: " · 已选中"; font-size: 11.5px; color: #B3472E; font-weight: 400; }</script>
+                </div>
+                <div class="lx-note"><span>这个演示里藏了三个「组合拳」：挑输入框用的是第 2 节的属性选择器 <code>input[type="text"]</code>；勾选后的对勾是第 5 节的伪元素 <code>::after</code>；<code>:checked + span</code> 用了第 1 节的相邻兄弟。<b>选择器从来都是组合出场的</b>，这也是它们真正的威力所在。</span></div>
+            </section>
+
+            <section>
+                <h2>五、伪元素：凭空造出「隐形零件」</h2>
+                <p>
+                    伪类描述「状态」，伪元素更进一步——直接在元素内部
+                    <strong class="hl">凭空生成一个假想的子元素</strong>。最常用的是 <code>::before</code> 和
+                    <code>::after</code> 这对双胞胎，分别站在内容的正前方和正后方。双冒号是 HTML5 时代的规范写法
+                    （老代码里的单冒号也能跑）。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>常用伪元素速查</caption>
+                        <thead>
+                            <tr><th>伪元素</th><th>管哪块</th><th>典型用法</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>::before</code></td><td>内容前面的隐形盒子</td><td>引号、图标、装饰色块、清除浮动</td></tr>
+                            <tr><td><code>::after</code></td><td>内容后面的隐形盒子</td><td>闭合引号、「更多 »」箭头</td></tr>
+                            <tr><td><code>::first-letter</code></td><td>只管第一个字</td><td>杂志式首字下沉</td></tr>
+                            <tr><td><code>::first-line</code></td><td>只管第一行</td><td>导语第一行加粗变色</td></tr>
+                            <tr><td><code>::selection</code></td><td>鼠标划选中的文字</td><td>自定义选中背景色</td></tr>
+                            <tr><td><code>::placeholder</code></td><td>输入框的占位提示</td><td>提示文字变淡变小</td></tr>
+                            <tr><td><code>::marker</code></td><td>列表项的记号（圆点/数字）</td><td>把圆点换成彩色方块</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="lab" data-lang="css" data-file="pseudo-elements.css">
+                    <div class="lab-head"><span class="lab-cap">首字下沉 + 前后凭空生成的引号：试试用鼠标划选引用文字看 <code>::selection</code> 换色；把 <code>content</code> 删掉看伪元素直接消失</span></div>
+                    <template class="lab-html">
+                        <p class="dropcap">
+                            杂志排版里常见的首字下沉（Drop Cap），靠 ::first-letter 一个伪元素就能实现——
+                            第一个字被放大、漂浮到段落左侧，正文自动环绕它排布。下面的引用块更妙：
+                            试试用鼠标划选那段文字，选中的背景色会被 ::selection 换成琥珀色。
+                        </p>
+                        <blockquote>
+                            我前后的两个大引号，HTML 里一个字都没写——它们是 ::before 和 ::after
+                            凭空生成的。不插文字也行：content 写空字符串，再用宽高和背景色，
+                            就能画出装饰用的色块、分隔线、气泡小尾巴。
+                        </blockquote>
+                    </template>
+                    <script type="text/plain" class="lab-code">/* 首字下沉：第一个字放大、飘到左边 */
+.dropcap { font-size: 14px; color: #4A3F33; }
+.dropcap::first-letter {
+    float: left; font-size: 3em; line-height: .8;
+    font-weight: 700; color: #96652C; padding: 6px 8px 0 0;
+}
+
+/* 引用块底座 */
+blockquote {
+    position: relative; background: #F7F1E6; border-left: 4px solid #96652C;
+    border-radius: 0 10px 10px 0; padding: 16px 20px 26px; margin: 18px 0 6px;
+    font-size: 13.5px; color: #4A3F33;
+}
+
+/* 前后各生成一个大引号——HTML 里一个字都没写（content 必填！） */
+blockquote::before {
+    content: "“"; position: absolute; top: -12px; left: 8px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 46px; line-height: 1; color: #C08A3E;
+}
+blockquote::after {
+    content: "”"; position: absolute; right: 10px; bottom: -10px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 46px; line-height: 1; color: #C08A3E;
+}
+
+/* 鼠标划选文字时换成琥珀底色（快试试） */
+::selection { background: #E8C39E; color: #6E4A1E; }</script>
+                </div>
+                <div class="lx-warn"><span><code>content</code> 是伪元素的命门——<b>忘了写 content，整个伪元素直接不显示</b>。不想插内容就写 <code>content: ""</code>（画装饰图形的标准姿势）。另外 ::before / ::after 默认是<b>行内元素</b>：想设宽高、做定位，得先加 <code>display: block</code>（或 <code>inline-block</code> / <code>position: absolute</code>）。</span></div>
+            </section>
+
+            <section>
+                <h2>六、优先级：规则打架了，谁说了算</h2>
+                <p>
+                    三条规则同时给一个元素上色，听谁的？CSS 有一套铁打的算法——<strong class="hl">权重（specificity）</strong>。
+                    把选择器拆开数三档：<strong>(id 个数, class/属性/伪类个数, 标签/伪元素个数)</strong>，
+                    从左往右逐位比较，左边大的直接赢。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>权重天梯：从行内样式到 !important</caption>
+                        <thead>
+                            <tr><th>选择器</th><th>权重</th><th>地位</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>行内 <code>style="…"</code></td><td>1-0-0-0</td><td>写在标签上，尽量少用</td></tr>
+                            <tr><td><code>#id</code></td><td>0-1-0-0</td><td>一等公民，一票顶千军</td></tr>
+                            <tr><td><code>.class</code> / <code>[attr]</code> / <code>:hover</code></td><td>0-0-1-0</td><td>主力部队，日常靠它们</td></tr>
+                            <tr><td>标签 / <code>::before</code></td><td>0-0-0-1</td><td>基础兵，打底用</td></tr>
+                            <tr><td><code>*</code> / 组合符 <code>+ ~ &gt;</code></td><td>0-0-0-0</td><td>不计数，纯关系</td></tr>
+                            <tr><td><code>!important</code></td><td>核弹</td><td>同权重全灭，调试应急，别当饭吃</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>口算练习：这些选择器各是几比几</h3>
+                <p>合上答案先自己数一遍——数 (id, class/属性/伪类, 标签/伪元素) 三档，再对照右边：</p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>权重口算练习表（组合符 +、&gt;、~、空格不计数；:not() 本身不算，括号里的算）</caption>
+                        <thead>
+                            <tr><th>选择器</th><th>拆解</th><th>权重</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>p</code></td><td>1 个标签</td><td class="td-val">0-0-1</td></tr>
+                            <tr><td><code>.nav li</code></td><td>1 个 class + 1 个标签</td><td class="td-val">0-1-1</td></tr>
+                            <tr><td><code>.nav &gt; .item:hover</code></td><td>2 个 class + 1 个伪类</td><td class="td-val">0-3-0</td></tr>
+                            <tr><td><code>ul li.active a</code></td><td>1 个 class + 3 个标签</td><td class="td-val">0-1-3</td></tr>
+                            <tr><td><code>#header .nav a</code></td><td>1 个 id + 1 个 class + 1 个标签</td><td class="td-val">1-1-1</td></tr>
+                            <tr><td><code>input[type="text"]:focus</code></td><td>1 个属性 + 1 个伪类 + 1 个标签</td><td class="td-val">0-2-1</td></tr>
+                            <tr><td><code>.list li:not(.empty)</code></td><td>2 个 class + 1 个标签（:not 不计数，括号里的 .empty 计）</td><td class="td-val">0-2-1</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="lab" data-lang="css" data-file="specificity.css">
+                    <div class="lab-head"><span class="lab-cap">上半场三条规则对决（id 完胜）；下半场同权重对决（后写的赢）。把 <code>#hero</code> 规则删掉，看绿色 class 接管</span></div>
+                    <template class="lab-html">
+                        <div class="rules">
+                            <div class="r"><code>p</code><b>0-0-1</b><span>灰色 · 最弱</span></div>
+                            <div class="r"><code>.note</code><b>0-1-0</b><span>绿色 · 居中</span></div>
+                            <div class="r"><code>#hero</code><b>1-0-0</b><span>红底白字 · 完胜</span></div>
+                        </div>
+                        <p id="hero" class="note">三条规则抢着给我上色——id 权重最高，我听 #hero 的</p>
+                        <p class="late">两条同权重规则盯着我：先写的浅紫、后写的深紫——后写的赢（层叠）</p>
+                    </template>
+                    <script type="text/plain" class="lab-code">/* ── 图例底座 ── */
+.rules { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+.r {
+    display: flex; align-items: center; gap: 8px; padding: 7px 12px;
+    border-radius: 8px; background: #F6F1E7; border: 1px solid #E3D5C4;
+    font-size: 12.5px; color: #6B5D4A;
+}
+.r code { font-size: 12.5px; color: #96652C; font-weight: 600; }
+.r b { font-family: "Cascadia Code", Consolas, monospace; color: #B3472E; font-size: 12px; }
+p {
+    padding: 11px 14px; border-radius: 8px; font-size: 13.5px;
+    margin: 6px 0; border: 1.5px solid transparent;
+}
+
+/* ── 上半场：三条规则都盯着同一个元素（p 且 class="note" 且 id="hero"） ── */
+p     { color: #6B5D4A; }                        /* 0-0-1 → 灰色，最弱 */
+.note { color: #4E6A3F; font-weight: 600; }      /* 0-1-0 → 绿色，居中 */
+#hero { color: #fff; background: #B3472E; border-color: #9E402B; }  /* 1-0-0 → 红底白字，完胜 */
+
+/* ── 下半场：同权重时，后写的覆盖先写的——这就是「层叠」的本义 ── */
+.late { color: #A67899; }   /* 先写 */
+.late { color: #7A4E6D; font-weight: 600; }   /* 同权重 0-1-0，后写的赢 → 紫色 */</script>
+                </div>
+                <div class="lx-tip"><span>比大小是<b>逐位比较</b>，不是加总分：10 个 class（0-10-0）也压不过 1 个 id（1-0-0）。实战心法：<b>样式层级尽量用 class 表达；id 选择器留给锚点跳转；!important 只在调试时应急</b>——到处 important 的代码，最终会变成谁都不敢动的雷区。</span></div>
+            </section>
+
+            <section>
+                <h2>七、本章小结</h2>
+                <ul>
+                    <li><strong>组合</strong>：空格选所有后代、<code>&gt;</code> 只选亲儿子、<code>+</code> 紧邻一个、<code>~</code> 后面全部、逗号分组共用。</li>
+                    <li><strong>属性</strong>：<code>[attr]</code> 有就行、<code>=</code> 全等、<code>^=</code> 开头、<code>$=</code> 结尾、<code>*=</code> 包含、<code>~=</code> 整词（css3 ≠ css）。</li>
+                    <li><strong>结构伪类管排行</strong>：<code>nth-child</code> 系列混着数、<code>of-type</code> 系列分类型数；<code>:first-child</code> 必须真的是第一个孩子。</li>
+                    <li><strong>状态伪类管心情</strong>：hover / active / focus / checked / disabled；<code>:focus-within</code> 让整个容器感知焦点。</li>
+                    <li><strong>伪元素凭空造零件</strong>：::before / ::after 记得写 content；::first-letter 首字下沉；::selection 换选中色。</li>
+                    <li><strong>打架看权重</strong>：数 (id, class/属性/伪类, 标签/伪元素) 三档逐位比；同权重后写的赢；!important 是核弹不是常规武器。</li>
+                </ul>
+                <div class="lx-note"><span><b>动手练习</b>：做一个「部门通讯录」列表——<code>nth-child(even)</code> 打斑马纹，<code>first-child</code> 强调表头行；每个联系人写 <code>data-dept="前端"</code> 之类的属性，用属性选择器给不同部门染不同色；行 hover 高亮用 <code>:hover</code>；每行前面加一个部门色块——颜色本身用 <code>::before</code> 画出来。全章武器一次用遍。</span></div>
+            </section>
+
+        </article>
+    </main>
+    <script src="../assets/learn.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>语义化与 HTML5 · HTML 基础 — 前端自习室</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23B8552F'/%3E%3Ctext x='16' y='22' font-size='16' font-family='serif' font-weight='700' fill='%23FFF7EF' text-anchor='middle'%3E学%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="../assets/learn.css">
+</head>
+<body data-page="01-HTML基础/06-语义化与HTML5.html">
+    <main class="lx-main">
+        <article class="lx-article">
+
+            <nav class="lx-crumb">
+                <a href="../教程中心页.html">学习路线</a><span class="sep">›</span>
+                <a href="index.html">HTML 基础</a><span class="sep">›</span>
+                <span class="here">语义化与 HTML5</span>
+            </nav>
+            <h1><span class="h-no">06</span>语义化与 HTML5</h1>
+            <p class="lx-lead">
+                浏览器不关心你用 div 还是 header——但<strong>搜索引擎、读屏软件、未来的你</strong>都关心。
+                语义化 = 用「含义正确的标签」写页面：代码自己会说话。
+                这一章收编 HTML5 的语义骨架、多媒体与实用新元素，HTML 模块就此收官。
+            </p>
+            <div class="lx-meta-row">
+                <span class="lx-chip">约 25 分钟</span>
+                <span class="lx-chip">7 个动手实验</span>
+                <span class="lx-chip">HTML 收官课</span>
+            </div>
+
+            <section>
+                <h2>一、为什么全世界都在劝你「别用 div 硬刚」</h2>
+                <p>
+                    全 div 页面对浏览器来说是一锅粥：哪块是导航？哪块是正文？搜索引擎排不了序，
+                    读屏软件跳不了转，回头维护时只剩「div 套 div 套 div」的俄罗斯套娃。
+                    <strong class="hl">语义化标签外观上毫无区别</strong>（默认不带样式），但机器一眼看懂结构。
+                </p>
+                <div class="lx-codeblock" data-lang="html" data-file="div对比.html">
+                    <script type="text/plain" class="lab-code"><!-- 无语义（div 大法）：机器看不懂哪块是导航、哪块是正文 -->
+<div class="top">...</div>
+<div class="menu">...</div>
+<div class="content">...</div>
+<div class="sidebar">...</div>
+<div class="bottom">...</div>
+
+<!-- 语义化（HTML5）：结构自己会说话 -->
+<header>...</header>
+<nav>...</nav>
+<main>...</main>
+<aside>...</aside>
+<footer>...</footer></script>
+                </div>
+                <div class="lab" data-lang="html" data-file="div对比预览.html">
+                    <div class="lab-head"><span class="lab-cap">同一份页面结构，两种写法（渲染结果一模一样，含义天差地别）：把右边任意一行改成 div 系列，语义立刻消失</span></div>
+                    <template class="lab-html"></template>
+                    <script type="text/plain" class="lab-code"><style>
+  .vs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 620px; }
+  @media (max-width: 640px) { .vs { grid-template-columns: 1fr; } }
+  .vs-col { border-radius: 12px; padding: 14px 16px; font-size: 13px; line-height: 2; font-family: "Cascadia Code", Consolas, monospace; }
+  .bad { background: #FBF3F1; border: 1.5px solid #E5C4BC; color: #8A5A4E; }
+  .good { background: #F3F7F2; border: 1.5px solid #C2D4C0; color: #4A6148; }
+  .vs-col b { display: block; font-family: "PingFang SC", "Microsoft YaHei", sans-serif; margin-bottom: 6px; font-size: 13.5px; }
+  .bad b { color: #C0392B; }
+  .good b { color: #3E7E5B; }
+</style>
+<div class="vs">
+  <div class="vs-col bad">
+    <b>✗ 无语义（div 大法）</b>
+    <div class="top">...</div><br>
+    <div class="menu">...</div><br>
+    <div class="content">...</div><br>
+    <div class="sidebar">...</div><br>
+    <div class="bottom">...</div>
+  </div>
+  <div class="vs-col good">
+    <b>✓ 语义化（HTML5）</b>
+    <header>...</header><br>
+    <nav>...</nav><br>
+    <main>...</main><br>
+    <aside>...</aside><br>
+    <footer>...</footer>
+  </div>
+</div></script>
+                </div>
+                <div class="lx-tip"><span>语义化的三大受益人：<b>SEO</b>（搜索引擎知道你哪里是正文）、
+                    <b>无障碍</b>（读屏用户可跳转导航/正文）、<b>你自己</b>（半年后改代码不用考古）。
+                    div 不是不能用——「实在没有准确含义时」才是它的主场。</span></div>
+            </section>
+
+            <section>
+                <h2>二、页面骨架七将：header / nav / main / aside / footer</h2>
+                <p>
+                    一张典型页面的骨架，就像人体：<strong class="hl">头（header）、路标（nav）、
+                    躯干（main + aside）、脚（footer）</strong>。main 全页只能有一个，是页面主内容区。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>骨架七将逐项分析：含义 / 位置 / 用法</caption>
+                        <thead>
+                            <tr><th>标签</th><th>含义</th><th>常见位置 / 用法</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>&lt;header&gt;</code></td><td>页头 / 区块头</td><td>放 logo、站名、搜索框；一个页面和每个 section 都可以有</td></tr>
+                            <tr><td><code>&lt;nav&gt;</code></td><td>导航链接组</td><td>主导航、面包屑、侧边目录；只包「重要的成组链接」</td></tr>
+                            <tr><td><code>&lt;main&gt;</code></td><td>主内容</td><td><b>全页唯一</b>；不能放进 header/nav/aside/footer 里</td></tr>
+                            <tr><td><code>&lt;aside&gt;</code></td><td>侧边栏 / 旁注</td><td>与主内容弱相关：推荐阅读、广告、标签云</td></tr>
+                            <tr><td><code>&lt;footer&gt;</code></td><td>页脚 / 区块脚</td><td>版权、联系方式、备案号</td></tr>
+                            <tr><td><code>&lt;h1&gt;~&lt;h6&gt;</code></td><td>标题层级</td><td>骨架的「目录树」，配合语义标签一起用</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="html" data-file="页面骨架.html">
+                    <script type="text/plain" class="lab-code"><body>
+  <header>
+    <h1>我的博客</h1>
+    <nav>
+      <a href="/">首页</a> <a href="/archives">归档</a> <a href="/about">关于</a>
+    </nav>
+  </header>
+
+  <main>
+    <article>……正文……</article>
+  </main>
+
+  <aside>
+    <h3>推荐阅读</h3>
+  </aside>
+
+  <footer>
+    <p>© 2026 我 · 备案号 XXX</p>
+  </footer>
+</body></script>
+                </div>
+                <div class="lab" data-lang="html" data-file="页面骨架预览.html">
+                    <div class="lab-head"><span class="lab-cap">典型页面骨架示意（每个色块对应一个语义标签）：看 <code>main</code> 只能出现一次，别加第二块</span></div>
+                    <template class="lab-html"></template>
+                    <script type="text/plain" class="lab-code"><style>
+  .skel { display: grid; gap: 8px; font-size: 12.5px; text-align: center;
+          grid-template-areas: "hd hd hd" "nv nv nv" "sd mn as" "ft ft ft";
+          max-width: 620px; }
+  .skel > div { border-radius: 8px; padding: 10px 8px; font-weight: 600; font-family: "Cascadia Code", Consolas, monospace; }
+  .hd { grid-area: hd; background: #F6E8DF; border: 1.5px dashed #C99A88; color: #8F3A26; }
+  .nv { grid-area: nv; background: #F3EFE6; border: 1.5px dashed #B8AC93; color: #6B6053; }
+  .sd { grid-area: sd; background: #EFF3F0; border: 1.5px dashed #9DB4A0; color: #4E7A52; min-height: 90px; display: flex; align-items: center; justify-content: center; }
+  .mn { grid-area: mn; background: #FDF9F4; border: 1.5px dashed #C9A284; color: #8F3A26; min-height: 90px; display: flex; align-items: center; justify-content: center; }
+  .as { grid-area: as; background: #F0EEF4; border: 1.5px dashed #A79DBE; color: #6A5D8A; min-height: 90px; display: flex; align-items: center; justify-content: center; }
+  .ft { grid-area: ft; background: #F3EFE6; border: 1.5px dashed #B8AC93; color: #6B6053; }
+</style>
+<div class="skel">
+  <div class="hd"><header> logo · 站名 · 搜索</div>
+  <div class="nv"><nav> 首页 / 分类 / 归档 / 关于</div>
+  <div class="sd"><aside><br>侧边栏</div>
+  <div class="mn"><main><br>主内容（全页唯一）</div>
+  <div class="as"><aside><br>旁注</div>
+  <div class="ft"><footer> © 2026 · 联系方式</div>
+</div></script>
+                </div>
+            </section>
+
+            <section>
+                <h2>三、article 与 section：独立成篇 vs 分节</h2>
+                <p>
+                    最容易混淆的一对。<strong class="hl">article 是「能单独拿出去用」的完整内容</strong>：
+                    一篇博客、一条评论、一张商品卡。
+                    <strong class="hl">section 是「同一主题下的一节」</strong>：它不要求独立，只负责分块，
+                    而且通常应该带一个标题。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>article 与 section 对比：剪下来独立 vs 主题下分节</caption>
+                        <thead>
+                            <tr><th>对比项</th><th><code>&lt;article&gt;</code></th><th><code>&lt;section&gt;</code></th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>判断口诀</td><td>剪下来能独立阅读？</td><td>是主题下的一个小节？</td></tr>
+                            <tr><td>典型场景</td><td>博客文章、评论、商品卡、新闻条目</td><td>章节、标签页内容、功能区块</td></tr>
+                            <tr><td>嵌套关系</td><td>article 里可以套 article（评论套回复）</td><td>section 里可以套 section</td></tr>
+                            <tr><td>配标题</td><td>强烈建议有 h1~h6</td><td>必须有标题才用（否则换 div）</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="html" data-file="article文章.html">
+                    <script type="text/plain" class="lab-code"><article>
+  <header>
+    <h2>Flex 布局入门</h2>
+    <p>发布于 <time datetime="2026-08-29">8月29日</time></p>
+  </header>
+
+  <section>
+    <h3>容器属性</h3>
+    <p>flex-direction 决定主轴方向……</p>
+  </section>
+  <section>
+    <h3>项目属性</h3>
+    <p>flex-grow 决定怎么瓜分剩余空间……</p>
+  </section>
+
+  <footer>
+    <p>作者：薇尔莉特 · 标签：CSS / 布局</p>
+  </footer>
+
+  <!-- 评论：article 套 article -->
+  <article>
+    <p>讲得真清楚！</p>
+  </article>
+</article></script>
+                </div>
+                <div class="lab" data-lang="html" data-file="article文章预览.html">
+                    <div class="lab-head"><span class="lab-cap">一篇带 section 分节与评论的文章（article 套 article）：数一数「评论」算不算一个独立的 article</span></div>
+                    <template class="lab-html"></template>
+                    <script type="text/plain" class="lab-code"><style>
+  .art { background: #FDF9F4; border: 1.5px solid #E3D5C4; border-radius: 12px; padding: 16px 18px; max-width: 560px; }
+  .art header { border-bottom: 1px dashed #E3D5C4; padding-bottom: 6px; margin-bottom: 8px; font-size: 13px; color: #6B5D4A; }
+  .art header h4 { font-size: 15px; color: #8F3A26; margin: 0 0 2px; }
+  .art footer { border-top: 1px dashed #E3D5C4; padding-top: 6px; margin-top: 8px; font-size: 12px; color: #A08C72; }
+  .art p { font-size: 13.5px; color: #3A2E26; margin: 6px 0; }
+  .sec-t { color: #3E7E5B; font-size: 13px; font-weight: 700; }
+  .comment { margin-top: 10px; border-top: 1px dashed #E3D5C4; padding-top: 8px; }
+  .comment b { font-size: 12.5px; color: #8F3A26; }
+</style>
+<article class="art">
+  <header>
+    <h4>Flex 布局入门</h4>
+    发布于 <time datetime="2026-08-29">8月29日</time>
+  </header>
+  <section>
+    <span class="sec-t">§ 容器属性</span>
+    <p>flex-direction 决定主轴方向，justify-content 决定主轴排队方式……</p>
+  </section>
+  <section>
+    <span class="sec-t">§ 项目属性</span>
+    <p>flex-grow 决定怎么瓜分剩余空间，align-self 允许单个项目「开小差」……</p>
+  </section>
+  <footer>作者：薇尔莉特 · 标签：CSS / 布局</footer>
+  <div class="comment">
+    <b>评论（article 套 article）</b>
+    <p>讲得真清楚！</p>
+  </div>
+</article></script>
+                </div>
+            </section>
+
+            <section>
+                <h2>四、文本级语义：figure / time / mark / details</h2>
+                <p>
+                    小而美的四个标签：<code>&lt;figure&gt;</code>+<code>&lt;figcaption&gt;</code> 给图表配说明文字、
+                    <code>&lt;time&gt;</code> 给机器读的时间、<code>&lt;mark&gt;</code> 高亮、
+                    <code>&lt;details&gt;</code>+<code>&lt;summary&gt;</code> 免 JS 的折叠面板。
+                </p>
+                <div class="lx-codeblock" data-lang="html" data-file="文本级语义.html">
+                    <script type="text/plain" class="lab-code"><figure>
+  <img src="chart.png" alt="2026 学习时长统计">
+  <figcaption>图 1：上半年每周学习时长（小时）</figcaption>
+</figure>
+
+<p>会议改到 <time datetime="2026-09-01 14:00">9月1日下午两点</time>。</p>
+
+<p>本次考试重点：<mark>语义化标签</mark>。</p>
+
+<details>
+  <summary>点击展开答案</summary>
+  <p>main 标签在一个页面中只能出现一次。</p>
+</details></script>
+                </div>
+                <div class="lab" data-lang="html" data-file="文本级语义预览.html">
+                    <div class="lab-head"><span class="lab-cap">figure 配图注、mark 高亮、details 折叠（点 summary 试试）：把 details 的 <code>open</code> 删掉，它就默认收起</span></div>
+                    <template class="lab-html"></template>
+                    <script type="text/plain" class="lab-code"><style>
+  figcaption, .t { font-size: 12.5px; color: #6B5D4A; margin-top: 8px; }
+  .mark { background: #F3E7D2; color: #8F3A26; padding: 0 4px; border-radius: 4px; font-weight: 600; }
+  .time { background: rgba(184,85,47,.1); border-radius: 5px; padding: 0 6px; font-family: "Cascadia Code", Consolas, monospace; font-size: 13px; }
+  .fig { background: #FDF9F4; border: 1.5px solid #E3D5C4; border-radius: 12px; padding: 14px; max-width: 420px; text-align: center; }
+  .ph { height: 110px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+        background: repeating-linear-gradient(45deg, #F3E9D8 0 14px, #EFE2CC 14px 28px);
+        color: #A08C72; font-size: 13px; letter-spacing: 2px; }
+  details { background: #FDF9F4; border: 1.5px solid #E3D5C4; border-radius: 10px; padding: 10px 16px; max-width: 460px; }
+  summary { font-weight: 700; color: #8F3A26; cursor: pointer; font-size: 14px; }
+  details[open] summary { border-bottom: 1px dashed #E3D5C4; padding-bottom: 6px; margin-bottom: 6px; }
+  details p { font-size: 13px; color: #6B5D4A; margin: 4px 0; }
+</style>
+<figure class="fig">
+  <div class="ph">图 片 占 位</div>
+  <figcaption>图 1：figure 与 figcaption 是绑定出场的搭档</figcaption>
+</figure>
+<p class="t">会议改到 <time class="time" datetime="2026-09-01 14:00">9月1日下午两点</time>，
+本次考试重点：<mark class="mark">语义化标签</mark>。</p>
+<details open>
+  <summary>details 默认收起，加 open 属性默认展开</summary>
+  <p>main 在页面中只能有一个；nav 只包重要链接组；figure 里的 figcaption 是图注。</p>
+</details></script>
+                </div>
+                <div class="lx-tip"><span><code>&lt;details&gt;</code> 是「零 JS 折叠面板」：FAQ 列表、答案隐藏全靠它，
+                    自带展开/收起动画。要默认展开就加 <code>open</code> 属性。</span></div>
+            </section>
+
+            <section>
+                <h2>五、HTML5 多媒体：audio 与 video</h2>
+                <p>
+                    以前网页放视频要靠 Flash 插件，HTML5 把音视频收编成了原生标签。
+                    <strong class="hl">controls 显示控制条</strong>，
+                    <code>&lt;source&gt;</code> 提供多格式备胎，<code>&lt;track&gt;</code> 挂字幕。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>media 媒体属性逐项分析：控制条 / 静音 / 预加载</caption>
+                        <thead>
+                            <tr><th>属性</th><th>作用</th><th>适用</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>controls</code></td><td>显示播放控制条</td><td>两者（不加用户没法操作）</td></tr>
+                            <tr><td><code>autoplay</code></td><td>自动播放</td><td>多数浏览器需配合 muted 才生效</td></tr>
+                            <tr><td><code>muted</code></td><td>静音</td><td>video</td></tr>
+                            <tr><td><code>loop</code></td><td>循环播放</td><td>两者（背景音乐常用）</td></tr>
+                            <tr><td><code>poster</code></td><td>封面图 URL</td><td>video（播放前显示的画面）</td></tr>
+                            <tr><td><code>preload</code></td><td>预加载策略</td><td><code>none</code> / <code>metadata</code> / <code>auto</code></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="html" data-file="媒体标签.html">
+                    <script type="text/plain" class="lab-code"><video controls width="480" poster="cover.jpg">
+  <source src="movie.webm" type="video/webm">
+  <source src="movie.mp4" type="video/mp4">
+  您的浏览器不支持 video 标签。   <!-- 兜底文案 -->
+</video>
+
+<audio controls loop src="bgm.mp3"></audio></script>
+                </div>
+                <div class="lab" data-lang="html" data-file="多媒体预览.html">
+                    <div class="lab-head"><span class="lab-cap">audio / video 结构示意（controls 一加，控制条免费送）：看 <code>source</code> 从上到下找一个能播的</span></div>
+                    <template class="lab-html"></template>
+                    <script type="text/plain" class="lab-code"><style>
+  .media { display: grid; gap: 12px; max-width: 480px; }
+  .mv { background: #2B2320; border-radius: 10px; height: 150px;
+        display: flex; align-items: center; justify-content: center; color: #B8A794;
+        font-size: 13px; flex-direction: column; gap: 8px; }
+  .bars { display: flex; gap: 4px; align-items: flex-end; height: 34px; }
+  .bars i { width: 6px; background: #C08A3E; border-radius: 2px; animation: wave 1s infinite ease-in-out alternate; }
+  .bars i:nth-child(1) { height: 40%; animation-delay: 0s; }
+  .bars i:nth-child(2) { height: 75%; animation-delay: .2s; }
+  .bars i:nth-child(3) { height: 55%; animation-delay: .4s; }
+  .bars i:nth-child(4) { height: 90%; animation-delay: .1s; }
+  .bars i:nth-child(5) { height: 60%; animation-delay: .3s; }
+  @keyframes wave { to { transform: scaleY(0.35); } }
+</style>
+<div class="media">
+  <div class="mv">
+    <div class="bars"><i></i><i></i><i></i><i></i><i></i></div>
+    <video controls poster="..."> 播放中
+  </div>
+  <div style="font-size:13px;color:#6B5D4A">
+    <source> 从上到下找：浏览器<strong>认出第一个能播的格式就用它</strong>，
+    全都不认识才显示兜底文字。MP4（H.264）是最大公约数。
+  </div>
+</div></script>
+                </div>
+            </section>
+
+            <section>
+                <h2>六、head 里的语义：SEO 与社交分享</h2>
+                <p>
+                    语义化不止在 body 里。head 里的 meta 深刻影响「搜索结果长什么样」和
+                    「分享到微信/推特时的卡片」——这是站长必争之地。
+                </p>
+                <div class="lx-codeblock" data-lang="html" data-file="head语义.html">
+                    <script type="text/plain" class="lab-code"><head>
+  <meta charset="UTF-8">
+  <title>页面标题：搜索结果的第一行（约 30 字）</title>
+  <meta name="description" content="页面描述：搜索结果的摘要文字（约 80 字）">
+  <meta name="keywords" content="HTML, 语义化, 前端">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Open Graph：分享到社交平台的卡片 -->
+  <meta property="og:title" content="分享卡片标题">
+  <meta property="og:image" content="https://example.com/cover.jpg">
+</head></script>
+                </div>
+                <div class="lab" data-lang="html" data-file="搜索预览.html">
+                    <div class="lab-head"><span class="lab-cap">一条搜索结果的构成（title 与 description 直接决定点击率）：把 description 的文字删空，摘要区就没了</span></div>
+                    <template class="lab-html"></template>
+                    <script type="text/plain" class="lab-code"><style>
+  .meta { background: #FDF9F4; border: 1.5px solid #E3D5C4; border-radius: 10px; padding: 12px 16px;
+          font-family: "Cascadia Code", Consolas, monospace; font-size: 12.5px; line-height: 2.1; color: #6B5D4A; max-width: 520px; }
+  .meta b { color: #8F3A26; font-weight: 600; }
+</style>
+<div class="meta">
+  <b><title></b> → 搜索结果第一行蓝色大标题<br>
+  <b><meta description></b> → 下面两行灰色摘要文字<br>
+  <b><og:image></b> → 分享链接时显示的缩略图
+</div></script>
+                </div>
+            </section>
+
+            <section>
+                <h2>七、语义化自查清单</h2>
+                <p>
+                    写完页面，用这七问过一遍。能答「是」的越多，页面越「会说人话」：
+                </p>
+                <ul>
+                    <li>页头页脚用了 <code>header</code> / <code>footer</code>，而不是 <code>div.top</code>？</li>
+                    <li>成组的重要链接包在 <code>nav</code> 里？</li>
+                    <li>主内容在唯一的 <code>main</code> 里，侧栏用 <code>aside</code>？</li>
+                    <li>独立成篇的内容（文章/评论/卡片）用了 <code>article</code>？</li>
+                    <li>带标题的区块用了 <code>section</code>，没标题的才用 <code>div</code>？</li>
+                    <li>图片有 <code>alt</code>，时间用 <code>time</code>，重点用 <code>mark</code>/<code>strong</code>？</li>
+                    <li>h1~h6 层级连续不跳号（h1 后直接 h3 是大忌）？</li>
+                </ul>
+                <div class="lab" data-lang="html" data-file="自查清单预览.html">
+                    <div class="lab-head"><span class="lab-cap">一张「语义体检报告」：左边全中 = 需要重构。对照你自己的页面，看属于哪一列</span></div>
+                    <template class="lab-html"></template>
+                    <script type="text/plain" class="lab-code"><style>
+  .vs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 620px; }
+  @media (max-width: 640px) { .vs { grid-template-columns: 1fr; } }
+  .vs-col { border-radius: 12px; padding: 14px 16px; font-size: 13px; line-height: 2; font-family: "Cascadia Code", Consolas, monospace; }
+  .bad { background: #FBF3F1; border: 1.5px solid #E5C4BC; color: #8A5A4E; }
+  .good { background: #F3F7F2; border: 1.5px solid #C2D4C0; color: #4A6148; }
+  .vs-col b { display: block; font-family: "PingFang SC", "Microsoft YaHei", sans-serif; margin-bottom: 6px; font-size: 13.5px; }
+  .bad b { color: #C0392B; }
+  .good b { color: #3E7E5B; }
+</style>
+<div class="vs">
+  <div class="vs-col bad">
+    <b>✗ 常见反面教材</b>
+    div 里全是 div<br>
+    标题用 <p class="big"> 凑<br>
+    导航是一堆裸 <a><br>
+    侧栏叫 div.right<br>
+    图片没写 alt
+  </div>
+  <div class="vs-col good">
+    <b>✓ 语义化达标</b>
+    骨架：header/nav/main/aside/footer<br>
+    标题：h1→h2→h3 逐级<br>
+    导航：nav 包 ul>li>a<br>
+    文章：article 套 section<br>
+    图片：必带 alt 描述
+  </div>
+</div></script>
+                </div>
+            </section>
+
+            <section>
+                <h2>八、本章小结 · HTML 模块收官</h2>
+                <ul>
+                    <li>语义化 = 给机器和未来的自己写「能自解释」的 HTML，受益人是 SEO、无障碍、可维护性。</li>
+                    <li>骨架七将：<code>header</code> 头、<code>nav</code> 路标、<code>main</code> 躯干（全页唯一）、<code>aside</code> 侧栏、<code>footer</code> 脚。</li>
+                    <li><code>article</code> 独立成篇可嵌套；<code>section</code> 主题分节须带标题；都没有含义时才轮到 div。</li>
+                    <li>文本级：<code>figure+figcaption</code> 图注、<code>time</code> 机器可读时间、<code>mark</code> 高亮、<code>details+summary</code> 零 JS 折叠。</li>
+                    <li>多媒体：<code>audio</code> / <code>video</code> + <code>source</code> 多格式备胎，controls 送控制条。</li>
+                    <li>head 语义：<code>title</code> + <code>description</code> 决定搜索结果长相，og 系列决定分享卡片。</li>
+                    <li>HTML 六章至此毕业：骨架 → 元素属性 → 文本链接 → 列表表格 → 表单 → 语义化。下一站：给素颜的 HTML 穿上 CSS 外衣。</li>
+                </ul>
+                <div class="lx-note"><span><b>毕业设计</b>：把前几章写的「奶茶定制单」重构成语义化版本——
+                    form 包 fieldset，页面用 header/nav/main/footer 搭骨架，
+                    说明文字配 figure，常见问题收进 details。F12 打开 Elements，
+                    让结构树一眼可读，就是最好的结业证。</span></div>
+            </section>
+
+        </article>
+    </main>
+    <script src="../assets/learn.js" defer></script>
+</body>
+</html>

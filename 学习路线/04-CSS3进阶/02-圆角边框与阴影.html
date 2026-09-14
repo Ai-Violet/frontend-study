@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>圆角边框与阴影 · CSS3 进阶 — 前端自习室</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23B8552F'/%3E%3Ctext x='16' y='22' font-size='16' font-family='serif' font-weight='700' fill='%23FFF7EF' text-anchor='middle'%3E学%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="../assets/learn.css">
+</head>
+<body data-page="04-CSS3进阶/02-圆角边框与阴影.html">
+    <main class="lx-main">
+        <article class="lx-article">
+
+            <nav class="lx-crumb">
+                <a href="../教程中心页.html">学习路线</a><span class="sep">›</span>
+                <a href="index.html">CSS3 进阶</a><span class="sep">›</span>
+                <span class="here">圆角边框与阴影</span>
+            </nav>
+            <h1><span class="h-no">02</span>圆角边框与阴影</h1>
+            <p class="lx-lead">
+                方正硬朗 → 圆润柔和，一个 <code>border-radius</code> 就够；
+                平面贴纸 → 立体悬浮，靠 <code>box-shadow</code>。
+                这是网页「质感」的第一课，也是 CSS3 里<strong class="hl">性价比最高的两个属性</strong>。
+            </p>
+            <div class="lx-meta-row">
+                <span class="lx-chip">约 30 分钟</span>
+                <span class="lx-chip">6 个动手实验</span>
+                <span class="lx-chip">网页质感之基</span>
+            </div>
+
+            <section>
+                <h2>一、border-radius：从方到圆</h2>
+                <p>
+                    一个值就是「每个角的半径」：<code>border-radius: 16px</code> 表示四个角都以 16px 为半径倒圆。
+                    想精细控制，可以按<strong class="hl">「左上 → 右上 → 右下 → 左下」顺时针</strong>给四个角不同的值，
+                    也可以用单角属性点名只改一个角。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>border-radius 各写法展开：一到四值顺时针 + 单角 + 特殊值</caption>
+                        <thead>
+                            <tr><th>写法</th><th>含义</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">border-radius: 12px</td><td>四角统一 12px</td></tr>
+                            <tr><td class="td-val">border-radius: 12px 24px</td><td>两值对角一组：左上右下 12px，右上左下 24px</td></tr>
+                            <tr><td class="td-val">border-radius: 12px 24px 8px</td><td>左上 / 右上左下 / 右下</td></tr>
+                            <tr><td class="td-val">border-radius: 12px 24px 8px 4px</td><td>左上 → 右上 → 右下 → 左下（顺时针一圈）</td></tr>
+                            <tr><td class="td-val">border-top-left-radius: 20px</td><td>只改左上角（另有 top-right / bottom-right / bottom-left）</td></tr>
+                            <tr><td class="td-val">border-radius: 50%</td><td>正方形变正圆；矩形变椭圆</td></tr>
+                            <tr><td class="td-val">border-radius: 999px</td><td>超大值 = 胶囊（超出的部分会被自动等比压缩）</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>五种形态摆一起，把 <code>.b</code> 的 16px 改成 40px，看圆角变化：</p>
+                <div class="lab" data-lang="css" data-file="radius.css">
+                    <div class="lab-head"><span class="lab-cap">从方到圆五种形态：把 <code>.b</code> 的 <code>16px</code> 改成 <code>40px</code>，看统一圆角更圆</span></div>
+                    <template class="lab-html">
+                        <div class="stage">
+                            <div class="box a">0<br>直角</div>
+                            <div class="box b">16px<br>统一圆角</div>
+                            <div class="box c">16px 0<br>对角圆</div>
+                            <div class="box d">50%<br>正圆</div>
+                            <div class="box e">999px 胶囊</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.stage {
+    display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; padding: 6px 0;
+}
+.stage .box {
+    width: 96px; height: 96px;
+    background: linear-gradient(135deg, #8A4E63, #B3748A);
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    font-size: 11.5px; text-align: center; line-height: 1.5;
+}
+.a { border-radius: 0; }          /* 直角：对照组 */
+.b { border-radius: 16px; }        /* 一个值：四角统一 */
+.c { border-radius: 16px 0; }      /* 两个值：对角圆（「叶子」形） */
+.d { border-radius: 50%; }         /* 50%：正方形 → 正圆 */
+.e {                               /* 超大值：胶囊 */
+    width: 150px; height: 44px;
+    border-radius: 999px;          /* 写 999px 比算 22px 省心 */
+}</script>
+                </div>
+                <div class="lx-tip"><span>头像裁圆不用改图片文件：<code>img { border-radius: 50%; }</code> 直接生效，
+                    前提是图片本身是正方形（可配合 <code>object-fit: cover</code> 补救）。</span></div>
+            </section>
+
+            <section>
+                <h2>二、斜杠语法：椭圆角</h2>
+                <p>
+                    圆角其实有<strong class="hl">两个半径</strong>：水平半径和垂直半径。
+                    平时写一个值时两者相等（正圆角）；用斜杠 <code>/</code> 分开写，就能让它们不一样，
+                    得到<strong class="hl">椭圆角</strong>：水平长就「扁圆」，垂直长就「竖圆」。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="ellipse.css">
+                    <script type="text/plain" class="lab-code">/* 斜杠左边 = 水平半径，右边 = 垂直半径 */
+.ellipse-a { border-radius: 50%  / 50%; }   /* 椭圆（矩形 + 50%） */
+.ellipse-b { border-radius: 40px / 20px; }  /* 水平大：扁圆角 */
+.ellipse-c { border-radius: 20px / 40px; }  /* 垂直大：竖圆角 */
+.ellipse-d { border-radius: 50%  / 20%; }   /* 百分比混搭也行 */
+
+/* 单角属性同样支持两值（空格分隔，不用斜杠） */
+.leaf { border-top-left-radius: 40px 20px; }  /* 左上角：水平 40 垂直 20 */</script>
+                </div>
+                <p>同一个盒子，四种「水平半径 / 垂直半径」组合，把每个盒子的 x / y 值调换看看差异：</p>
+                <div class="lab" data-lang="css" data-file="ellipse-demo.css">
+                    <div class="lab-head"><span class="lab-cap">四种「水平 / 垂直」半径组合：把 <code>.c</code> 的 <code>20px / 40px</code> 与 <code>.b</code> 的 <code>40px / 20px</code> 互换，看扁圆角和竖圆角翻转</span></div>
+                    <template class="lab-html">
+                        <div class="sl-stage">
+                            <div class="box a">50% / 50%<br>椭圆</div>
+                            <div class="box b">40px / 20px<br>扁圆角</div>
+                            <div class="box c">20px / 40px<br>竖圆角</div>
+                            <div class="box d">50% / 20%<br>混搭</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.sl-stage {
+    display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; padding: 6px 0;
+}
+.sl-stage .box {
+    width: 150px; height: 96px;
+    background: linear-gradient(135deg, #6C3B4C, #B3748A);
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    font-size: 11.5px; text-align: center; line-height: 1.5;
+}
+.a { border-radius: 50% / 50%; }
+.b { border-radius: 40px / 20px; }
+.c { border-radius: 20px / 40px; }
+.d { border-radius: 50% / 20%; }</script>
+                </div>
+                <div class="lx-warn"><span>日常开发 95% 的场景一个值就够；斜杠语法更多出现在
+                    <b>「鸡蛋形」「叶子形」</b>这类拟物设计里。认识它，见到不慌即可。</span></div>
+            </section>
+
+            <section>
+                <h2>三、box-shadow：五个参数逐个看</h2>
+                <p>
+                    盒阴影的完整语法是
+                    <strong class="hl">x 偏移 y 偏移 模糊半径 扩散半径 颜色</strong>——
+                    只有前两个必填，其余可选。一个参数一个效果，逐个叠加着看最直观：
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="box-shadow.css">
+                    <script type="text/plain" class="lab-code">/* 完整形态：       x      y    模糊   扩散   颜色（建议 rgba 带透明度） */
+.sh-b { box-shadow: 10px 10px 8px 0px rgba(108, 59, 76, 0.45); }
+
+/* ① 只有偏移：影子是「实心剪纸」，边缘硬 */
+.sh-a { box-shadow: 10px 10px rgba(108, 59, 76, 0.55); }
+
+/* ② 加模糊：边缘虚化，立刻柔和自然 */
+.sh-b { box-shadow: 10px 10px 8px rgba(108, 59, 76, 0.45); }
+
+/* ③ 偏移归零 + 模糊：经典的「悬浮」阴影 */
+.sh-c { box-shadow: 0 10px 18px rgba(108, 59, 76, 0.35); }
+
+/* ④ 扩散半径：影子整体变大——0 偏移 0 模糊 + 正扩散 = 描边色环 */
+.sh-d { box-shadow: 0 0 0 8px rgba(138, 78, 99, 0.25); }
+
+/* ⑤ 负扩散：影子缩小收紧，投影不会伸出太远 */
+.sh-e { box-shadow: 0 10px 18px -6px rgba(108, 59, 76, 0.4); }</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="box-shadow-demo.css">
+                    <div class="lab-head"><span class="lab-cap">五个盒子各用一种参数组合——把 <code>.d</code> 的 <code>8px</code> 扩散改成 <code>-8px</code>，描边环变内收</span></div>
+                    <template class="lab-html">
+                        <div class="sh-stage">
+                            <div class="box a">① 只有偏移<br>硬边影子</div>
+                            <div class="box b">② + 模糊<br>柔和自然</div>
+                            <div class="box c">③ 0 偏移 + 模糊<br>悬浮感</div>
+                            <div class="box d">④ 正扩散<br>描边色环</div>
+                            <div class="box e">⑤ 负扩散<br>收紧的投影</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.sh-stage {
+    display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start;
+    justify-content: center; padding: 14px 0 18px;
+}
+.sh-stage .box {
+    width: 158px; height: 86px; background: #fff; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11.5px; color: #6C3B4C; text-align: center; line-height: 1.6;
+}
+.a { box-shadow: 10px 10px rgba(108, 59, 76, 0.55); }
+.b { box-shadow: 10px 10px 8px rgba(108, 59, 76, 0.45); }
+.c { box-shadow: 0 10px 18px rgba(108, 59, 76, 0.35); }
+.d { box-shadow: 0 0 0 8px rgba(138, 78, 99, 0.25); }
+.e { box-shadow: 0 10px 18px -6px rgba(108, 59, 76, 0.4); }</script>
+                </div>
+                <div class="lx-tip"><span>方向口诀：<b>x 正右负左，y 正下负上</b>。
+                    想让光从左上打来（视觉习惯），影子就该往右下：
+                    <code>box-shadow: 4px 4px 12px rgba(0,0,0,.2)</code>。</span></div>
+            </section>
+
+            <section>
+                <h2>四、inset 内阴影与多重阴影</h2>
+                <p>
+                    在最前面加一个 <code>inset</code> 关键字，阴影就从「外面的影子」变成
+                    <strong class="hl">「里面的影子」</strong>——凹陷感扑面而来，输入框、凹陷按钮、井底都靠它。
+                    另外，阴影可以<strong class="hl">逗号分隔写多层</strong>，先写的在上层，
+                    「描边 + 投影」的组合拳是卡片设计的常客。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="inset.css">
+                    <script type="text/plain" class="lab-code">/* inset：注意写在最前面 */
+.well {
+    background: #F3EDDD;
+    box-shadow: inset 0 3px 8px rgba(108, 59, 76, 0.28);  /* 上内阴影 = 凹陷 */
+}
+
+/* 多重阴影：三层叠加（白描边 → 紫描边 → 底部投影） */
+.card {
+    background: #fff;
+    box-shadow:
+        0 0 0 3px #fff,                     /* 第 1 层：白色贴边 */
+        0 0 0 6px rgba(138, 78, 99, 0.4),   /* 第 2 层：紫色描边 */
+        0 16px 32px rgba(108, 59, 76, 0.3); /* 第 3 层：底部投影 */
+}
+
+/* inset 和外阴影还能混用：凹陷 + 投影一步到位 */
+.combo { box-shadow: inset 0 2px 6px rgba(0,0,0,.15), 0 8px 20px rgba(0,0,0,.2); }</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="inset-demo.css">
+                    <div class="lab-head"><span class="lab-cap">左边 inset 凹陷井，右边三层阴影拼出的「双描边浮卡」——把左边 <code>inset</code> 删掉就是外投影</span></div>
+                    <template class="lab-html">
+                        <div class="im-stage">
+                            <div class="well">inset 内阴影<br>凹陷 / 输入框感</div>
+                            <div class="card">多重阴影<br>白描边 + 紫描边 + 投影</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.im-stage {
+    display: flex; flex-wrap: wrap; gap: 22px; align-items: center;
+    justify-content: center; padding: 10px 0;
+}
+.well {
+    width: 180px; height: 86px; border-radius: 12px; background: #F3EDDD;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; color: #6B6053; text-align: center; line-height: 1.6;
+    box-shadow: inset 0 3px 8px rgba(108, 59, 76, 0.28);
+}
+.card {
+    width: 180px; height: 86px; border-radius: 12px; background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; color: #6C3B4C; text-align: center; line-height: 1.6;
+    box-shadow:
+        0 0 0 3px #fff,
+        0 0 0 6px rgba(138, 78, 99, 0.4),
+        0 16px 32px rgba(108, 59, 76, 0.3);
+}</script>
+                </div>
+                <div class="lx-warn"><span>阴影颜色别用不透明纯黑——<b>rgba + 低透明度</b> 才自然。
+                    业界经典的两段式悬浮：<code>0 1px 2px rgba(0,0,0,.08), 0 8px 24px rgba(0,0,0,.12)</code>
+                    （近处一实一虚，层次立刻出来）。</span></div>
+            </section>
+
+            <section>
+                <h2>五、实战：悬浮卡片与霓虹按钮</h2>
+                <p>
+                    圆角 + 阴影 + 一个 <code>:hover</code>，就能做出「能摸」的交互质感。
+                    这里的 <code>transition</code> 让变化平滑发生——<b>后面第 6 课的主角</b>，先混个脸熟。
+                </p>
+                <div class="lab" data-lang="css" data-file="hover.css">
+                    <div class="lab-head"><span class="lab-cap">鼠标悬停卡片和按钮——把 <code>translateY(-6px)</code> 改大，看浮起更高；改霓虹按钮发光层模糊，光晕更散</span></div>
+                    <template class="lab-html">
+                        <div class="hv-stage">
+                            <div class="card">
+                                <h4>悬浮卡片</h4>
+                                <p>hover：上移 6px<br>阴影从「贴地」变「悬空」</p>
+                            </div>
+                            <button class="neo" type="button">霓虹发光</button>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.hv-stage {
+    display: flex; flex-wrap: wrap; gap: 26px; align-items: center;
+    justify-content: center; padding: 16px 0 22px;
+}
+.card {
+    width: 220px; padding: 20px; background: #fff;
+    border: 1.5px solid #E3D5C4; border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(108, 59, 76, 0.12);   /* 平时：浅浅贴地 */
+    transition: all 0.28s ease;                       /* 平滑过渡 */
+}
+.card h4 { margin: 0 0 6px; font-size: 14px; color: #3A2E26; }
+.card p { margin: 0; font-size: 12.5px; color: #6B6053; line-height: 1.7; }
+.card:hover {
+    transform: translateY(-6px);                     /* 上移 6px */
+    border-color: #D9C3CD;
+    box-shadow: 0 16px 32px rgba(108, 59, 76, 0.24); /* 悬空：影子更深更远 */
+}
+
+.neo {
+    padding: 13px 34px; border: 2px solid #B3472E; border-radius: 999px;
+    background: #fff; color: #B3472E; font-size: 14px;
+    font-family: inherit; cursor: pointer;
+    transition: all 0.25s ease;                     /* 平滑过渡 */
+}
+.neo:hover {
+    background: #B3472E; color: #fff;
+    box-shadow:
+        0 0 12px rgba(179, 71, 46, 0.55),   /* 内圈亮 */
+        0 0 32px rgba(179, 71, 46, 0.35),   /* 中圈晕 */
+        0 0 60px rgba(179, 71, 46, 0.2);    /* 外圈更淡 */
+}</script>
+                </div>
+                <div class="lx-note"><span>「上移 + 阴影加深」是物理直觉：物体离桌面越远，
+                    影子越大越淡、本体越亮。照着物理规律做动效，用户永远觉得「顺」。</span></div>
+            </section>
+
+            <section>
+                <h2>六、border-image：把边框当画布</h2>
+                <p>
+                    普通边框只能是一条纯色线；<code>border-image</code> 允许用<strong class="hl">一张图（或一个渐变）</strong>
+                    来画边框。它把素材切成<strong class="hl">九宫格</strong>：四个角照搬、四条边拉伸或平铺、
+                    中间丢弃——所以特别适合「四角有花纹」的相框式边框。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>border-image 五个子属性：切图、控宽、平铺</caption>
+                        <thead>
+                            <tr><th>子属性</th><th>作用</th><th>常用值</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">border-image-source</td><td>素材来源</td><td><code>url(图)</code> / 渐变函数</td></tr>
+                            <tr><td class="td-val">border-image-slice</td><td>从四周往里切多少（决定九宫格的格线）</td><td>无单位数字 / <code>%</code></td></tr>
+                            <tr><td class="td-val">border-image-width</td><td>边框图的绘制宽度</td><td><code>px</code> / 数字倍数</td></tr>
+                            <tr><td class="td-val">border-image-outset</td><td>边框图向外扩张多少</td><td>了解即可</td></tr>
+                            <tr><td class="td-val">border-image-repeat</td><td>四条边的填充方式</td><td><code>stretch</code>（默认）/ <code>round</code> / <code>repeat</code></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="border-image.css">
+                    <script type="text/plain" class="lab-code">/* 简写：source slice / width outset repeat —— 实战常只写前两段 */
+/* 素材不必是图片文件：渐变函数同样合法，零请求画边框 */
+
+.bi-a {
+    border: 10px solid transparent;                          /* 先留出边框位置 */
+    border-image: linear-gradient(135deg, #C08A3E, #B3472E) 1;
+}
+
+.bi-b {
+    border: 12px solid transparent;
+    border-image: repeating-linear-gradient(45deg, #C08A3E 0 10px, #F3D5A0 10px 20px) 12 round;
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="border-image-demo.css">
+                    <div class="lab-head"><span class="lab-cap">渐变边框 + 斜纹相框，零请求——把左框的渐变颜色换成 <code>#6E8B6E, #4E7A52</code> 看配色变化</span></div>
+                    <template class="lab-html">
+                        <div class="bi-stage">
+                            <div class="box a">
+                                <b>渐变边框</b>
+                                border-image + linear-gradient
+                            </div>
+                            <div class="box b">
+                                <b>斜纹相框</b>
+                                repeating 渐变 + round 平铺
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.bi-stage {
+    display: flex; flex-wrap: wrap; gap: 24px; align-items: center;
+    justify-content: center; padding: 10px 0;
+}
+.box {
+    width: 190px; padding: 18px 14px; background: #FDF9F4;
+    font-size: 12.5px; color: #473F35; text-align: center; line-height: 1.7;
+}
+.box b { display: block; font-size: 13.5px; color: #3A2E26; margin-bottom: 4px; }
+.a {
+    border: 10px solid transparent;                          /* 先留出边框位置 */
+    border-image: linear-gradient(135deg, #C08A3E, #B3472E) 1;
+}
+.b {
+    border: 12px solid transparent;
+    border-image: repeating-linear-gradient(45deg, #C08A3E 0 10px, #F3D5A0 10px 20px) 12 round;
+}</script>
+                </div>
+                <div class="lx-tip"><span>记住这个组合：<code>border: Npx solid transparent</code> +
+                    <code>border-image: 渐变 1</code> = <b>渐变描边</b>。
+                    它和 <code>border-radius</code> 互斥（圆角会被边框图吃掉），二选一。</span></div>
+            </section>
+
+            <section>
+                <h2>七、本章小结</h2>
+                <p><code>box-shadow</code> 参数速查（考试高频，实战更高频）：</p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>box-shadow 六参数速查</caption>
+                        <thead>
+                            <tr><th>参数</th><th>必填</th><th>作用</th><th>常用值</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>x 偏移</td><td>是</td><td>水平方向，正右负左</td><td><code>0 ~ 12px</code></td></tr>
+                            <tr><td>y 偏移</td><td>是</td><td>垂直方向，正下负上</td><td><code>2 ~ 16px</code></td></tr>
+                            <tr><td>模糊半径</td><td>否</td><td>边缘虚化，越大越「飘」</td><td><code>4 ~ 30px</code></td></tr>
+                            <tr><td>扩散半径</td><td>否</td><td>整体扩大 / 收缩，负值收小</td><td><code>-6 ~ 8px</code></td></tr>
+                            <tr><td>颜色</td><td>建议</td><td>务必 rgba 带透明度</td><td><code>rgba(0,0,0,.15)</code></td></tr>
+                            <tr><td><code>inset</code></td><td>否</td><td>写在最前面，变内阴影</td><td><code>inset 0 2px 6px …</code></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <ul>
+                    <li><code>border-radius</code>：一个值四角统一；顺时针可给四角不同值；<code>50%</code> 变圆、超大值变胶囊；斜杠分水平 / 垂直半径得椭圆角</li>
+                    <li><code>box-shadow</code>：x y 模糊 扩散 颜色，只有偏移必填；颜色用 rgba 才自然</li>
+                    <li><code>inset</code> 做凹陷感；<strong class="hl">多重阴影逗号分隔</strong>，描边 + 投影组合拳</li>
+                    <li>悬浮效果公式：<b>hover 上移 + 阴影加深</b>（配合 transition 平滑）</li>
+                    <li><code>border-image</code> 用图或渐变当边框素材，九宫格切分；渐变描边是它的招牌用法</li>
+                </ul>
+                <div class="lx-note"><span><b>动手练习</b>：复制第五节悬浮卡片的代码到实验台，做一套「三态按钮」——
+                    默认浅阴影 <code>0 2px 6px</code>、hover 上移加深、按下（<code>:active</code>）反而下压
+                    <code>translateY(2px)</code> + 阴影缩小。做完你就理解了「用阴影表达物理状态」。</span></div>
+            </section>
+
+        </article>
+    </main>
+    <script src="../assets/learn.js" defer></script>
+</body>
+</html>

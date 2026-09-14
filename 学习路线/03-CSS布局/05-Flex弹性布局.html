@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flex 弹性布局 · CSS 布局 — 前端自习室</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23B8552F'/%3E%3Ctext x='16' y='22' font-size='16' font-family='serif' font-weight='700' fill='%23FFF7EF' text-anchor='middle'%3E学%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="../assets/learn.css">
+</head>
+<body data-page="03-CSS布局/05-Flex弹性布局.html">
+    <main class="lx-main">
+        <article class="lx-article">
+
+            <nav class="lx-crumb">
+                <a href="../教程中心页.html">学习路线</a><span class="sep">›</span>
+                <a href="index.html">CSS 布局</a><span class="sep">›</span>
+                <span class="here">Flex 弹性布局</span>
+            </nav>
+            <h1><span class="h-no">05</span>Flex 弹性布局</h1>
+            <p class="lx-lead">
+                Flex 是现代 CSS 布局的<strong class="hl">绝对主力</strong>：一行 <code>display: flex</code>，
+                子元素立刻从「竖着堆」变成「横着排」，对齐、分配、换行全部听指挥。
+                本章是 CSS 布局的重中之重，请务必边改边看右边的实时预览。
+            </p>
+            <div class="lx-meta-row">
+                <span class="lx-chip">约 30 分钟</span>
+                <span class="lx-chip">14 个动手实验</span>
+                <span class="lx-chip">页面布局绝对主力</span>
+            </div>
+
+            <section>
+                <h2>一、主轴与交叉轴：先建坐标系</h2>
+                <p>
+                    学 Flex 之前必须先立好坐标系，否则后面所有属性都会记混。Flex 容器里有两条轴：
+                    <strong class="hl">主轴（main axis）</strong>是项目排队走的方向，
+                    <strong class="hl">交叉轴（cross axis）</strong>永远垂直于主轴。
+                    默认情况下（<code>flex-direction: row</code>）主轴水平向右、交叉轴垂直向下——
+                    但只要把方向改成 <code>column</code>，两根轴就会整体互换。
+                </p>
+                <ul>
+                    <li><code>justify-content</code> —— 管<strong class="hl">主轴</strong>上的对齐与空间分配；</li>
+                    <li><code>align-items</code> —— 管<strong class="hl">交叉轴</strong>上的对齐。</li>
+                </ul>
+                <div class="lx-codeblock" data-lang="css" data-file="fx-axis.css">
+                    <script type="text/plain" class="lab-code">/* 图解：row 方向时，主轴水平、交叉轴垂直 */
+.fx-axis {
+    position: relative;
+    border: 2px solid #4E7A52;
+    border-radius: 10px;
+    padding: 32px 40px 14px 14px;
+    background: rgba(78,122,82,.04);
+}
+.fx-axis .m { position: absolute; top: 7px; left: 14px; font-size: 12px; color: #3A5F3E; }
+.fx-axis .c {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
+    writing-mode: vertical-rl;     /* 文字竖排，用来标注交叉轴 */
+    font-size: 12px;
+    color: #8A6A2B;
+}
+.fx-axis .row { display: flex; gap: 10px; }
+.fx-axis .it {
+    flex: 1;                       /* 三个项目平分主轴空间 */
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    text-align: center;
+    padding: 14px 0;
+    font-size: 12.5px;
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="fx-axis-preview.css">
+                    <div class="lab-head"><span class="lab-cap">把 <code>.row</code> 的 <code>display: flex</code> 下面补一行 <code>flex-direction: column</code>，两根轴立刻互换、项目改竖着排</span></div>
+                    <template class="lab-html">
+                        <div class="fx-axis">
+                            <span class="m">→ 主轴 main axis：项目排队走的方向</span>
+                            <span class="c">交叉轴 cross axis ↓</span>
+                            <div class="row">
+                                <div class="it">项目 1</div>
+                                <div class="it">项目 2</div>
+                                <div class="it">项目 3</div>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.fx-axis {
+    position: relative;
+    border: 2px solid #4E7A52;
+    border-radius: 10px;
+    padding: 32px 40px 14px 14px;
+    background: rgba(78,122,82,.04);
+}
+.fx-axis .m { position: absolute; top: 7px; left: 14px; font-size: 12px; color: #3A5F3E; }
+.fx-axis .c {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
+    writing-mode: vertical-rl;
+    font-size: 12px;
+    color: #8A6A2B;
+}
+.fx-axis .row { display: flex; gap: 10px; }
+.fx-axis .it {
+    flex: 1;
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    text-align: center;
+    padding: 14px 0;
+    font-size: 12.5px;
+}</script>
+                </div>
+                <div class="lx-tip"><span>记忆口诀：<b>justify 管「排队方向」，align 管「垂直于排队的方向」</b>。
+                    改成 column 之后，justify-content 管的就变成竖直方向、align-items 管水平方向——
+                    属性没变，轴换了。</span></div>
+            </section>
+
+            <section>
+                <h2>二、display: flex：起手式</h2>
+                <p>
+                    在父元素上写一行 <code>display: flex</code>，它就变成<strong class="hl">弹性容器（flex container）</strong>，
+                    所有<strong>直接子元素</strong>自动升级为<strong class="hl">弹性项目（flex item）</strong>：
+                    块级子元素不再竖着堆，而是沿主轴排成一行；宽度也不再撑满整行，而是收缩为内容宽度。
+                    注意子元素用的还是同一套 HTML，一个字都没改——变的只是父级的一个属性。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="fx-start.css">
+                    <script type="text/plain" class="lab-code">/* 上下两个舞台内容相同：下面的父级多了 display: flex */
+.fx-start .stage {
+    border: 1.5px dashed #9DB89B;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: rgba(78,122,82,.03);
+}
+.fx-start .item {
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    padding: 10px 16px;
+    font-size: 13px;
+    margin-right: 8px;
+}
+.fx-start .flexed { display: flex; }   /* ← 关键就这一行 */</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="fx-start-preview.css">
+                    <div class="lab-head"><span class="lab-cap">同一组子元素：上面竖着堆、下面横着排——把 <code>.flexed</code> 的 <code>display: flex</code> 删掉，下面立刻退回竖排</span></div>
+                    <template class="lab-html">
+                        <div class="fx-start">
+                            <div class="lbl">普通块级子元素：一个占一整行</div>
+                            <div class="stage">
+                                <div class="item">项目 1</div>
+                                <div class="item">项目 2</div>
+                                <div class="item">项目 3</div>
+                            </div>
+                            <div class="lbl">父级加 display: flex：子元素沿主轴横向排队</div>
+                            <div class="stage flexed">
+                                <div class="item">项目 1</div>
+                                <div class="item">项目 2</div>
+                                <div class="item">项目 3</div>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.lbl { font-size: 12.5px; color: #6B5D4A; margin: 10px 0 6px; }
+.fx-start .stage {
+    border: 1.5px dashed #9DB89B;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: rgba(78,122,82,.03);
+}
+.fx-start .item {
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    padding: 10px 16px;
+    font-size: 13px;
+    margin-right: 8px;
+}
+.fx-start .flexed { display: flex; }</script>
+                </div>
+                <div class="lx-warn"><span><b>三个常见误区：</b>① flex 只影响直接子元素，孙元素不管；
+                    ② 子元素身上的 float、clear、vertical-align 在 flex 里全部失效，所以「Flex 排版不用清浮动」；
+                    ③ 想让弹性容器本身像行内元素一样跟文字并排，用 <code>display: inline-flex</code>。</span></div>
+            </section>
+
+            <section>
+                <h2>三、flex-direction：主轴朝哪边</h2>
+                <p>
+                    <code>flex-direction</code> 决定主轴的方向，也决定了项目「从哪头往哪头排」。四个取值一张表看全：
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>flex-direction 取值行为分析</caption>
+                        <thead>
+                            <tr><th>取值</th><th>方向</th><th>排列起点</th><th>备注</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">row</td><td>水平</td><td>左 → 右</td><td>默认值，项目沿 x 轴排</td></tr>
+                            <tr><td class="td-val">row-reverse</td><td>水平</td><td>右 → 左</td><td>只是换起点，不是镜像镜子</td></tr>
+                            <tr><td class="td-val">column</td><td>垂直</td><td>上 → 下</td><td>主轴变成 y 轴，两轴互换</td></tr>
+                            <tr><td class="td-val">column-reverse</td><td>垂直</td><td>下 → 上</td><td>同样只改起点</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="fx-dir.css">
+                    <script type="text/plain" class="lab-code">/* 四个舞台用同一组项目，只有 direction 不同 */
+.fx-dir .stage {
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+.fx-dir .row    { display: flex; }
+.fx-dir .col    { display: flex; flex-direction: column; }
+.fx-dir .rev    { display: flex; flex-direction: row-reverse; }
+.fx-dir .colrev { display: flex; flex-direction: column-reverse; }
+.fx-dir .it {
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    padding: 8px 14px;
+    font-size: 12.5px;
+    margin: 3px;
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="fx-dir-preview.css">
+                    <div class="lab-head"><span class="lab-cap">四种 direction 的排队结果：把 <code>.rev</code> 的 <code>flex-direction: row-reverse</code> 换成 <code>row</code>，第二个舞台立刻改成从左排</span></div>
+                    <template class="lab-html">
+                        <div class="fx-dir">
+                            <div class="lbl">row（默认）：水平，从左往右</div>
+                            <div class="stage row"><div class="it">项目 1</div><div class="it">项目 2</div><div class="it">项目 3</div></div>
+                            <div class="lbl">row-reverse：水平，从右往左</div>
+                            <div class="stage rev"><div class="it">项目 1</div><div class="it">项目 2</div><div class="it">项目 3</div></div>
+                            <div class="lbl">column：垂直，从上往下</div>
+                            <div class="stage col"><div class="it">项目 1</div><div class="it">项目 2</div><div class="it">项目 3</div></div>
+                            <div class="lbl">column-reverse：垂直，从下往上</div>
+                            <div class="stage colrev"><div class="it">项目 1</div><div class="it">项目 2</div><div class="it">项目 3</div></div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.lbl { font-size: 12.5px; color: #6B5D4A; margin: 8px 0 4px; }
+.fx-dir .stage {
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+.fx-dir .row    { display: flex; }
+.fx-dir .rev    { display: flex; flex-direction: row-reverse; }
+.fx-dir .col    { display: flex; flex-direction: column; }
+.fx-dir .colrev { display: flex; flex-direction: column-reverse; }
+.fx-dir .it {
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    padding: 8px 14px;
+    font-size: 12.5px;
+    margin: 3px;
+}</script>
+                </div>
+                <div class="lx-tip"><span>做「页面主体 + 底部 Tab 栏」这类结构时，外层容器用 <code>flex-direction: column</code>，
+                    主体区写 <code>flex: 1</code> 吃掉剩余高度——这是移动端页面最常用的骨架（本章第九节会实战）。</span></div>
+            </section>
+
+            <section>
+                <h2>四、justify-content：主轴上怎么分空间</h2>
+                <p>
+                    项目排完队，主轴上剩下的空隙怎么处理？<code>justify-content</code> 说了算。
+                    它是「导航两端对齐」「按钮组居中」「卡片等距分布」背后的功臣，六个取值：
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>justify-content 取值行为分析（主轴对齐）</caption>
+                        <thead>
+                            <tr><th>取值</th><th>效果</th><th>典型场景</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">flex-start</td><td>全部挤在主轴起点</td><td>普通列表（默认）</td></tr>
+                            <tr><td class="td-val">flex-end</td><td>全部挤在主轴终点</td><td>靠右的操作按钮</td></tr>
+                            <tr><td class="td-val">center</td><td>整体居中，项目挨在一起</td><td>居中的标签组</td></tr>
+                            <tr><td class="td-val">space-between</td><td>两端贴边，<strong class="hl">中间</strong>间距相等</td><td>顶栏（logo 左、菜单右）</td></tr>
+                            <tr><td class="td-val">space-around</td><td>每个项目两侧间距相等（中间 = 边缘 × 2）</td><td>均匀分布的图标</td></tr>
+                            <tr><td class="td-val">space-evenly</td><td>所有间隔<strong class="hl">完全</strong>相等</td><td>等距分布</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="fx-jc.css">
+                    <script type="text/plain" class="lab-code">/* 六个容器结构相同（三个定宽项目），只有 justify-content 不同 */
+.fx-jc {
+    display: flex;
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 8px;
+    background: rgba(78,122,82,.03);
+}
+.fx-jc .it {
+    width: 58px;
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    text-align: center;
+    padding: 9px 0;
+    font-size: 12.5px;
+}
+.fx-jc.start   { justify-content: flex-start; }
+.fx-jc.end     { justify-content: flex-end; }
+.fx-jc.center  { justify-content: center; }
+.fx-jc.between { justify-content: space-between; }
+.fx-jc.around  { justify-content: space-around; }
+.fx-jc.evenly  { justify-content: space-evenly; }</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="fx-jc-preview.css">
+                    <div class="lab-head"><span class="lab-cap">六种分配直观对比：把 <code>.between</code> 的 <code>space-between</code> 改成 <code>space-evenly</code>，两端立刻不再贴边</span></div>
+                    <template class="lab-html">
+                        <div class="fx-jc">
+                            <div class="lbl">flex-start（默认）：挤在左边</div>
+                            <div class="fx-jc start"><div class="it">1</div><div class="it">2</div><div class="it">3</div></div>
+                            <div class="lbl">flex-end：挤在右边</div>
+                            <div class="fx-jc end"><div class="it">1</div><div class="it">2</div><div class="it">3</div></div>
+                            <div class="lbl">center：整体居中</div>
+                            <div class="fx-jc center"><div class="it">1</div><div class="it">2</div><div class="it">3</div></div>
+                            <div class="lbl">space-between：两端贴边，中间均分</div>
+                            <div class="fx-jc between"><div class="it">1</div><div class="it">2</div><div class="it">3</div></div>
+                            <div class="lbl">space-around：每个项目两侧等距（中间是边缘的两倍）</div>
+                            <div class="fx-jc around"><div class="it">1</div><div class="it">2</div><div class="it">3</div></div>
+                            <div class="lbl">space-evenly：所有间隔完全相等</div>
+                            <div class="fx-jc evenly"><div class="it">1</div><div class="it">2</div><div class="it">3</div></div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.lbl { font-size: 12.5px; color: #6B5D4A; margin: 8px 0 4px; }
+.fx-jc {
+    display: flex;
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 8px;
+    background: rgba(78,122,82,.03);
+}
+.fx-jc .it {
+    width: 58px;
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    text-align: center;
+    padding: 9px 0;
+    font-size: 12.5px;
+}
+.fx-jc.start   { justify-content: flex-start; }
+.fx-jc.end     { justify-content: flex-end; }
+.fx-jc.center  { justify-content: center; }
+.fx-jc.between { justify-content: space-between; }
+.fx-jc.around  { justify-content: space-around; }
+.fx-jc.evenly  { justify-content: space-evenly; }</script>
+                </div>
+                <div class="lx-tip"><span>最常背混的是 around 和 evenly：<b>around</b> 是「每个项目自带一圈」，
+                    所以相邻两个项目的间距会叠成两倍；<b>evenly</b> 干脆所有缝一样宽。
+                    分不清就都试试，眼睛比脑子快。</span></div>
+            </section>
+
+            <section>
+                <h2>五、align-items：交叉轴上怎么对齐</h2>
+                <p>
+                    主轴排好了，交叉轴方向项目们靠哪边、怎么对齐？<code>align-items</code> 管「一行项目的集体站位」。
+                    注意默认值 <code>stretch</code> 很特殊：项目不写高度时会被<strong class="hl">拉到和最高的一样高</strong>——
+                    这就是 Flex「天生等高」的秘密。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>align-items 取值行为分析（交叉轴对齐）</caption>
+                        <thead>
+                            <tr><th>取值</th><th>效果</th><th>备注</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">stretch</td><td>拉伸填满交叉轴</td><td>默认，只项目没写高度时有效</td></tr>
+                            <tr><td class="td-val">flex-start</td><td>交叉轴起点对齐</td><td>row 方向 = 顶对齐</td></tr>
+                            <tr><td class="td-val">flex-end</td><td>交叉轴终点对齐</td><td>row 方向 = 底对齐</td></tr>
+                            <tr><td class="td-val">center</td><td>交叉轴居中</td><td>最常见的垂直居中</td></tr>
+                            <tr><td class="td-val">baseline</td><td>按文字<strong class="hl">基线</strong>对齐</td><td>字号不同时看得最清楚</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="fx-ai.css">
+                    <script type="text/plain" class="lab-code">/* 五个容器，中间一个项目故意更高（.b），观察对齐基准 */
+.fx-ai {
+    display: flex;
+    height: 92px;
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 8px;
+    background: rgba(78,122,82,.03);
+}
+.fx-ai .it {
+    width: 56px;
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    text-align: center;
+    font-size: 12.5px;
+}
+.fx-ai .it.b { padding: 24px 0; }        /* 又高又胖的项目 */
+.fx-ai.fstart { align-items: flex-start; }  /* 顶对齐 */
+.fx-ai.fend   { align-items: flex-end; }    /* 底对齐 */
+.fx-ai.mid    { align-items: center; }      /* 垂直居中 */
+.fx-ai.base   { align-items: baseline; }    /* 文字基线对齐 */
+.fx-ai.base .it.b { padding: 4px 0; font-size: 22px; }  /* 大字号，凸显基线 */</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="fx-ai-preview.css">
+                    <div class="lab-head"><span class="lab-cap">四行交叉轴对比：把 <code>.mid</code> 的 <code>center</code> 改成 <code>stretch</code>，中间那个高项目立刻被拉回顶到底填满</span></div>
+                    <template class="lab-html">
+                        <div class="fx-ai">
+                            <div class="lbl">flex-start：顶对齐</div>
+                            <div class="fx-ai fstart"><div class="it">1</div><div class="it b">2</div><div class="it">3</div></div>
+                            <div class="lbl">flex-end：底对齐</div>
+                            <div class="fx-ai fend"><div class="it">1</div><div class="it b">2</div><div class="it">3</div></div>
+                            <div class="lbl">center：垂直居中</div>
+                            <div class="fx-ai mid"><div class="it">1</div><div class="it b">2</div><div class="it">3</div></div>
+                            <div class="lbl">baseline：按文字基线对齐（中间项目字号更大）</div>
+                            <div class="fx-ai base"><div class="it">1</div><div class="it b">2</div><div class="it">3</div></div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.lbl { font-size: 12.5px; color: #6B5D4A; margin: 8px 0 4px; }
+.fx-ai {
+    display: flex;
+    height: 92px;
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 8px;
+    background: rgba(78,122,82,.03);
+}
+.fx-ai .it {
+    width: 56px;
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    text-align: center;
+    font-size: 12.5px;
+}
+.fx-ai .it.b { padding: 24px 0; }
+.fx-ai.fstart { align-items: flex-start; }
+.fx-ai.fend   { align-items: flex-end; }
+.fx-ai.mid    { align-items: center; }
+.fx-ai.base   { align-items: baseline; }
+.fx-ai.base .it.b { padding: 4px 0; font-size: 22px; }</script>
+                </div>
+                <div class="lx-note"><span>为什么 Flex 里的项目「默认等高」？正是 stretch 在起作用：项目没写高度时，
+                    会被拉到整行那么高。所以「多列卡片等高」这个当年的大难题，在 Flex 里是默认行为。</span></div>
+            </section>
+
+            <section>
+                <h2>六、换行三件套：flex-wrap / align-content / gap</h2>
+                <p>
+                    默认 <code>flex-wrap: nowrap</code>：项目再多也<strong class="hl">死挤一行</strong>，
+                    挤不下就互相压缩（配合后文的 flex-shrink）。改成 <code>wrap</code> 才会换行；
+                    换行之后，<strong>行与行</strong>在交叉轴上怎么摆，交给 <code>align-content</code>；
+                    而项目之间的间距，现代写法用 <code>gap</code>。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>换行与多行对齐三件套</caption>
+                        <thead>
+                            <tr><th>属性</th><th>作用</th><th>关键点</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">flex-wrap</td><td>nowrap 死挤一行 / wrap 自动换行</td><td>默认 nowrap</td></tr>
+                            <tr><td class="td-val">align-content</td><td>行与行之间在交叉轴的分布</td><td>只在多行（wrap）时生效</td></tr>
+                            <tr><td class="td-val">gap</td><td>项目之间的间距</td><td>可 <code>row-gap / column-gap</code> 分开设</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="fx-wrap.css">
+                    <script type="text/plain" class="lab-code">/* 三张卡 88px 宽，一共 5 张：挤不下时各显神通 */
+.fx-w .stage {
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+.fx-w .nowrap { display: flex; }                        /* 默认：死挤一行，互相压缩 */
+.fx-w .wrap   { display: flex; flex-wrap: wrap; }       /* 换行 */
+.fx-w .multi  {                                         /* 换行 + 多行整体居中 + gap */
+    display: flex;
+    flex-wrap: wrap;
+    height: 148px;
+    align-content: center;     /* 多行作为整体，在交叉轴上居中 */
+    gap: 10px;                 /* 行列间距一起设（row-gap / column-gap 分开设） */
+}
+.fx-w .it {
+    width: 88px;
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 12.5px;
+    margin: 3px;
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="fx-wrap-preview.css">
+                    <div class="lab-head"><span class="lab-cap">nowrap 把 5 张卡硬压进一行、wrap 自动换行：把 <code>.wrap</code> 的 <code>flex-wrap: wrap</code> 删掉，第二框立刻挤成一排变瘦</span></div>
+                    <template class="lab-html">
+                        <div class="fx-w">
+                            <div class="lbl">flex-wrap: nowrap（默认）：死挤一行，全部被压缩</div>
+                            <div class="stage nowrap">
+                                <div class="it">卡 1</div><div class="it">卡 2</div><div class="it">卡 3</div><div class="it">卡 4</div><div class="it">卡 5</div>
+                            </div>
+                            <div class="lbl">flex-wrap: wrap：装不下就换行</div>
+                            <div class="stage wrap">
+                                <div class="it">卡 1</div><div class="it">卡 2</div><div class="it">卡 3</div><div class="it">卡 4</div><div class="it">卡 5</div>
+                            </div>
+                            <div class="lbl">wrap + align-content: center + gap：多行整体居中，间距更漂亮</div>
+                            <div class="stage multi">
+                                <div class="it">卡 1</div><div class="it">卡 2</div><div class="it">卡 3</div><div class="it">卡 4</div><div class="it">卡 5</div>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.lbl { font-size: 12.5px; color: #6B5D4A; margin: 8px 0 4px; }
+.fx-w .stage {
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+.fx-w .nowrap { display: flex; }
+.fx-w .wrap   { display: flex; flex-wrap: wrap; }
+.fx-w .multi  {
+    display: flex;
+    flex-wrap: wrap;
+    height: 148px;
+    align-content: center;
+    gap: 10px;
+}
+.fx-w .it {
+    width: 88px;
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 12.5px;
+    margin: 3px;
+}</script>
+                </div>
+                <div class="lx-warn"><span><b>align-content 与 align-items 别混：</b>align-items 管「同一行里」项目怎么对齐；
+                    align-content 管「行与行」整体怎么摆——<strong>只在换行（多行）时才有效</strong>，
+                    nowrap 下写了也白写。取值和 justify-content 一模一样（center / space-between / …）。</span></div>
+            </section>
+
+            <section>
+                <h2>七、子项三属性：flex-grow / flex-shrink / flex-basis</h2>
+                <p>
+                    前面六节都写在<strong class="hl">容器</strong>上，接下来三个属性写在<strong class="hl">项目</strong>上，
+                    合称「flex 三兄弟」，共同决定每个项目占多大地方：
+                </p>
+                <ul>
+                    <li><code>flex-basis</code> —— 主轴上的<strong>初始尺寸</strong>，优先级高于 width（默认 auto：看内容/宽度）；</li>
+                    <li><code>flex-grow</code> —— 有<strong>剩余空间</strong>时，按比例瓜分（默认 0：不瓜分）；</li>
+                    <li><code>flex-shrink</code> —— 空间<strong>不足</strong>时，按比例压缩（默认 1：人人可压）。</li>
+                </ul>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>flex 简写：flex-grow flex-shrink flex-basis</caption>
+                        <thead>
+                            <tr><th>写法</th><th>等价展开</th><th>含义</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">flex: 1</td><td>flex: 1 1 0</td><td>先清零再平分，等分布局首选</td></tr>
+                            <tr><td class="td-val">flex: 2 1 auto</td><td>grow=2 shrink=1 basis=auto</td><td>先保住内容，再按比例伸</td></tr>
+                            <tr><td class="td-val">flex: 0 0 240px</td><td>grow=0 shrink=0 basis=240px</td><td>尺寸焊死，不伸不缩（固定侧栏）</td></tr>
+                            <tr><td class="td-val">flex: auto</td><td>flex: 1 1 auto</td><td>grow 为 1，但 basis 取内容宽</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="fx-grow.css">
+                    <script type="text/plain" class="lab-code">/* 侧栏固定宽度，主区吃掉全部剩余空间 */
+.fx-g {
+    display: flex;
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+.fx-g .side {
+    width: 76px;
+    flex-shrink: 0;      /* 空间再紧张也不许压缩我（侧栏保命咒） */
+    background: rgba(192,138,62,.25);
+    border: 1.5px solid #C08A3E;
+    border-radius: 8px;
+    color: #7A5A26;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 12.5px;
+}
+.fx-g .main {
+    flex-grow: 1;        /* 剩余空间全部给我 */
+    flex-basis: auto;    /* 初始尺寸先按内容算，再被 grow 拉伸 */
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 12.5px;
+    margin: 0 8px;
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="fx-grow-preview.css">
+                    <div class="lab-head"><span class="lab-cap">侧栏 76px 写死 + <code>flex-shrink: 0</code>，主区 <code>flex-grow: 1</code> 吃掉剩余空间——把侧栏 width 改成 120 试试</span></div>
+                    <template class="lab-html">
+                        <div class="fx-g">
+                            <div class="side">侧栏 76px</div>
+                            <div class="main">主区：flex-grow: 1，剩余空间全归我</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.fx-g {
+    display: flex;
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+.fx-g .side {
+    width: 76px;
+    flex-shrink: 0;
+    background: rgba(192,138,62,.25);
+    border: 1.5px solid #C08A3E;
+    border-radius: 8px;
+    color: #7A5A26;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 12.5px;
+}
+.fx-g .main {
+    flex-grow: 1;
+    flex-basis: auto;
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 12.5px;
+    margin: 0 8px;
+}</script>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="fx-grow2.css">
+                    <script type="text/plain" class="lab-code">/* 三个项目 grow 比例 1 : 2 : 1 → 主轴空间按 1:2:1 切分 */
+.fx-g2 {
+    display: flex;
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+.fx-g2 .it {
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 12.5px;
+    margin: 0 4px;
+}
+.fx-g2 .g1, .fx-g2 .g3 { flex-grow: 1; }
+.fx-g2 .g2 { flex-grow: 2; background: rgba(192,138,62,.28); border-color: #C08A3E; color: #7A5A26; }</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="fx-grow2-preview.css">
+                    <div class="lab-head"><span class="lab-cap">grow 按「份数」瓜分空间——1 : 2 : 1：把 <code>.g2</code> 的 grow 改成 3，中间立刻变得更宽</span></div>
+                    <template class="lab-html">
+                        <div class="fx-g2">
+                            <div class="it g1">grow: 1</div>
+                            <div class="it g2">grow: 2</div>
+                            <div class="it g3">grow: 1</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.fx-g2 {
+    display: flex;
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+.fx-g2 .it {
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 12.5px;
+    margin: 0 4px;
+}
+.fx-g2 .g1, .fx-g2 .g3 { flex-grow: 1; }
+.fx-g2 .g2 { flex-grow: 2; background: rgba(192,138,62,.28); border-color: #C08A3E; color: #7A5A26; }</script>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="fx-order.css">
+                    <script type="text/plain" class="lab-code">/* order：纯 CSS 改变视觉顺序，DOM 一动不动 */
+.fx-ord {
+    display: flex;
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+.fx-ord .it {
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 12.5px;
+    margin: 0 4px;
+}
+.fx-ord .o1 { order: 3; }   /* DOM 里排第 1，视觉上排第 3 */
+.fx-ord .o2 { order: 1; }
+.fx-ord .o3 { order: 2; }</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="fx-order-preview.css">
+                    <div class="lab-head"><span class="lab-cap">HTML 顺序是 A B C，视觉顺序却是 B C A：把 <code>.o2</code> 的 order 改成 0，B 立刻挪到最前面</span></div>
+                    <template class="lab-html">
+                        <div class="fx-ord">
+                            <div class="it o1">A：order 3</div>
+                            <div class="it o2">B：order 1</div>
+                            <div class="it o3">C：order 2</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.fx-ord {
+    display: flex;
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+.fx-ord .it {
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 12.5px;
+    margin: 0 4px;
+}
+.fx-ord .o1 { order: 3; }
+.fx-ord .o2 { order: 1; }
+.fx-ord .o3 { order: 2; }</script>
+                </div>
+                <div class="lx-tip"><span><b>flex: 1 为什么能「完美平分」？</b>因为它的 basis 是 0：先把所有项目的初始尺寸当成 0，
+                    剩余空间 = 整个容器，再按 grow 比例分——所以每个项目严格等宽。而 flex: auto（basis 取内容宽）
+                    是「先保住内容，再分剩下的」，两者结果常常不同。</span></div>
+            </section>
+
+            <section>
+                <h2>八、align-self：给单个项目「开小灶」</h2>
+                <p>
+                    容器上的 <code>align-items</code> 是集体口令，项目上的 <code>align-self</code> 是个人请假条：
+                    取值完全相同（stretch / flex-start / flex-end / center / baseline），
+                    但只对自己生效，会<strong class="hl">覆盖</strong>容器设置。聊天界面「自己的消息靠上、别人的靠下」就靠它。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="fx-self.css">
+                    <script type="text/plain" class="lab-code">/* 容器默认顶对齐，2 号、3 号项目各自越狱 */
+.fx-self {
+    display: flex;
+    height: 100px;
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 8px;
+    padding: 8px;
+    background: rgba(78,122,82,.03);
+}
+.fx-self .it {
+    width: 66px;
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    text-align: center;
+    font-size: 12.5px;
+    margin-right: 8px;
+}
+.fx-self .s-mid { align-self: center; background: rgba(192,138,62,.32); border-color: #C08A3E; color: #7A5A26; }
+.fx-self .s-end { align-self: flex-end; background: rgba(179,71,46,.30); border-color: #B3472E; color: #8A3A28; }</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="fx-self-preview.css">
+                    <div class="lab-head"><span class="lab-cap">其余项目默认顶对齐，2 号居中、4 号贴底——给第一个项目也加一句 <code>align-self: flex-end</code> 试试</span></div>
+                    <template class="lab-html">
+                        <div class="fx-self">
+                            <div class="it">1<br>默认</div>
+                            <div class="it s-mid">2<br>center</div>
+                            <div class="it">3<br>默认</div>
+                            <div class="it s-end">4<br>flex-end</div>
+                            <div class="it">5<br>默认</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.fx-self {
+    display: flex;
+    height: 100px;
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 8px;
+    padding: 8px;
+    background: rgba(78,122,82,.03);
+}
+.fx-self .it {
+    width: 66px;
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    text-align: center;
+    font-size: 12.5px;
+    margin-right: 8px;
+}
+.fx-self .s-mid { align-self: center; background: rgba(192,138,62,.32); border-color: #C08A3E; color: #7A5A26; }
+.fx-self .s-end { align-self: flex-end; background: rgba(179,71,46,.30); border-color: #B3472E; color: #8A3A28; }</script>
+                </div>
+                <div class="lx-tip"><span>同理还有 <code>order</code>（上一节）也是「项目级」属性。项目能覆盖容器的口令，
+                    项目级能覆盖的只有：align-self、order、flex 三兄弟——其余都得听容器的。</span></div>
+            </section>
+
+            <section>
+                <h2>九、经典实战四连</h2>
+                <p>
+                    学完属性，来四个真实到可以直接抄走的配方：等宽导航、完美居中、圣杯布局、底部固定页脚。
+                    每个都是面试与日常的高频题。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="fx-nav.css">
+                    <script type="text/plain" class="lab-code">/* 配方一：等宽导航条 —— 子项 flex: 1 平分 */
+.fx-nav {
+    display: flex;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1.5px solid #4E7A52;
+}
+.fx-nav .it {
+    flex: 1;              /* 每个导航项等宽 */
+    text-align: center;
+    padding: 11px 0;
+    font-size: 13px;
+    color: #3A5F3E;
+    background: rgba(78,122,82,.14);
+    border-right: 1px solid rgba(78,122,82,.25);
+}
+.fx-nav .it:last-child { border-right: none; }
+.fx-nav .it.on { background: #4E7A52; color: #fff; }   /* 选中态 */</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="fx-nav-preview.css">
+                    <div class="lab-head"><span class="lab-cap">五个导航项自动等宽：删掉一个 <code>.it</code>、或把「首页」的 class 去掉 <code>on</code> 试试，宽度都自动重排</span></div>
+                    <template class="lab-html">
+                        <div class="fx-nav">
+                            <div class="it on">首页</div>
+                            <div class="it">课程</div>
+                            <div class="it">题库</div>
+                            <div class="it">社区</div>
+                            <div class="it">我的</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.fx-nav {
+    display: flex;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1.5px solid #4E7A52;
+}
+.fx-nav .it {
+    flex: 1;              /* 每个导航项等宽 */
+    text-align: center;
+    padding: 11px 0;
+    font-size: 13px;
+    color: #3A5F3E;
+    background: rgba(78,122,82,.14);
+    border-right: 1px solid rgba(78,122,82,.25);
+}
+.fx-nav .it:last-child { border-right: none; }
+.fx-nav .it.on { background: #4E7A52; color: #fff; }</script>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="fx-center.css">
+                    <script type="text/plain" class="lab-code">/* 配方二：完美居中 —— 两行搞定水平 + 垂直 */
+.fx-center {
+    display: flex;
+    justify-content: center;   /* 主轴（水平）居中 */
+    align-items: center;       /* 交叉轴（垂直）居中 */
+    height: 130px;
+    border: 2px dashed #9DB89B;
+    border-radius: 10px;
+    background: rgba(78,122,82,.05);
+}
+.fx-center .box {
+    background: rgba(78,122,82,.32);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    font-size: 12.5px;
+    padding: 10px 16px;
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="fx-center-preview.css">
+                    <div class="lab-head"><span class="lab-cap">一行内容、一张卡片，都能两行 CSS 居中——把 <code>.fx-center</code> 的 <code>align-items</code> 改 <code>flex-start</code>，卡片立刻顶上</span></div>
+                    <template class="lab-html">
+                        <div class="fx-center">
+                            <div class="box">我被完美居中了：justify-content + align-items</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.fx-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 130px;
+    border: 2px dashed #9DB89B;
+    border-radius: 10px;
+    background: rgba(78,122,82,.05);
+}
+.fx-center .box {
+    background: rgba(78,122,82,.32);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    font-size: 12.5px;
+    padding: 10px 16px;
+}</script>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="fx-holy.css">
+                    <script type="text/plain" class="lab-code">/* 配方三：圣杯布局 —— 两侧固定，中间自适应 */
+.fx-holy { display: flex; gap: 10px; }
+.fx-holy .side {
+    width: 86px;          /* 两栏写死宽度 */
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    text-align: center;
+    padding: 16px 0;
+    font-size: 12.5px;
+}
+.fx-holy .main {
+    flex: 1;              /* 中间吃掉全部剩余 */
+    background: rgba(192,138,62,.18);
+    border: 1.5px solid #C08A3E;
+    border-radius: 8px;
+    color: #7A5A26;
+    text-align: center;
+    padding: 16px 0;
+    font-size: 12.5px;
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="fx-holy-preview.css">
+                    <div class="lab-head"><span class="lab-cap">左右 86px 固定，中间 <code>flex: 1</code> 自适应——把左栏 width 改成 140，主区自动变窄</span></div>
+                    <template class="lab-html">
+                        <div class="fx-holy">
+                            <div class="side">左栏</div>
+                            <div class="main">主内容区：flex: 1</div>
+                            <div class="side">右栏</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.fx-holy { display: flex; gap: 10px; }
+.fx-holy .side {
+    width: 86px;
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    text-align: center;
+    padding: 16px 0;
+    font-size: 12.5px;
+}
+.fx-holy .main {
+    flex: 1;
+    background: rgba(192,138,62,.18);
+    border: 1.5px solid #C08A3E;
+    border-radius: 8px;
+    color: #7A5A26;
+    text-align: center;
+    padding: 16px 0;
+    font-size: 12.5px;
+}</script>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="fx-page.css">
+                    <script type="text/plain" class="lab-code">/* 配方四：底部固定页脚 —— column + flex: 1 */
+.fx-page {
+    display: flex;
+    flex-direction: column;   /* 主轴竖直：头、身、脚从上往下排 */
+    min-height: 240px;        /* 页面至少这么高，内容再多也能撑开 */
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.fx-page .hd { background: #4E7A52; color: #fff; text-align: center; padding: 10px; font-size: 13px; }
+.fx-page .content {
+    flex: 1;                  /* 身体吃掉剩余高度 → 页脚永远沉底 */
+    background: rgba(78,122,82,.08);
+    padding: 14px;
+    font-size: 12.5px;
+    color: #6B5D4A;
+}
+.fx-page .ft { background: rgba(192,138,62,.30); color: #7A5A26; text-align: center; padding: 10px; font-size: 12.5px; }</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="fx-page-preview.css">
+                    <div class="lab-head"><span class="lab-cap">内容很少时页脚也贴底：把 <code>.content</code> 的 <code>flex: 1</code> 删掉，footer 立刻被拽到中间</span></div>
+                    <template class="lab-html">
+                        <div class="fx-page">
+                            <div class="hd">header</div>
+                            <div class="content">content：flex: 1，吃掉 header 和 footer 之外的全部高度。<br>内容再少，footer 也被推到最底下。</div>
+                            <div class="ft">footer：永远沉底</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.fx-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 240px;
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.fx-page .hd { background: #4E7A52; color: #fff; text-align: center; padding: 10px; font-size: 13px; }
+.fx-page .content {
+    flex: 1;
+    background: rgba(78,122,82,.08);
+    padding: 14px;
+    font-size: 12.5px;
+    color: #6B5D4A;
+}
+.fx-page .ft { background: rgba(192,138,62,.30); color: #7A5A26; text-align: center; padding: 10px; font-size: 12.5px; }</script>
+                </div>
+            </section>
+
+            <section>
+                <h2>十、Flex 属性速查表</h2>
+                <p>把整章属性的取值归拢到两张表，背下来即可覆盖 90% 的实战。</p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>容器六属性速查</caption>
+                        <thead>
+                            <tr><th>属性</th><th>取值</th><th>作用</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">flex-direction</td><td>row / row-reverse / column / column-reverse</td><td>决定主轴方向</td></tr>
+                            <tr><td class="td-val">flex-wrap</td><td>nowrap / wrap</td><td>是否换行</td></tr>
+                            <tr><td class="td-val">flex-flow</td><td>上面两者简写</td><td>如 <code>flex-flow: row wrap</code></td></tr>
+                            <tr><td class="td-val">justify-content</td><td>flex-start / flex-end / center / space-between / space-around / space-evenly</td><td>主轴空间分配</td></tr>
+                            <tr><td class="td-val">align-items</td><td>stretch / flex-start / flex-end / center / baseline</td><td>交叉轴单行对齐</td></tr>
+                            <tr><td class="td-val">align-content</td><td>同 justify-content + stretch</td><td>交叉轴多行分布（需 wrap）</td></tr>
+                            <tr><td class="td-val">gap</td><td>长度值</td><td>项目间距（含换行后的行距）</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>项目四属性 + align-self 速查</caption>
+                        <thead>
+                            <tr><th>属性</th><th>取值</th><th>作用</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">flex-grow</td><td>数字（默认 0）</td><td>剩余空间按份数伸展</td></tr>
+                            <tr><td class="td-val">flex-shrink</td><td>数字（默认 1）</td><td>空间不足时按份数收缩</td></tr>
+                            <tr><td class="td-val">flex-basis</td><td>尺寸 / auto（默认 auto）</td><td>主轴初始尺寸，优先于 width</td></tr>
+                            <tr><td class="td-val">flex</td><td><code>1</code> / <code>0 0 auto</code> 等简写</td><td>三兄弟一次写完</td></tr>
+                            <tr><td class="td-val">order</td><td>数字（默认 0）</td><td>改变视觉顺序</td></tr>
+                            <tr><td class="td-val">align-self</td><td>同 align-items</td><td>覆盖容器的交叉轴对齐</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section>
+                <h2>十一、本章小结</h2>
+                <ul>
+                    <li>两根轴定乾坤：<code>justify-content</code> 管<strong class="hl">主轴</strong>、<code>align-items</code> 管<strong class="hl">交叉轴</strong>；direction 一换，两轴跟着换。</li>
+                    <li>容器六件套：<code>flex-direction</code>、<code>justify-content</code>、<code>align-items</code>、<code>flex-wrap</code>、<code>align-content</code>（多行才生效）、<code>gap</code>。</li>
+                    <li>项目四件套：<code>flex-grow</code>（分剩余）、<code>flex-shrink</code>（压不足）、<code>flex-basis</code>（初始尺寸）、<code>order</code>（视觉排序），外加 <code>align-self</code>（个人对齐）。</li>
+                    <li><code>flex: 1</code> = <code>1 1 0</code>：先清零再平分，等分布局首选。</li>
+                    <li>四大配方直接背：等宽导航 <code>flex: 1</code>；完美居中 <code>justify-content + align-items</code>；圣杯 <code>固定宽 + flex: 1</code>；沉底页脚 <code>column + flex: 1 + min-height</code>。</li>
+                    <li>Flex 是一维布局；行 <strong>和</strong> 列要同时排，交给下一课的 Grid。</li>
+                </ul>
+                <div class="lx-note"><span><b>动手练习：</b>做一个「个人主页卡片」：顶部头像 + 昵称用 flex 排（头像固定 64px，昵称区 flex: 1）；
+                    中间一行三个数据（作品 / 粉丝 / 关注）等宽分布；
+                    底部两个按钮一个靠左一个靠右（想想用 space-between 还是 margin-left: auto）；
+                    整个卡片外层再用 column + flex: 1 让「关注」按钮沉底。</span></div>
+            </section>
+
+        </article>
+    </main>
+    <script src="../assets/learn.js" defer></script>
+</body>
+</html>

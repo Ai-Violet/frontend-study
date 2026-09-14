@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>列表与表格 · HTML 基础 — 前端自习室</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23B8552F'/%3E%3Ctext x='16' y='22' font-size='16' font-family='serif' font-weight='700' fill='%23FFF7EF' text-anchor='middle'%3E学%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="../assets/learn.css">
+</head>
+<body data-page="01-HTML基础/04-列表与表格.html">
+    <main class="lx-main">
+        <article class="lx-article">
+
+            <nav class="lx-crumb">
+                <a href="../教程中心页.html">学习路线</a><span class="sep">›</span>
+                <a href="index.html">HTML 基础</a><span class="sep">›</span>
+                <span class="here">列表与表格</span>
+            </nav>
+            <h1><span class="h-no">04</span>列表与表格</h1>
+            <p class="lx-lead">
+                有一堆并列的东西要摆出来？用<strong>列表</strong>。
+                有数据要按行列对齐？用<strong>表格</strong>。
+                这一章把 ul / ol / dl 三兄弟和 table 全家一次性讲透。
+            </p>
+            <div class="lx-meta-row">
+                <span class="lx-chip">约 18 分钟</span>
+                <span class="lx-chip">7 个动手实验</span>
+                <span class="lx-chip">排列的艺术</span>
+            </div>
+
+            <section>
+                <h2>一、无序列表：ul + li</h2>
+                <p>
+                    「ul + li」是最常用的列表：<strong class="hl">并列、无先后</strong>的东西都归它管——
+                    导航菜单、商品特点、标签云。<code>&lt;ul&gt;</code>（unordered list）只认识一种孩子：
+                    <code>&lt;li&gt;</code>（list item）。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>list-style-type 取值：决定项目符号长相（type 属性已废弃）</caption>
+                        <thead>
+                            <tr><th>取值</th><th>符号长相</th><th>适用场景</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">disc</td><td>实心圆点（默认）</td><td>最普通、最常用的无序列表</td></tr>
+                            <tr><td class="td-val">circle</td><td>空心圆</td><td>次级列表、柔和一点的分组</td></tr>
+                            <tr><td class="td-val">square</td><td>实心方块</td><td>需要稍微「庄重」一点的列表</td></tr>
+                            <tr><td class="td-val">none</td><td>无标记</td><td>导航菜单最爱，用 CSS 自定义图标</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="html" data-file="无序列表.html">
+                    <script type="text/plain" class="lab-code"><ul>
+  <li>默认圆点（disc）</li>
+  <li>第二项</li>
+</ul>
+
+<!-- 老写法 type="circle/square" 已废弃，现在用 CSS 的 list-style-type -->
+<ul style="list-style-type: circle">
+  <li>空心圆 circle（CSS 指定）</li>
+</ul>
+<ul style="list-style-type: square">
+  <li>实心方块 square</li>
+</ul>
+<ul style="list-style-type: none; padding-left: 6px">
+  <li>无标记 none（导航菜单最爱）</li>
+</ul></script>
+                </div>
+                <div class="lab" data-lang="css" data-file="无序列表.css">
+                    <div class="lab-head"><span class="lab-cap">把某个 <code>ul</code> 的 <code>list-style-type</code> 从 circle 换成 square，看符号变化；换成 none 则消失</span></div>
+                    <template class="lab-html">
+                        <ul class="ex ls">
+                            <li>默认圆点（disc）</li>
+                            <li>第二项</li>
+                        </ul>
+                        <ul class="ex ls circle">
+                            <li>空心圆 circle（CSS 指定）</li>
+                            <li>第二项</li>
+                        </ul>
+                        <ul class="ex ls square">
+                            <li>实心方块 square</li>
+                            <li>第二项</li>
+                        </ul>
+                        <ul class="ex ls none">
+                            <li>无标记 none（导航菜单最爱）</li>
+                            <li>第二项</li>
+                        </ul>
+                    </template>
+                    <script type="text/plain" class="lab-code">.ex.ls { color: #3A2E26; font-size: 14.5px; margin: 6px 0 16px; }
+.ex.ls li { margin: 4px 0; }
+.ex.circle { list-style-type: circle; }
+.ex.square { list-style-type: square; }
+.ex.none { list-style-type: none; padding-left: 6px; }</script>
+                </div>
+                <div class="lx-warn"><span><code>&lt;ul&gt;</code> 里只能直接放 <code>&lt;li&gt;</code>，
+                    直接塞文字或别的标签属于非法结构——浏览器虽然不报错，但语义全乱。</span></div>
+            </section>
+
+            <section>
+                <h2>二、有序列表：ol</h2>
+                <p>
+                    顺序有意义就用 <code>&lt;ol&gt;</code>（ordered list）：排行榜、操作步骤、TOP 10。
+                    它自带「编号系统」，不用自己敲 1. 2. 3.——增删条目时编号自动重排。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>ol 属性逐项分析：编号系统的四种玩法</caption>
+                        <thead>
+                            <tr><th>属性</th><th>取值</th><th>说明</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>start</code></td><td>数字</td><td>从几开始编号，如 <code>start="3"</code> 从 3 数起</td></tr>
+                            <tr><td><code>type</code></td><td><code>1</code> / <code>a</code> / <code>A</code> / <code>i</code> / <code>I</code></td><td>编号样式：数字 / 小写字母 / 大写字母 / 小写罗马 / 大写罗马</td></tr>
+                            <tr><td><code>reversed</code></td><td>布尔属性</td><td>倒序编号（配合 start 效果更佳）</td></tr>
+                            <tr><td><code>li 的 value</code></td><td>数字</td><td>把某项编号直接设为某值，后面的项接着它数</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="html" data-file="有序列表.html">
+                    <script type="text/plain" class="lab-code"><ol type="A" start="3">
+  <li>type="A" + start="3"：从 C 开始</li>
+  <li>第二项是 D</li>
+</ol>
+
+<ol type="i" reversed>
+  <li>三项倒着数：显示 iii</li>
+  <li>显示 ii</li>
+  <li>显示 i</li>
+</ol>
+
+<ol>
+  <li>正常的第一项</li>
+  <li value="9">value="9"：直接跳到 9</li>
+  <li>后面的项接着数：10</li>
+</ol></script>
+                </div>
+                <div class="lab" data-lang="css" data-file="有序列表.css">
+                    <div class="lab-head"><span class="lab-cap">把第一个 <code>ol</code> 的 <code>start="3"</code> 改成 <code>start="1"</code>，编号立刻从字母 A 重新开始</span></div>
+                    <template class="lab-html">
+                        <ol class="ex ol">
+                            <li>默认数字编号</li>
+                            <li>第二项</li>
+                        </ol>
+                        <ol class="ex ol lc" type="A" start="3">
+                            <li>type="A" + start="3"：从 C 开始</li>
+                            <li>第二项是 D</li>
+                        </ol>
+                        <ol class="ex ol rv" type="i" reversed>
+                            <li>三项倒着数：显示 iii</li>
+                            <li>显示 ii</li>
+                            <li>显示 i</li>
+                        </ol>
+                        <ol class="ex ol">
+                            <li>正常的第一项</li>
+                            <li value="9">value="9"：直接跳到 9</li>
+                            <li>后面的项接着数：10</li>
+                        </ol>
+                    </template>
+                    <script type="text/plain" class="lab-code">.ex.ol { color: #3A2E26; font-size: 14.5px; margin: 6px 0 16px; }
+.ex.ol li { margin: 4px 0; }</script>
+                </div>
+                <div class="lx-tip"><span>选择口诀：<b>顺序有讲究用 ol，顺序无所谓用 ul</b>。
+                    「安装步骤」用 ul 会让用户不知道先做哪个，属语义事故。</span></div>
+            </section>
+
+            <section>
+                <h2>三、嵌套列表：两级导航菜单</h2>
+                <p>
+                    li 里面可以再放一个 ul / ol，形成<strong class="hl">多级列表</strong>——
+                    电商分类、下拉菜单的多级结构就是这么长出来的。
+                    记住嵌套位置：<strong class="hl">子列表必须包在某个 li 里面</strong>，不能和 li 平级。
+                </p>
+                <div class="lx-codeblock" data-lang="html" data-file="嵌套列表.html">
+                    <script type="text/plain" class="lab-code"><ul>
+  <li><a href="#">首页</a>
+    <ul>                          <!-- 子列表写在 li 内部 -->
+      <li><a href="#">推荐</a></li>
+      <li><a href="#">排行榜</a></li>
+    </ul>
+  </li>
+  <li><a href="#">课程</a>
+    <ul>
+      <li><a href="#">HTML 入门</a></li>
+      <li><a href="#">CSS 基础</a></li>
+    </ul>
+  </li>
+  <li><a href="#">关于我们</a></li>
+</ul></script>
+                </div>
+                <div class="lab" data-lang="css" data-file="嵌套菜单.css">
+                    <div class="lab-head"><span class="lab-cap">两级导航菜单：往里再加一层 <code>&lt;ul&gt;</code> 到「课程」下就是三级</span></div>
+                    <template class="lab-html">
+                        <nav class="nav">
+                            <li><a href="#">首页</a>
+                                <ul>
+                                    <li><a href="#">推荐</a></li>
+                                    <li><a href="#">排行榜</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="#">课程</a>
+                                <ul>
+                                    <li><a href="#">HTML 入门</a></li>
+                                    <li><a href="#">CSS 基础</a></li>
+                                    <li><a href="#">JavaScript</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="#">关于我们</a></li>
+                        </nav>
+                    </template>
+                    <script type="text/plain" class="lab-code">.nav {
+  list-style: none; padding: 0; max-width: 300px;
+  background: #FDF9F4; border: 1.5px solid #E3D5C4;
+  border-radius: 12px; overflow: hidden;
+}
+.nav > li { border-bottom: 1px solid #F0E6D6; }
+.nav > li:last-child { border-bottom: none; }
+.nav a { display: block; padding: 10px 16px; color: #3A2E26; text-decoration: none; font-size: 14px; font-weight: 600; }
+.nav a:hover { background: rgba(184, 85, 47, .08); color: #B8552F; }
+.nav ul { list-style: none; padding: 0; background: #F7F1E6; }
+.nav ul a { padding: 8px 16px 8px 36px; font-size: 13.5px; font-weight: 400; color: #6B5D4A; }
+.nav ul a::before { content: "· "; color: #C9A284; }</script>
+                </div>
+                <div class="lx-warn"><span>错误写法：<code>&lt;ul&gt;&lt;li&gt;…&lt;/li&gt;&lt;ul&gt;…&lt;/ul&gt;&lt;/ul&gt;</code>
+                    （子 ul 与 li 平级）。浏览器照样渲染，但结构树是错的，样式和 JS 遍历都会出幺蛾子。</span></div>
+            </section>
+
+            <section>
+                <h2>四、定义列表：dl + dt + dd</h2>
+                <p>
+                    第三种列表专管「名词解释」：<code>&lt;dl&gt;</code>（definition list）里，
+                    <code>&lt;dt&gt;</code>（term）是被解释的术语，<code>&lt;dd&gt;</code>（description）是解释本身。
+                    一个词可以有多条解释，一个词也可以跟多个词共享段落。
+                </p>
+                <div class="lx-codeblock" data-lang="html" data-file="定义列表.html">
+                    <script type="text/plain" class="lab-code"><dl>
+  <dt>HTML</dt>
+  <dd>超文本标记语言，负责网页的结构。</dd>
+
+  <dt>前端三件套</dt>
+  <dd>HTML + CSS + JavaScript。</dd>      <!-- 一个 dt 可以配多个 dd -->
+  <dd>一个管结构、一个管样式、一个管行为。</dd>
+</dl></script>
+                </div>
+                <div class="lab" data-lang="css" data-file="定义列表.css">
+                    <div class="lab-head"><span class="lab-cap">术语表（dt 加粗红棕，dd 缩进解释）：再给「前端三件套」补一条 <code>&lt;dd&gt;</code>，看它成对追加</span></div>
+                    <template class="lab-html">
+                        <dl class="dl">
+                            <dt>HTML</dt>
+                            <dd>超文本标记语言，负责网页的结构。</dd>
+                            <dt>CSS</dt>
+                            <dd>层叠样式表，负责网页的外观。</dd>
+                            <dt>前端三件套</dt>
+                            <dd>HTML + CSS + JavaScript。</dd>
+                            <dd>一个管结构、一个管样式、一个管行为。</dd>
+                        </dl>
+                    </template>
+                    <script type="text/plain" class="lab-code">.dl { background: #FDF9F4; border: 1.5px solid #E3D5C4; border-radius: 12px; padding: 14px 18px; max-width: 480px; }
+.dl dt { font-weight: 700; color: #8F3A26; margin-top: 12px; font-size: 14.5px; }
+.dl dt:first-child { margin-top: 0; }
+.dl dd { color: #6B5D4A; font-size: 13.5px; margin: 2px 0 0 24px; }</script>
+                </div>
+                <div class="lx-tip"><span>dl 的常见舞台：<b>术语表、FAQ（dt 问、dd 答）、商品参数、页脚的联系方式</b>。
+                    凡是「标题 + 说明」成对出现的地方都可以想它。</span></div>
+            </section>
+
+            <section>
+                <h2>五、表格骨架：table / tr / th / td / caption</h2>
+                <p>
+                    表格是「行优先」的世界：<code>&lt;table&gt;</code> 是整张表，
+                    <code>&lt;tr&gt;</code>（table row）是一行，行里面装格子——
+                    <code>&lt;th&gt;</code>（header）是表头格子，<code>&lt;td&gt;</code>（data）是数据格子，
+                    <code>&lt;caption&gt;</code> 是表格标题。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>表格五兄弟：谁是谁</caption>
+                        <thead>
+                            <tr><th>元素</th><th>角色</th><th>记忆点</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>table</code></td><td>表格容器</td><td>一切格子的大宅子</td></tr>
+                            <tr><td><code>caption</code></td><td>表格标题</td><td>默认显示在表格上方</td></tr>
+                            <tr><td><code>tr</code></td><td>一行</td><td>table row，横向思维</td></tr>
+                            <tr><td><code>th</code></td><td>表头单元格</td><td><b>默认加粗且居中</b>，不用写 CSS</td></tr>
+                            <tr><td><code>td</code></td><td>数据单元格</td><td>默认常规字重、左对齐</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="html" data-file="表格.html">
+                    <script type="text/plain" class="lab-code"><table>
+  <caption>前端学习周报</caption>
+  <tr>
+    <th>学科</th> <th>本周进度</th> <th>状态</th>
+  </tr>
+  <tr>
+    <td>HTML</td> <td>第 4 章 列表与表格</td> <td>顺利</td>
+  </tr>
+  <tr>
+    <td>CSS</td> <td>尚未开始</td> <td>排队中</td>
+  </tr>
+</table></script>
+                </div>
+                <div class="lab" data-lang="css" data-file="表格.css">
+                    <div class="lab-head"><span class="lab-cap">表头 th 默认加粗居中、td 常规左对齐：给状态列再加一行，看结构怎么延伸</span></div>
+                    <template class="lab-html">
+                        <table class="tb">
+                            <caption>前端学习周报</caption>
+                            <tr>
+                                <th>学科</th> <th>本周进度</th> <th>状态</th>
+                            </tr>
+                            <tr>
+                                <td>HTML</td> <td>第 4 章 列表与表格</td> <td>顺利</td>
+                            </tr>
+                            <tr>
+                                <td>CSS</td> <td>尚未开始</td> <td>排队中</td>
+                            </tr>
+                        </table>
+                    </template>
+                    <script type="text/plain" class="lab-code">.tb { border-collapse: collapse; width: 100%; font-size: 14px; max-width: 520px; }
+.tb caption { caption-side: top; text-align: left; font-weight: 700; color: #8F3A26; padding-bottom: 8px; font-size: 14px; }
+.tb th, .tb td { border: 1px solid #E3D5C4; padding: 8px 12px; text-align: left; color: #3A2E26; }
+.tb th { background: #F7F1E6; }</script>
+                </div>
+                <div class="lx-warn"><span>表格只用来放<b>数据</b>，不要拿来排版页面——「用 table 摆布局」是上个时代的老手艺，
+                    现在布局是 CSS 的职责（第 03 章布局模块里会细讲）。</span></div>
+            </section>
+
+            <section>
+                <h2>六、结构化分组：thead / tbody / tfoot</h2>
+                <p>
+                    表一长，就该把行分组：<code>&lt;thead&gt;</code> 表头区、<code>&lt;tbody&gt;</code> 数据区、
+                    <code>&lt;tfoot&gt;</code> 汇总区。好处是语义清晰，CSS/JS 可以整组操作
+                    （比如滚动的长表里「只让 tbody 滚、表头钉住」）。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>三个分组区：表头 / 数据 / 汇总</caption>
+                        <thead>
+                            <tr><th>分组</th><th>全称</th><th>放什么</th><th>注意事项</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val"><code>thead</code></td><td>table header</td><td>表头行（放 th）</td><td>一个表格可有多个</td></tr>
+                            <tr><td class="td-val"><code>tbody</code></td><td>table body</td><td>主体数据行</td><td>没写浏览器会自动补一个</td></tr>
+                            <tr><td class="td-val"><code>tfoot</code></td><td>table footer</td><td>汇总行（合计）</td><td><b>无论写在哪，渲染时都被搬到表格末尾</b></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="html" data-file="分组表格.html">
+                    <script type="text/plain" class="lab-code"><table>
+  <caption>奶茶小铺月度账单</caption>
+  <thead>
+    <tr><th>月份</th> <th>营收（元）</th> <th>成本（元）</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>6 月</td> <td>12,000</td> <td>7,200</td></tr>
+    <tr><td>7 月</td> <td>15,800</td> <td>8,900</td></tr>
+  </tbody>
+  <tfoot>
+    <tr><td>合计</td> <td>27,800</td> <td>16,100</td></tr>
+  </tfoot>
+</table></script>
+                </div>
+                <div class="lab" data-lang="css" data-file="分组表格.css">
+                    <div class="lab-head"><span class="lab-cap">thead 表头 / tbody 数据 / tfoot 合计（tfoot 会加粗浅底）：往 tbody 里再加一行 8 月的数据，合计不会自动变——你自己算</span></div>
+                    <template class="lab-html">
+                        <table class="tb">
+                            <caption>奶茶小铺月度账单</caption>
+                            <thead>
+                                <tr><th>月份</th> <th>营收（元）</th> <th>成本（元）</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>6 月</td> <td>12,000</td> <td>7,200</td></tr>
+                                <tr><td>7 月</td> <td>15,800</td> <td>8,900</td></tr>
+                            </tbody>
+                            <tfoot>
+                                <tr><td>合计</td> <td>27,800</td> <td>16,100</td></tr>
+                            </tfoot>
+                        </table>
+                    </template>
+                    <script type="text/plain" class="lab-code">.tb { border-collapse: collapse; width: 100%; font-size: 14px; max-width: 520px; }
+.tb caption { caption-side: top; text-align: left; font-weight: 700; color: #8F3A26; padding-bottom: 8px; font-size: 14px; }
+.tb th, .tb td { border: 1px solid #E3D5C4; padding: 8px 12px; text-align: left; color: #3A2E26; }
+.tb th { background: #F7F1E6; }
+.tb tfoot td { font-weight: 700; background: #FDF9F4; color: #8F3A26; }</script>
+                </div>
+                <div class="lx-tip"><span>浏览器的两个「热心肠」：<b>没写 tbody 会自动帮你补一个</b>；
+                    把 tfoot 写在 thead 前面，渲染时也会被<b>自动搬到表格末尾</b>。
+                    所以顺序错了页面不一定坏，但代码可读性会坏——按 thead → tbody → tfoot 写。</span></div>
+            </section>
+
+            <section>
+                <h2>七、合并单元格：colspan 与 rowspan</h2>
+                <p>
+                    课程表里「体育连堂两节」「午休占一整行」，靠的就是合并：
+                    <code>colspan</code> 横着吞并几列，<code>rowspan</code> 竖着吞并几行。
+                    写在<strong class="hl">被保留的那个格子</strong>上。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>colspan / rowspan：横吞列、竖吞行</caption>
+                        <thead>
+                            <tr><th>属性</th><th>取值</th><th>说明</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>colspan</code></td><td>数字（默认 1）</td><td>横跨几列：<code>colspan="2"</code> 一格占两格宽</td></tr>
+                            <tr><td><code>rowspan</code></td><td>数字（默认 1）</td><td>纵跨几行：<code>rowspan="2"</code> 一格占两格高</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="html" data-file="合并单元格.html">
+                    <script type="text/plain" class="lab-code"><table>
+  <caption>周三课程表（含连堂合并）</caption>
+  <tr>
+    <th>时间</th> <th>周一</th> <th>周三</th> <th>周五</th>
+  </tr>
+  <tr>
+    <td>上午 1-2 节</td>
+    <td colspan="2">HTML 精讲（横跨两列）</td>   <!-- 占两列，本行少写一个 td -->
+    <td>CSS 基础</td>
+  </tr>
+  <tr>
+    <td rowspan="2">下午（纵跨两行）</td>          <!-- 占两行，下一行少写一个 td -->
+    <td>JavaScript</td> <td>Vue</td> <td>React</td>
+  </tr>
+  <tr>
+    <td>自习</td> <td>答疑</td> <td>复盘</td>
+  </tr>
+</table></script>
+                </div>
+                <div class="lab" data-lang="css" data-file="合并单元格.css">
+                    <div class="lab-head"><span class="lab-cap">colspan 横跨两列 + rowspan 纵跨两行（米色格子即被合并的）：把 HTML 精讲的 <code>colspan="2"</code> 改成 <code>1</code>，右边立刻多出一个空格</span></div>
+                    <template class="lab-html">
+                        <table class="tb">
+                            <caption>周三课程表（含连堂合并）</caption>
+                            <tr>
+                                <th>时间</th> <th>周一</th> <th>周三</th> <th>周五</th>
+                            </tr>
+                            <tr>
+                                <td>上午 1-2 节</td>
+                                <td class="hi" colspan="2">HTML 精讲（横跨两列）</td>
+                                <td>CSS 基础</td>
+                            </tr>
+                            <tr>
+                                <td class="hi" rowspan="2">下午（纵跨两行）</td>
+                                <td>JavaScript</td> <td>Vue</td> <td>React</td>
+                            </tr>
+                            <tr>
+                                <td>自习</td> <td>答疑</td> <td>复盘</td>
+                            </tr>
+                        </table>
+                    </template>
+                    <script type="text/plain" class="lab-code">.tb { border-collapse: collapse; width: 100%; font-size: 14px; max-width: 560px; }
+.tb caption { caption-side: top; text-align: left; font-weight: 700; color: #8F3A26; padding-bottom: 8px; font-size: 14px; }
+.tb th, .tb td { border: 1px solid #E3D5C4; padding: 8px 12px; text-align: left; color: #3A2E26; }
+.tb th { background: #F7F1E6; }
+.tb .hi { background: #F3E7D2; font-weight: 600; }</script>
+                </div>
+                <div class="lx-note"><span>合并口诀：<b>「谁合并谁留下，被吃掉的格子删掉」</b>——
+                    colspan="2" 就删掉同行右边 1 个格子，rowspan="2" 就删掉下一行同列 1 个格子。
+                    数不清时画方格图，一列一列对齐着写。</span></div>
+            </section>
+
+            <section>
+                <h2>八、本章小结</h2>
+                <ul>
+                    <li>并列无序用 <strong class="hl">ul + li</strong>；顺序有意义用 <strong class="hl">ol</strong>（start / type / reversed / li value）。</li>
+                    <li>改项目符号找 CSS 的 <code>list-style-type</code>，别用废弃的 type 属性。</li>
+                    <li>嵌套列表：子列表必须包在 li 里，不能与 li 平级。</li>
+                    <li>名词解释用 <strong class="hl">dl + dt + dd</strong>，一个 dt 可配多个 dd。</li>
+                    <li>表格行优先：tr 是行，th 默认加粗居中，td 常规左对齐，caption 是标题。</li>
+                    <li>长表用 thead / tbody / tfoot 分组，浏览器会自动补 tbody、纠正 tfoot 位置。</li>
+                    <li>colspan 横跨列、rowspan 纵跨行，关键是删掉被吞并的格子。</li>
+                </ul>
+                <div class="lx-note"><span><b>动手练习</b>：先写一个两级嵌套的「美食分类导航」（如 川菜→麻婆豆腐），
+                    再手绘一张自己的周课程表，至少用上一次 colspan、一次 rowspan、caption 和 thead。</span></div>
+            </section>
+
+        </article>
+    </main>
+    <script src="../assets/learn.js" defer></script>
+</body>
+</html>

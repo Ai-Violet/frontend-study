@@ -1,0 +1,537 @@
+/* ============================================================
+ * route.js — 学习路线 · 章节注册表 + 页面骨架 + 进度追踪
+ * ------------------------------------------------------------
+ * 用法：章节页 <body data-chapter="01-HTML基础/01-认识HTML.html">
+ *       教程中心 <body class="rt-hub">
+ * 本脚本自动注入：顶栏 / 侧边章节栏 / 面包屑 / 章节底部导航
+ * 进度存储于 localStorage（key: route-progress-v1）
+ * ============================================================ */
+(function () {
+    'use strict';
+
+    var RUNOOB = 'https://www.runoob.com';
+    var KEY = 'route-progress-v1';
+    var SIDE_KEY = 'route-side-off';
+
+    /* ==================== 章节注册表（唯一数据源） ==================== */
+    var ROUTE_DATA = [
+        {
+            id: 'html', dir: '01-HTML基础', num: '01', title: 'HTML 基础', tone: '#B54A33',
+            desc: '网页的骨架：从认识 HTML 到语义化结构，掌握搭建页面的全部标签。',
+            chapters: [
+                { file: '01-认识HTML.html', title: '认识 HTML', refs: [
+                    ['HTML 简介', '/html/html-intro.html'],
+                    ['HTML 基础（四个实例）', '/html/html-basic.html'],
+                    ['HTML 总结', '/html/html-summary.html']
+                ]},
+                { file: '02-元素与属性.html', title: '元素与属性', refs: [
+                    ['HTML 元素', '/html/html-elements.html'],
+                    ['HTML 属性', '/html/html-attributes.html'],
+                    ['HTML 标签简写及全称', '/html/html-tag-name.html'],
+                    ['HTML 标签参考手册（按字母）', '/tags/html-reference.html']
+                ]},
+                { file: '03-文本与链接.html', title: '文本与链接', refs: [
+                    ['HTML 标题', '/html/html-headings.html'],
+                    ['HTML 段落', '/html/html-paragraphs.html'],
+                    ['HTML 文本格式化', '/html/html-formatting.html'],
+                    ['HTML 链接', '/html/html-links.html'],
+                    ['HTML 图像', '/html/html-images.html'],
+                    ['HTML 字符实体', '/html/html-entities.html']
+                ]},
+                { file: '04-列表与表格.html', title: '列表与表格', refs: [
+                    ['HTML 列表', '/html/html-lists.html'],
+                    ['HTML 表格', '/html/html-tables.html']
+                ]},
+                { file: '05-表单与输入.html', title: '表单与输入', refs: [
+                    ['HTML 表单', '/html/html-forms.html'],
+                    ['HTML5 Input 类型', '/html/html5-form-input-types.html'],
+                    ['HTML5 表单元素', '/html/html5-form-elements.html'],
+                    ['HTML5 表单属性', '/html/html5-form-attributes.html']
+                ]},
+                { file: '06-语义化与HTML5.html', title: '语义化与 HTML5', refs: [
+                    ['HTML 区块', '/html/html-blocks.html'],
+                    ['HTML5 语义元素', '/html/html5-semantic-elements.html'],
+                    ['HTML 布局', '/html/html-layouts.html'],
+                    ['HTML 头部', '/html/html-head.html']
+                ]}
+            ]
+        },
+        {
+            id: 'css', dir: '02-CSS基础', num: '02', title: 'CSS 基础', tone: '#96652C',
+            desc: '网页的外衣：语法、选择器、文本、背景、盒模型——写出任何静态样式。',
+            chapters: [
+                { file: '01-CSS是什么.html', title: 'CSS 是什么', refs: [
+                    ['CSS 简介', '/css/css-intro.html'],
+                    ['CSS 语法', '/css/css-syntax.html'],
+                    ['CSS 编辑器', '/css/css-editor.html']
+                ]},
+                { file: '02-引入与基础选择器.html', title: '引入与基础选择器', refs: [
+                    ['CSS 创建（三种引入）', '/css/css-howto.html'],
+                    ['CSS Id 和 Class 选择器', '/css/css-id-class.html'],
+                    ['CSS 分组和嵌套', '/css/css-grouping-nesting.html']
+                ]},
+                { file: '03-文本与字体.html', title: '文本与字体', refs: [
+                    ['CSS 文本', '/css/css-text.html'],
+                    ['CSS 字体', '/css/css-font.html'],
+                    ['CSS Web 安全字体', '/cssref/css-websafe-fonts.html']
+                ]},
+                { file: '04-背景与边框.html', title: '背景与边框', refs: [
+                    ['CSS 背景', '/css/css-background.html'],
+                    ['CSS 边框', '/css/css-border.html'],
+                    ['CSS 轮廓 outline', '/css/css-outline.html']
+                ]},
+                { file: '05-盒模型.html', title: '盒模型', refs: [
+                    ['CSS 盒子模型', '/css/css-boxmodel.html'],
+                    ['CSS margin（外边距）', '/css/css-margin.html'],
+                    ['CSS padding（内边距）', '/css/css-padding.html'],
+                    ['CSS3 框大小 box-sizing', '/css3/css3-box-sizing.html']
+                ]},
+                { file: '06-显示与尺寸.html', title: '显示与尺寸', refs: [
+                    ['CSS 尺寸 Dimension', '/css/css-dimension.html'],
+                    ['CSS Display 与可见性', '/css/css-display-visibility.html'],
+                    ['CSS 单位参考手册', '/cssref/css-units.html']
+                ]},
+                { file: '07-选择器进阶.html', title: '选择器进阶', refs: [
+                    ['CSS 组合选择符', '/css/css-combinators.html'],
+                    ['CSS 伪类', '/css/css-pseudo-classes.html'],
+                    ['CSS 伪元素', '/css/css-pseudo-elements.html'],
+                    ['CSS 属性选择器', '/css/css-attribute-selectors.html'],
+                    ['CSS 选择器参考手册', '/cssref/css-selectors.html']
+                ]}
+            ]
+        },
+        {
+            id: 'layout', dir: '03-CSS布局', num: '03', title: 'CSS 布局', tone: '#4E7A52',
+            desc: '网页的骨架排布：从文档流到 Flex、Grid，让元素各就各位。',
+            chapters: [
+                { file: '01-布局与对齐.html', title: '布局与对齐', refs: [
+                    ['CSS 网页布局', '/css/css-website-layout.html'],
+                    ['CSS 对齐', '/css/css-align.html']
+                ]},
+                { file: '02-浮动.html', title: '浮动', refs: [
+                    ['CSS Float 浮动', '/css/css-float.html'],
+                    ['float 属性参考手册', '/cssref/pr-class-float.html'],
+                    ['clear 属性参考手册', '/cssref/pr-class-clear.html']
+                ]},
+                { file: '03-定位.html', title: '定位', refs: [
+                    ['CSS Position 定位', '/css/css-positioning.html']
+                ]},
+                { file: '04-溢出处理.html', title: '溢出处理', refs: [
+                    ['CSS Overflow', '/css/css-overflow.html']
+                ]},
+                { file: '05-Flex弹性布局.html', title: 'Flex 弹性布局', refs: [
+                    ['CSS3 弹性盒子', '/css3/css3-flexbox.html']
+                ]},
+                { file: '06-Grid网格布局.html', title: 'Grid 网格布局', refs: [
+                    ['CSS 网格布局', '/css3/css-grid.html'],
+                    ['CSS 网格容器', '/css3/css-grid-container.html'],
+                    ['CSS 网格元素', '/css3/css-grid-item.html']
+                ]}
+            ]
+        },
+        {
+            id: 'css3', dir: '04-CSS3进阶', num: '04', title: 'CSS3 进阶', tone: '#8A4E63',
+            desc: '网页的动效与颜值：圆角、渐变、变换、动画与响应式设计。',
+            chapters: [
+                { file: '01-CSS3总览.html', title: 'CSS3 总览', refs: [
+                    ['CSS3 简介', '/css3/css3-intro.html'],
+                    ['CSS3 浏览器支持情况', '/cssref/css3-browsersupport.html'],
+                    ['CSS 属性参考手册', '/cssref/css-reference.html']
+                ]},
+                { file: '02-圆角边框与阴影.html', title: '圆角、边框与阴影', refs: [
+                    ['CSS3 边框', '/css3/css3-borders.html'],
+                    ['CSS3 圆角', '/css3/css3-border-radius.html'],
+                    ['border-radius 属性手册', '/cssref/css3-pr-border-radius.html'],
+                    ['box-shadow 属性手册', '/cssref/css3-pr-box-shadow.html']
+                ]},
+                { file: '03-背景与渐变.html', title: '背景与渐变', refs: [
+                    ['CSS3 背景', '/css3/css3-backgrounds.html'],
+                    ['CSS3 渐变', '/css3/css3-gradients.html']
+                ]},
+                { file: '04-文本效果与字体.html', title: '文本效果与字体', refs: [
+                    ['CSS3 文本效果', '/css3/css3-text-effects.html'],
+                    ['CSS3 字体 @font-face', '/css3/css3-fonts.html']
+                ]},
+                { file: '05-2D与3D转换.html', title: '2D 与 3D 转换', refs: [
+                    ['CSS3 2D 转换', '/css3/css3-2dtransforms.html'],
+                    ['CSS3 3D 转换', '/css3/css3-3dtransforms.html']
+                ]},
+                { file: '06-过渡.html', title: '过渡', refs: [
+                    ['CSS3 过渡', '/css3/css3-transitions.html'],
+                    ['transition 属性手册', '/cssref/css3-pr-transition.html']
+                ]},
+                { file: '07-动画.html', title: '动画', refs: [
+                    ['CSS3 动画', '/css3/css3-animations.html'],
+                    ['CSS 动画（可动画属性）', '/cssref/css-animatable.html']
+                ]},
+                { file: '08-响应式设计.html', title: '响应式设计', refs: [
+                    ['CSS3 多媒体查询', '/css3/css3-mediaqueries.html'],
+                    ['多媒体查询实例', '/css3/css3-mediaqueries-ex.html'],
+                    ['响应式 Viewport', '/css/css-rwd-viewport.html'],
+                    ['响应式网格视图', '/css/css-rwd-grid.html'],
+                    ['响应式图片', '/css/css-rwd-images.html']
+                ]}
+            ]
+        }
+    ];
+
+    /* ==================== 工具函数 ==================== */
+    function el(tag, cls, text) {
+        var n = document.createElement(tag);
+        if (cls) n.className = cls;
+        if (text != null) n.textContent = text;
+        return n;
+    }
+
+    function loadProgress() {
+        try { return JSON.parse(localStorage.getItem(KEY)) || {}; }
+        catch (e) { return {}; }
+    }
+    function saveProgress(p) {
+        try { localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) {}
+    }
+
+    function flatten() {
+        var list = [];
+        for (var m = 0; m < ROUTE_DATA.length; m++) {
+            var mod = ROUTE_DATA[m];
+            for (var c = 0; c < mod.chapters.length; c++) {
+                list.push({ mod: mod, ch: mod.chapters[c], key: mod.dir + '/' + mod.chapters[c].file });
+            }
+        }
+        return list;
+    }
+
+    function doneCount(progress) {
+        var n = 0, all = flatten();
+        for (var i = 0; i < all.length; i++) if (progress[all[i].key]) n++;
+        return n;
+    }
+
+    /* ==================== 当前章节定位 ==================== */
+    function findCurrent() {
+        var attr = document.body.getAttribute('data-chapter');
+        var all = flatten();
+        if (attr) {
+            for (var i = 0; i < all.length; i++) if (all[i].key === attr) return all[i];
+        }
+        var href = decodeURIComponent(window.location.pathname.replace(/\\/g, '/'));
+        for (var j = 0; j < all.length; j++) {
+            if (href.slice(-all[j].key.length) === all[j].key) return all[j];
+        }
+        return null;
+    }
+
+    /* ==================== 顶栏 + 侧边栏骨架 ==================== */
+    function buildChrome(current, progress, total, done) {
+        var isHub = document.body.classList.contains('rt-hub');
+        var prefix = isHub ? '' : '../';
+
+        var bar = el('header', 'rt-topbar');
+
+        var menuBtn = el('button', 'rt-menu-btn', '☰');
+        menuBtn.type = 'button';
+        menuBtn.setAttribute('aria-label', '打开章节目录');
+        bar.appendChild(menuBtn);
+
+        var brand = el('a', 'rt-brand');
+        brand.href = prefix + '教程中心页.html';
+        var mark = el('span', 'rt-brand-mark', '学');
+        brand.appendChild(mark);
+        brand.appendChild(el('span', null, '2026 新前端 · 学习路线'));
+        bar.appendChild(brand);
+
+        var crumb = el('div', 'rt-crumb');
+          if (current) {
+              crumb.innerHTML = '<a href="' + prefix + '教程中心页.html" class="rt-crumb-link">学习路线</a> <span class="rt-crumb-sep">/</span> ' +
+                  '<a href="' + prefix + '教程中心页.html" class="rt-crumb-link">' + current.mod.title + '</a> <span class="rt-crumb-sep">/</span> <b>' + current.ch.title + '</b>';
+          } else {
+              crumb.innerHTML = '<a href="' + prefix + '教程中心页.html" class="rt-crumb-link">学习路线</a> <span class="rt-crumb-sep">/</span> <b>教程中心</b>';
+          }
+          bar.appendChild(crumb);
+
+        var pill = el('a', 'rt-progress-pill');
+          pill.href = prefix + '关系网.html';
+          pill.title = '查看重点关系网';
+        var ring = el('span', 'rt-progress-ring');
+        ring.style.setProperty('--p', total ? Math.round(done / total * 100) : 0);
+        pill.appendChild(ring);
+        pill.appendChild(el('span', null, done + ' / ' + total + ' 章'));
+        bar.appendChild(pill);
+
+        var homeLink = el('a', 'rt-top-link', '项目主页');
+        homeLink.href = isHub ? '../学习工作台.html' : '../../学习工作台.html';
+        bar.appendChild(homeLink);
+
+        /* —— 侧边栏 —— */
+        var side = el('nav', 'rt-sidebar');
+        side.setAttribute('aria-label', '章节目录');
+
+        var head = el('div', 'rt-side-head');
+        head.appendChild(el('span', null, '章节目录'));
+        head.appendChild(el('small', null, '菜鸟教程风格'));
+        side.appendChild(head);
+
+        var meter = el('div', 'rt-side-meter');
+        var meterIn = el('i');
+        meter.appendChild(meterIn);
+        side.appendChild(meter);
+        meterIn.style.width = (total ? done / total * 100 : 0) + '%';
+
+        side.appendChild(el('div', 'rt-side-count', '已完成 ' + done + ' / ' + total + ' 章'));
+
+        var groups = el('div', 'rt-side-groups');
+        for (var m = 0; m < ROUTE_DATA.length; m++) {
+            var mod = ROUTE_DATA[m];
+            var group = el('div', 'rt-group' + (current && current.mod.id === mod.id ? ' open' : ''));
+
+            var gHead = el('button', 'rt-group-head');
+            gHead.type = 'button';
+            gHead.appendChild(el('span', 'rt-group-num', mod.num));
+            gHead.appendChild(el('span', 'rt-group-title', mod.title));
+            var gDone = 0;
+            for (var d = 0; d < mod.chapters.length; d++) {
+                if (progress[mod.dir + '/' + mod.chapters[d].file]) gDone++;
+            }
+            gHead.appendChild(el('span', 'rt-group-count', gDone + '/' + mod.chapters.length));
+            gHead.appendChild(el('span', 'rt-group-arrow', '▶'));
+            (function (g) {
+                gHead.addEventListener('click', function () { g.classList.toggle('open'); });
+            })(group);
+            group.appendChild(gHead);
+
+            var list = el('div', 'rt-group-list');
+            for (var c = 0; c < mod.chapters.length; c++) {
+                var ch = mod.chapters[c];
+                var key = mod.dir + '/' + ch.file;
+                var link = el('a', 'rt-chapter' +
+                    (current && current.key === key ? ' active' : '') +
+                    (progress[key] ? ' done' : ''));
+                link.href = prefix + mod.dir + '/' + ch.file;
+                link.appendChild(el('span', 'rt-ch-num', String(c + 1)));
+                link.appendChild(el('span', 'rt-ch-title', ch.title));
+                link.appendChild(el('span', 'rt-ch-check', '✓'));
+                list.appendChild(link);
+            }
+            group.appendChild(list);
+            groups.appendChild(group);
+        }
+        side.appendChild(groups);
+
+        var homeSide = el('a', 'rt-side-home', ' 在线练习场');
+        homeSide.href = prefix + '互动练习.html';
+        side.appendChild(homeSide);
+
+        var mask = el('div', 'rt-drawer-mask');
+
+        var main = document.querySelector('.rt-main');
+        document.body.insertBefore(bar, document.body.firstChild);
+        document.body.insertBefore(side, main || null);
+        document.body.appendChild(mask);
+
+        menuBtn.addEventListener('click', function () {
+            if (window.matchMedia('(max-width: 980px)').matches) {
+                /* 移动端：抽屉式目录 */
+                side.classList.toggle('open');
+                mask.classList.toggle('show');
+            } else {
+                /* 桌面端：折叠 / 展开侧边栏，正文自动变宽 */
+                var off = document.body.classList.toggle('rt-side-off');
+                menuBtn.textContent = off ? '⇥' : '☰';
+                menuBtn.setAttribute('aria-label', off ? '展开章节目录' : '收起章节目录');
+                try { localStorage.setItem(SIDE_KEY, off ? '1' : ''); } catch (e) {}
+            }
+        });
+        mask.addEventListener('click', function () {
+            side.classList.remove('open');
+            mask.classList.remove('show');
+        });
+        window.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                side.classList.remove('open');
+                mask.classList.remove('show');
+                if (document.querySelector('.le-editor.le-fullscreen')) return;
+            }
+        });
+
+        /* —— 恢复上次的侧边栏折叠状态 —— */
+        try {
+            if (localStorage.getItem(SIDE_KEY) === '1' &&
+                !window.matchMedia('(max-width: 980px)').matches) {
+                document.body.classList.add('rt-side-off');
+                menuBtn.textContent = '⇥';
+                menuBtn.setAttribute('aria-label', '展开章节目录');
+            }
+        } catch (e) {}
+
+        return { side: side, mask: mask };
+    }
+
+    /* ==================== 章节底部导航 + 深入学习 ==================== */
+    function buildChapterFoot(current, all, progress) {
+        var content = document.querySelector('.rt-content');
+        if (!content || !current) return;
+
+        /* —— 自动填充章节元信息（.rt-chapter-meta 为空时） —— */
+        var meta = content.querySelector('.rt-chapter-meta');
+        if (meta && !meta.textContent.trim()) {
+            var chNo = current.mod.chapters.indexOf(current.ch) + 1;
+            meta.textContent = current.mod.title + ' · 第 ' + chNo + ' 章';
+        }
+
+        /* —— 深入学习（菜鸟教程外链，数据来自注册表） —— */
+        if (current.ch.refs && current.ch.refs.length) {
+            var refs = el('section', 'rt-refs');
+            refs.appendChild(el('div', 'rt-refs-head', '深入学习 · 菜鸟教程'));
+            refs.appendChild(el('p', 'rt-refs-tip',
+                '本章只讲了核心，下面这些更细、更深的内容，点击直达菜鸟教程对应页面：'));
+            var grid = el('div', 'rt-ref-grid');
+            for (var r = 0; r < current.ch.refs.length; r++) {
+                var ref = current.ch.refs[r];
+                var a = el('a', 'rt-ref');
+                a.href = RUNOOB + ref[1];
+                a.target = '_blank';
+                a.rel = 'noopener';
+                a.appendChild(el('strong', null, ref[0]));
+                a.appendChild(el('span', null, 'runoob.com' + ref[1]));
+                grid.appendChild(a);
+            }
+            refs.appendChild(grid);
+            content.appendChild(refs);
+        }
+
+        var idx = -1;
+        for (var i = 0; i < all.length; i++) if (all[i].key === current.key) idx = i;
+
+        var foot = el('div', 'rt-foot');
+
+        var prev = idx > 0 ? all[idx - 1] : null;
+        var prevNav = el('a', 'rt-foot-nav' + (prev ? '' : ' placeholder'));
+        if (prev) prevNav.href = '../' + prev.mod.dir + '/' + prev.ch.file;
+        prevNav.appendChild(el('span', null, '← 上一章'));
+        prevNav.appendChild(el('strong', null, prev ? prev.ch.title : '已是第一章'));
+        foot.appendChild(prevNav);
+
+        var doneBtn = el('button', 'rt-foot-done' + (progress[current.key] ? ' is-done' : ''),
+            progress[current.key] ? '✓ 已掌握' : '标记为已掌握');
+        doneBtn.type = 'button';
+        doneBtn.addEventListener('click', function () {
+            var p = loadProgress();
+            if (p[current.key]) delete p[current.key]; else p[current.key] = 1;
+            saveProgress(p);
+            window.location.reload();
+        });
+        foot.appendChild(doneBtn);
+
+        var next = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
+        var nextNav = el('a', 'rt-foot-nav next' + (next ? '' : ' placeholder'));
+        if (next) nextNav.href = '../' + next.mod.dir + '/' + next.ch.file;
+        nextNav.appendChild(el('span', null, '下一章 →'));
+        nextNav.appendChild(el('strong', null, next ? next.ch.title : '已学完全部章节'));
+        foot.appendChild(nextNav);
+
+        content.appendChild(foot);
+    }
+
+    /* ==================== 教程中心专属渲染 ==================== */
+    function buildHub(progress, total, done) {
+        var modulesBox = document.getElementById('rtModules');
+        if (!modulesBox) return;
+
+        for (var m = 0; m < ROUTE_DATA.length; m++) {
+            var mod = ROUTE_DATA[m];
+            var card = el('div', 'rt-module-card');
+            card.style.setProperty('--mc', mod.tone);
+
+            var mHead = el('div', 'rt-module-head');
+            mHead.appendChild(el('span', 'rt-module-num', mod.num));
+            var mTitleBox = el('div');
+            mTitleBox.appendChild(el('h3', null, mod.title));
+            mTitleBox.appendChild(el('div', 'rt-module-meta', mod.chapters.length + ' 章 · 深入链接 ' +
+                countRefs(mod) + ' 条'));
+            mHead.appendChild(mTitleBox);
+            card.appendChild(mHead);
+
+            card.appendChild(el('p', 'rt-module-desc', mod.desc));
+
+            var gDone = 0;
+            for (var d = 0; d < mod.chapters.length; d++) {
+                if (progress[mod.dir + '/' + mod.chapters[d].file]) gDone++;
+            }
+            var meter = el('div', 'rt-module-meter');
+            var meterIn = el('i');
+            meterIn.style.width = (gDone / mod.chapters.length * 100) + '%';
+            meter.appendChild(meterIn);
+            card.appendChild(meter);
+            card.appendChild(el('div', 'rt-module-meter-label', '已掌握 ' + gDone + ' / ' + mod.chapters.length + ' 章'));
+
+            var list = el('ul', 'rt-module-list');
+            for (var c = 0; c < mod.chapters.length; c++) {
+                var ch = mod.chapters[c];
+                var key = mod.dir + '/' + ch.file;
+                var li = el('li');
+                var a = el('a', null, ch.title);
+                a.href = mod.dir + '/' + ch.file;
+                li.appendChild(a);
+                if (progress[key]) a.appendChild(el('span', 'rt-mc-done', '✓ 已掌握'));
+                list.appendChild(li);
+            }
+            card.appendChild(list);
+            modulesBox.appendChild(card);
+        }
+
+        var contBtn = document.getElementById('rtContinue');
+        var contLabel = document.getElementById('rtContinueLabel');
+        if (contBtn) {
+            var all = flatten();
+            var target = null;
+            for (var i = 0; i < all.length; i++) {
+                if (!progress[all[i].key]) { target = all[i]; break; }
+            }
+            if (target) {
+                contBtn.href = target.mod.dir + '/' + target.ch.file;
+                if (contLabel) contLabel.textContent = target.mod.title + ' · ' + target.ch.title;
+            } else {
+                contBtn.href = '#rtModules';
+                if (contLabel) contLabel.textContent = '全部章节已掌握，回顾一下';
+            }
+        }
+
+        var hubDone = document.getElementById('rtHubDone');
+        if (hubDone) hubDone.textContent = done + ' / ' + total;
+    }
+
+    function countRefs(mod) {
+        var n = 0;
+        for (var i = 0; i < mod.chapters.length; i++) n += mod.chapters[i].refs.length;
+        return n;
+    }
+
+    /* ==================== 启动 ==================== */
+    function boot() {
+        var all = flatten();
+        var progress = loadProgress();
+        var done = doneCount(progress);
+        var current = findCurrent();
+
+        if (current) document.body.setAttribute('data-module', current.mod.id);
+
+        buildChrome(current, progress, all.length, done);
+
+        if (!document.body.classList.contains('rt-hub')) {
+            buildChapterFoot(current, all, progress);
+        } else {
+            buildHub(progress, all.length, done);
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot);
+    } else {
+        boot();
+    }
+})();
+
+
+
+

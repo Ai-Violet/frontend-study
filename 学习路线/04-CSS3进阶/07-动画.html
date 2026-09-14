@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>动画 · CSS3 进阶 — 前端自习室</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23B8552F'/%3E%3Ctext x='16' y='22' font-size='16' font-family='serif' font-weight='700' fill='%23FFF7EF' text-anchor='middle'%3E学%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="../assets/learn.css">
+</head>
+<body data-page="04-CSS3进阶/07-动画.html">
+    <main class="lx-main">
+        <article class="lx-article">
+
+            <nav class="lx-crumb">
+                <a href="../教程中心页.html">学习路线</a><span class="sep">›</span>
+                <a href="index.html">CSS3 进阶</a><span class="sep">›</span>
+                <span class="here">动画</span>
+            </nav>
+            <h1><span class="h-no">07</span>动画</h1>
+            <p class="lx-lead">
+                过渡只有「起点 → 终点」两站；<code>animation</code> + <code>@keyframes</code>
+                给你<strong class="hl">完整导演权</strong>：<b>几站、每站长什么样、循环几次、要不要倒放</b>，全听你的。
+                而且<strong class="hl">不需要触发</strong>——绑定即开演。
+            </p>
+            <div class="lx-meta-row">
+                <span class="lx-chip">约 50 分钟</span>
+                <span class="lx-chip">7 个动手实验</span>
+                <span class="lx-chip">CSS 动效完全体</span>
+            </div>
+
+            <section>
+                <h2>一、动画 vs 过渡：什么时候用哪个</h2>
+                <p>
+                    两兄弟分工明确：<strong class="hl">过渡是「反馈」，动画是「演出」</strong>。
+                    hover 时亮一下是反馈，用过渡；loading 转圈、入场演出是持续的行为，用动画。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>transition 与 animation 对比</caption>
+                        <thead>
+                            <tr><th>对比项</th><th>transition 过渡</th><th>animation 动画</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">触发方式</td><td>状态变化（hover / 类名）</td><td><strong class="hl">自动播放</strong>，绑定即跑</td></tr>
+                            <tr><td class="td-val">关键帧数</td><td>只有首尾两帧</td><td>任意多帧（0%~100% 随便加）</td></tr>
+                            <tr><td class="td-val">循环</td><td>不可循环</td><td><code>infinite</code> 随意</td></tr>
+                            <tr><td class="td-val">倒放 / 往返</td><td>状态回去就自动「倒放」</td><td><code>direction</code> 手动控制</td></tr>
+                            <tr><td class="td-val">结束定格</td><td>自然回到基态</td><td><code>fill-mode</code> 可停在终点</td></tr>
+                            <tr><td class="td-val">典型场景</td><td>hover 反馈、展开收起</td><td>loading、入场、氛围动效</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="transition-vs-animation.css">
+                    <script type="text/plain" class="lab-code">/* 左：过渡——必须悬停才动，是「反馈」 */
+.vs-btn { transition: transform 0.3s ease; }
+.vs-btn:hover { transform: translateY(-4px); }
+
+/* 右：动画——页面一加载就自己动，是「演出」 */
+.vs-badge { animation: vs-bob 1.6s ease-in-out infinite; }
+@keyframes vs-bob {
+    0%, 100% { transform: translateY(0); }    /* 站点写法：两个百分比共用一段样式 */
+    50%      { transform: translateY(-10px); }
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="vs-demo.css">
+                    <div class="lab-head"><span class="lab-cap">左边要你悬停（过渡），右边一直在演（动画）——把 <code>.vs-badge</code> 的 duration 从 1.6s 改成 4s 看它"懒洋洋"</span></div>
+                    <template class="lab-html">
+                        <div class="c3-vs-stage">
+                            <div class="item">
+                                <button class="c3-vs-btn">悬停我才动</button>
+                                <span>transition · 反馈</span>
+                            </div>
+                            <div class="item">
+                                <span class="c3-vs-badge">我自己一直动</span>
+                                <span>animation · 演出</span>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.c3-vs-stage {
+    display: flex; gap: 28px; align-items: center; justify-content: flex-start; flex-wrap: wrap; padding: 18px 0;
+}
+.c3-vs-stage .item { text-align: center; }
+.c3-vs-btn {
+    padding: 13px 26px; border-radius: 999px; border: none; cursor: pointer;
+    font-size: 13.5px; font-family: inherit; background: #8A4E63; color: #fff;
+    transition: transform 0.3s ease;
+}
+.c3-vs-btn:hover { transform: translateY(-4px); }
+.c3-vs-badge {
+    display: inline-block; padding: 13px 26px; border-radius: 999px; font-size: 13.5px; color: #fff;
+    background: linear-gradient(135deg, #C08A3E, #B3472E);
+    animation: c3-vs-bob 1.6s ease-in-out infinite;
+}
+@keyframes c3-vs-bob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-10px); }
+}
+.c3-vs-stage span { display: block; margin-top: 10px; font-size: 11.5px; color: #6B6053; }</script>
+                </div>
+                <div class="lx-tip"><span>工程心法：<b>交互反馈用过渡，氛围效果用动画</b>。
+                    一个页面里同时狂奔的动画别超过两三个——动效是调味料，不是主菜。</span></div>
+            </section>
+
+            <section>
+                <h2>二、@keyframes：动画的分镜表</h2>
+                <p>
+                    动画分两步：<strong class="hl">先定义关键帧，再绑到元素上</strong>。
+                    关键帧就是分镜表——<code>from/to</code> 只是最简形式（等价于 0%/100%），
+                    中间的<strong class="hl">百分比站点随便加</strong>，站点越多动作越细腻。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="keyframes.css">
+                    <script type="text/plain" class="lab-code">/* 分镜表：四个站点 + 循环，小球沿跑道跑一个来回，中途还有两次缩放 */
+@keyframes c3-kf-run {
+    0%   { transform: translateX(0)    scale(1); }     /* 左端出发，原大小 */
+    25%  { transform: translateX(138px) scale(1.18); } /* 中点，鼓起来（加速的错觉） */
+    50%  { transform: translateX(276px) scale(1); }    /* 右端折返 */
+    75%  { transform: translateX(138px) scale(0.8); }  /* 回程中点，压扁（减速感） */
+    100% { transform: translateX(0)    scale(1); }     /* 回到起点，无缝进入下一轮 */
+}
+
+.kf-runner { animation: c3-kf-run 4s ease-in-out infinite; }</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="keyframes-demo.css">
+                    <div class="lab-head"><span class="lab-cap">一个关键帧两种动作（位移 + 缩放同步进行）——把 <code>50%</code> 的 scale 改成 <code>1.5</code>、把 100% 的 translateX 改成 <code>276px</code> 看循环跳帧</span></div>
+                    <template class="lab-html">
+                        <div class="c3-kf-stage">
+                            <div class="c3-kf-track">
+                                <div class="c3-kf-runner">跑</div>
+                            </div>
+                        </div>
+                        <p class="c3-kf-note">0% → 25% → 50% → 75% → 100%：五站分镜，infinite 无缝循环</p>
+                    </template>
+                    <script type="text/plain" class="lab-code">.c3-kf-stage { display: flex; flex-direction: column; align-items: center; padding: 14px 0; }
+.c3-kf-track { position: relative; width: 320px; height: 64px; background: rgba(138, 78, 99, 0.08); border-radius: 32px; }
+.c3-kf-track::before {
+    content: ""; position: absolute; left: 22px; right: 22px; top: 50%;
+    height: 2px; margin-top: -1px;
+    background: repeating-linear-gradient(90deg, #C9A8B8 0 10px, transparent 10px 20px);
+}
+.c3-kf-runner {
+    position: absolute; top: 50%; left: 0; width: 44px; height: 44px;
+    margin-top: -22px; border-radius: 50%;
+    background: linear-gradient(135deg, #8A4E63, #B3748A); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-size: 17px;
+    animation: c3-kf-run 4s ease-in-out infinite;
+}
+@keyframes c3-kf-run {
+    0%   { transform: translateX(0)    scale(1); }
+    25%  { transform: translateX(138px) scale(1.18); }
+    50%  { transform: translateX(276px) scale(1); }
+    75%  { transform: translateX(138px) scale(0.8); }
+    100% { transform: translateX(0)    scale(1); }
+}
+.c3-kf-note { text-align: center; font-size: 12px; color: #6B6053; margin: 8px 0 0; }</script>
+                </div>
+                <div class="lx-note"><span>写多站点动画的诀窍：<b>先想清楚「几个关键时刻」，每个时刻写一行</b>，
+                    中间过程浏览器全帮你补。0% 和 100% 写成一样的值，循环时才不会跳帧。</span></div>
+            </section>
+
+            <section>
+                <h2>三、animation 八个子属性逐个看</h2>
+                <p>
+                    <code>animation</code> 是一个<strong class="hl">八合一简写</strong>，拆开每个都能单独写：
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>animation 八个子属性速查</caption>
+                        <thead>
+                            <tr><th>子属性</th><th>管什么</th><th>常用值</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val"><code>animation-name</code></td><td>用哪套关键帧</td><td>对应 @keyframes 的名字</td></tr>
+                            <tr><td class="td-val"><code>animation-duration</code></td><td>一轮多久</td><td><code>0.3s ~ 4s</code></td></tr>
+                            <tr><td class="td-val"><code>animation-timing-function</code></td><td>每两站之间怎么跑</td><td>与过渡相同：<code>ease</code> / <code>linear</code> / <code>cubic-bezier()</code></td></tr>
+                            <tr><td class="td-val"><code>animation-delay</code></td><td>多久后开演</td><td>错峰入场、延迟出场用</td></tr>
+                            <tr><td class="td-val"><code>animation-iteration-count</code></td><td>演几轮</td><td><code>infinite</code> / 数字</td></tr>
+                            <tr><td class="td-val"><code>animation-direction</code></td><td>方向</td><td><code>normal</code> / <code>alternate</code>（往返）/ <code>reverse</code></td></tr>
+                            <tr><td class="td-val"><code>animation-fill-mode</code></td><td>开演前 / 结束后定格在哪</td><td><code>none</code> / <code>forwards</code> / <code>backwards</code> / <code>both</code></td></tr>
+                            <tr><td class="td-val"><code>animation-play-state</code></td><td>播放 / 暂停</td><td><code>running</code> / <code>paused</code></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>
+                    最难理解的是 <strong class="hl">direction</strong> 和 <strong class="hl">fill-mode</strong>，各用一个对照实验说清楚：
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="direction.css">
+                    <script type="text/plain" class="lab-code">/* direction：normal 每轮跑完「瞬移」回起点；alternate 偶数轮倒着演（真往返） */
+.lane.a .c3-dr-ball { animation: c3-dr-hop 1s ease-in-out infinite; }          /* normal */
+.lane.b .c3-dr-ball { animation: c3-dr-hop 1s ease-in-out infinite alternate; } /* 往返 */
+
+@keyframes c3-dr-hop {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-82px); }
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="direction-demo.css">
+                    <div class="lab-head"><span class="lab-cap">normal 跳上去再瞬移下来；alternate 跳上去又跳下来——把 <code>.b</code> 的 alternate 改成 reverse 看它只往下钻</span></div>
+                    <template class="lab-html">
+                        <div class="c3-dr-stage">
+                            <div class="item">
+                                <div class="c3-dr-lane a"><div class="c3-dr-ball"></div></div>
+                                <span>normal · 每轮瞬移回起点</span>
+                            </div>
+                            <div class="item">
+                                <div class="c3-dr-lane b"><div class="c3-dr-ball"></div></div>
+                                <span>alternate · 丝滑往返</span>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.c3-dr-stage {
+    display: flex; gap: 44px; justify-content: center; align-items: flex-end; padding: 12px 0 6px;
+}
+.c3-dr-stage .item { text-align: center; }
+.c3-dr-lane { position: relative; width: 64px; height: 118px; background: rgba(110, 139, 110, 0.14); border-radius: 12px; }
+.c3-dr-ball {
+    position: absolute; left: 50%; margin-left: -12px; bottom: 8px;
+    width: 24px; height: 24px; border-radius: 50%;
+    background: linear-gradient(135deg, #6E8B6E, #4E7A52);
+}
+.c3-dr-lane.a .c3-dr-ball { animation: c3-dr-hop 1s ease-in-out infinite; }
+.c3-dr-lane.b .c3-dr-ball { animation: c3-dr-hop 1s ease-in-out infinite alternate; }
+@keyframes c3-dr-hop { from { transform: translateY(0); } to { transform: translateY(-82px); } }
+.c3-dr-stage span { display: block; margin-top: 8px; font-size: 11.5px; color: #6B6053; }</script>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="fill-mode.css">
+                    <script type="text/plain" class="lab-code">/* fill-mode：延迟 1.2s 开演、只演 1 轮，看开演前后「定格在哪」 */
+.fm-a .c3-fm-box { animation: c3-fm-in 1s ease-out 1.2s 1; }      /* none：延迟期显示基态，演完弹回基态 */
+.fm-b .c3-fm-box { animation: c3-fm-in 1s ease-out 1.2s 1 both; } /* both：延迟期定格首帧，演完停在末帧 */
+
+@keyframes c3-fm-in {
+    from { opacity: 0; transform: translateX(-36px); }  /* 首帧：隐形、偏左 */
+    to   { opacity: 1; transform: translateX(0); }      /* 末帧：就位 */
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="fill-mode-demo.css">
+                    <div class="lab-head"><span class="lab-cap">两盒都延迟 1.2s 开演——右边（both）等待期就藏在首帧里，演完停在终点（把 1.2s 改成 4s 看得更清楚）</span></div>
+                    <template class="lab-html">
+                        <div class="c3-fm-stage">
+                            <div class="c3-fm-a item">
+                                <div class="c3-fm-box">fill: none<br>演完弹回</div>
+                                <span>none · 基态等 / 基态收</span>
+                            </div>
+                            <div class="c3-fm-b item">
+                                <div class="c3-fm-box">fill: both<br>停在终点</div>
+                                <span>both · 首帧等 / 末帧收</span>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.c3-fm-stage {
+    display: flex; gap: 44px; justify-content: center; flex-wrap: wrap; padding: 14px 0;
+}
+.c3-fm-stage .item { text-align: center; }
+.c3-fm-box {
+    width: 150px; height: 64px; border-radius: 12px;
+    background: linear-gradient(135deg, #C08A3E, #B3472E); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; text-align: center; line-height: 1.5;
+}
+.c3-fm-a .c3-fm-box { animation: c3-fm-in 1s ease-out 1.2s 1; }
+.c3-fm-b .c3-fm-box { animation: c3-fm-in 1s ease-out 1.2s 1 both; }
+@keyframes c3-fm-in {
+    from { opacity: 0; transform: translateX(-36px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+.c3-fm-stage span { display: block; margin-top: 8px; font-size: 11.5px; color: #6B6053; }</script>
+                </div>
+                <div class="lx-warn"><span>「入场动画只在第一次加载时闪一下，之后一切如常」——
+                    这说明你忘了 fill-mode。<b>想让元素演完停在终点，加 <code>forwards</code></b>；
+                    有 delay 又不想它等的时候裸奔出来，加 <code>backwards</code>；两个都要就 <code>both</code>。</span></div>
+            </section>
+
+            <section>
+                <h2>四、简写与多动画：一个元素，两套戏</h2>
+                <p>
+                    简写顺序（不必背，记住<strong class="hl">两个时间的规则</strong>就行——第一个是 duration，第二个是 delay）：
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="shorthand-multi.css">
+                    <script type="text/plain" class="lab-code">/*                name       duration  timing     delay  count  direction  fill      state */
+animation: c3-kf-run  4s  ease-in-out  0s  infinite  normal  none  running;
+
+/* 多动画：逗号分隔，各用各的关键帧、各有各的节奏 */
+.ma-badge {
+    animation: c3-ma-bob 1.4s ease-in-out infinite,   /* 套戏一：上下漂浮 */
+               c3-ma-hue 2.8s ease-in-out infinite;   /* 套戏二：色相旋转 */
+}
+@keyframes c3-ma-bob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-12px); }
+}
+@keyframes c3-ma-hue {
+    0%, 100% { filter: hue-rotate(0deg); }
+    50%      { filter: hue-rotate(45deg); }
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="multi-demo.css">
+                    <div class="lab-head"><span class="lab-cap">一枚徽章同时演两套戏——1.4s 浮动 + 2.8s 变色（把两套 duration 改成一样，层次就没了）</span></div>
+                    <template class="lab-html">
+                        <div class="c3-ma-stage">
+                            <span class="c3-ma-badge">梅紫 · 双动画徽章</span>
+                        </div>
+                        <p class="c3-ma-note">两套动画互不干扰：transform 管位置，filter 管颜色</p>
+                    </template>
+                    <script type="text/plain" class="lab-code">.c3-ma-stage { display: flex; justify-content: center; padding: 20px 0; }
+.c3-ma-badge {
+    display: inline-block; padding: 14px 28px; border-radius: 999px; font-size: 14px; color: #fff;
+    background: linear-gradient(135deg, #8A4E63, #B3748A);
+    animation: c3-ma-bob 1.4s ease-in-out infinite,
+               c3-ma-hue 2.8s ease-in-out infinite;
+}
+@keyframes c3-ma-bob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-12px); }
+}
+@keyframes c3-ma-hue {
+    0%, 100% { filter: hue-rotate(0deg); }
+    50%      { filter: hue-rotate(45deg); }
+}
+.c3-ma-note { text-align: center; font-size: 12px; color: #6B6053; margin: 0 0 6px; }</script>
+                </div>
+                <div class="lx-tip"><span>多动画若<strong class="hl">操作同一个属性</strong>（比如都改 transform），后面的赢——前者被覆盖。
+                    想叠加就分家：一套管 <code>transform</code>，一套管 <code>filter</code> 或 <code>opacity</code>。</span></div>
+            </section>
+
+            <section>
+                <h2>五、animation-play-state：会暂停的跑马灯</h2>
+                <p>
+                    <code>animation-play-state: paused</code> 让动画<strong class="hl">原地冻结</strong>（不是回到起点），
+                    配合 hover 就是「跑马灯悬停暂停」——用户想细看时它乖乖停下。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="play-state.css">
+                    <script type="text/plain" class="lab-code">.c3-ps-track {
+    display: flex; gap: 56px; width: max-content;
+    animation: c3-ps-scroll 7s linear infinite;   /* 无缝滚动的轨道 */
+}
+@keyframes c3-ps-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(calc(-50% - 28px)); }  /* 恰好滚过一半（一组内容+半个间距）→ 无缝 */
+}
+
+/* 悬停暂停：冻结在当前帧，鼠标移开继续跑 */
+.c3-ps-stage:hover .c3-ps-track { animation-play-state: paused; }</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="play-state-demo.css">
+                    <div class="lab-head"><span class="lab-cap">鼠标移到跑马灯上，滚动冻结在当前帧（移开继续）——把 7s 改成 3s 让它跑快点</span></div>
+                    <template class="lab-html">
+                        <div class="c3-ps-stage">
+                            <div class="c3-ps-track">
+                                <span>◆ 学习路线 · CSS3 进阶</span>
+                                <span>✦ 动画 animation</span>
+                                <span>✦ 过渡 transition</span>
+                                <span>✦ 转换 transform</span>
+                                <span>◆ 学习路线 · CSS3 进阶</span>
+                                <span>✦ 动画 animation</span>
+                                <span>✦ 过渡 transition</span>
+                                <span>✦ 转换 transform</span>
+                            </div>
+                        </div>
+                        <p class="c3-ps-note">轨道内容复制了两份，滚过一半时正好首尾衔接 —— 无缝循环的秘密</p>
+                    </template>
+                    <script type="text/plain" class="lab-code">.c3-ps-stage { overflow: hidden; border-radius: 12px; background: rgba(138, 78, 99, 0.08); }
+.c3-ps-track { display: flex; gap: 56px; width: max-content; padding: 15px 0; animation: c3-ps-scroll 7s linear infinite; }
+.c3-ps-track span { font-size: 14px; color: #6C3B4C; white-space: nowrap; }
+@keyframes c3-ps-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(calc(-50% - 28px)); }
+}
+.c3-ps-stage:hover .c3-ps-track { animation-play-state: paused; }
+.c3-ps-note { text-align: center; font-size: 12px; color: #6B6053; margin: 10px 0 0; }</script>
+                </div>
+                <div class="lx-note"><span>跑马灯三件套：<b>轨道 <code>width: max-content</code> + 内容复制两份 + 滚动距离 50%</b>。
+                    JS 轮播图的 CSS 版原理一模一样，只是把「滚动到头重置」换成了「永远差 50%」。</span></div>
+            </section>
+
+            <section>
+                <h2>六、实战：三个经典 loading 动效</h2>
+                <p>
+                    面试和项目里出现频率最高的三件套：<strong class="hl">转圈、弹跳点、脉冲波纹</strong>。
+                    每一个都不超过十行 CSS。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="loading.css">
+                    <script type="text/plain" class="lab-code">/* ① 转圈：空心圆 + 只亮一条边，旋转起来就是经典的 spinner */
+.c3-ld-spinner {
+    width: 48px; height: 48px; border-radius: 50%;
+    border: 5px solid rgba(138, 78, 99, 0.18);   /* 底色：很淡的梅紫 */
+    border-top-color: #8A4E63;                   /* 只把顶边染亮 */
+    animation: c3-ld-spin 0.9s linear infinite;  /* 匀速才像机器在干活 */
+}
+@keyframes c3-ld-spin { to { transform: rotate(360deg); } }
+
+/* ② 弹跳点：三个点共用一套动画，delay 依次错开 0.15s */
+.c3-ld-dots i { animation: c3-ld-bounce 1.2s ease-in-out infinite; }
+.c3-ld-dots i:nth-child(2) { animation-delay: 0.15s; }
+.c3-ld-dots i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes c3-ld-bounce {
+    0%, 100% { transform: translateY(0);    opacity: 0.5; }
+    50%      { transform: translateY(-12px); opacity: 1;   }
+}
+
+/* ③ 脉冲波纹：动的不是元素本身，是它的 ::after 伪元素 */
+.c3-ld-pulse { position: relative; }               /* 伪元素定位的锚点 */
+.c3-ld-pulse::after {
+    content: ""; position: absolute; inset: 0;     /* 和本体一样大的圆环 */
+    border-radius: 50%; border: 3px solid #8A4E63;
+    animation: c3-ld-ripple 1.6s ease-out infinite;
+}
+@keyframes c3-ld-ripple {
+    0%   { transform: scale(1);   opacity: 1; }    /* 贴着本体出发 */
+    100% { transform: scale(2.1); opacity: 0; }    /* 扩大到 2.1 倍同时淡出 */
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="loading-demo.css">
+                    <div class="lab-head"><span class="lab-cap">三件套同台——把弹跳点第二个点的 delay 改成 0.4s 感受「节奏太散」</span></div>
+                    <template class="lab-html">
+                        <div class="c3-ld-stage">
+                            <div class="cell">
+                                <div class="c3-ld-spinner"></div>
+                                <span>① border-top 转圈</span>
+                            </div>
+                            <div class="cell">
+                                <div class="c3-ld-dots"><i></i><i></i><i></i></div>
+                                <span>② delay 错峰弹跳</span>
+                            </div>
+                            <div class="cell">
+                                <div class="c3-ld-pulse"></div>
+                                <span>③ ::after 波纹扩散</span>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.c3-ld-stage {
+    display: flex; gap: 34px; align-items: center; justify-content: center; flex-wrap: wrap; padding: 18px 0;
+}
+.c3-ld-stage .cell { text-align: center; }
+.c3-ld-spinner {
+    width: 48px; height: 48px; margin: 0 auto; border-radius: 50%;
+    border: 5px solid rgba(138, 78, 99, 0.18); border-top-color: #8A4E63;
+    animation: c3-ld-spin 0.9s linear infinite;
+}
+@keyframes c3-ld-spin { to { transform: rotate(360deg); } }
+.c3-ld-dots { display: flex; gap: 7px; align-items: center; justify-content: center; }
+.c3-ld-dots i {
+    width: 11px; height: 11px; border-radius: 50%; background: #8A4E63;
+    animation: c3-ld-bounce 1.2s ease-in-out infinite;
+}
+.c3-ld-dots i:nth-child(2) { animation-delay: 0.15s; }
+.c3-ld-dots i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes c3-ld-bounce {
+    0%, 100% { transform: translateY(0); opacity: 0.5; }
+    50%      { transform: translateY(-12px); opacity: 1; }
+}
+.c3-ld-pulse { width: 46px; height: 46px; margin: 0 auto; border-radius: 50%; background: #8A4E63; position: relative; }
+.c3-ld-pulse::after {
+    content: ""; position: absolute; inset: 0; border-radius: 50%;
+    border: 3px solid #8A4E63;
+    animation: c3-ld-ripple 1.6s ease-out infinite;
+}
+@keyframes c3-ld-ripple {
+    0%   { transform: scale(1);   opacity: 1; }
+    100% { transform: scale(2.1); opacity: 0; }
+}
+.c3-ld-stage span { display: block; margin-top: 12px; font-size: 11.5px; color: #6B6053; }</script>
+                </div>
+                <div class="lx-tip"><span>三个套路背后的通用思想：<b>转圈 = 旋转一个「半成品」；错峰 = 同一动画不同 delay；
+                    波纹 = 动伪元素不动本体</b>。看懂套路，loading 动效可以自己编。</span></div>
+            </section>
+
+            <section>
+                <h2>七、性能与动画礼仪</h2>
+                <p>
+                    动画是 CSS 里最烧性能的部分，规矩也最多。核心一条：
+                    <strong class="hl">只动 transform 和 opacity</strong>——它们走 GPU 合成，不触发重排重绘。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>动画性能取舍</caption>
+                        <thead>
+                            <tr><th>做法</th><th>成本</th><th>替代方案</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">动 <code>transform</code> / <code>opacity</code> / <code>filter</code></td><td>合成层，GPU</td><td>—— 就该用它</td></tr>
+                            <tr><td class="td-val">动 <code>width</code> / <code>top</code> / <code>margin</code></td><td>每帧重排</td><td><code>transform: scale() / translate()</code></td></tr>
+                            <tr><td class="td-val">动 <code>box-shadow</code> / <code>background</code></td><td>每帧重绘</td><td>大面积发光用伪元素 + opacity</td></tr>
+                            <tr><td class="td-val">满屏 <code>infinite</code> 动画</td><td>持续耗电</td><td>视口外的暂停，或干脆删掉</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="performance.css">
+                    <script type="text/plain" class="lab-code">/* 提前告诉浏览器「这货要动」，给它单独开一层 */
+.card { will-change: transform; }     /* 动画结束记得移除，别常驻 */
+
+/* 尊重系统的「减少动态效果」设置 */
+@media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01s !important; animation-iteration-count: 1 !important; }
+}</script>
+                </div>
+                <div class="lx-warn"><span><code>will-change</code> 是「预订 GPU 层」，<b>不是加速器开关</b>：
+                    常驻滥用反而多占内存。只在确实卡顿时加，动画完删掉。</span></div>
+                <div class="lx-note"><span>动画礼仪三问：<b>它帮用户理解了什么？打断注意力了吗？关掉页面会不会更舒服？</b>
+                    答不上来的动画，删掉是最大的优化。</span></div>
+            </section>
+
+            <section>
+                <h2>八、本章小结</h2>
+                <p>animation 八属性速查（简写顺序即表格顺序）：</p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>animation 八属性一句话速查</caption>
+                        <thead>
+                            <tr><th>属性</th><th>一句话</th><th>高频值</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val"><code>animation-name</code></td><td>用哪套分镜</td><td>@keyframes 名</td></tr>
+                            <tr><td class="td-val"><code>animation-duration</code></td><td>一轮多久</td><td><code>0.3s ~ 4s</code></td></tr>
+                            <tr><td class="td-val"><code>animation-timing-function</code></td><td>站间怎么跑</td><td><code>ease</code> / <code>linear</code> / <code>cubic-bezier()</code></td></tr>
+                            <tr><td class="td-val"><code>animation-delay</code></td><td>多久开演</td><td>错峰用 <code>0.1s</code> 级</td></tr>
+                            <tr><td class="td-val"><code>animation-iteration-count</code></td><td>演几轮</td><td><code>infinite</code> / <code>1</code></td></tr>
+                            <tr><td class="td-val"><code>animation-direction</code></td><td>方向</td><td><code>alternate</code> 往返</td></tr>
+                            <tr><td class="td-val"><code>animation-fill-mode</code></td><td>前后定格</td><td><code>forwards</code> / <code>both</code></td></tr>
+                            <tr><td class="td-val"><code>animation-play-state</code></td><td>播放暂停</td><td><code>paused</code> 悬停冻结</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <ul>
+                    <li>动画 = <strong class="hl">@keyframes 分镜 + animation 绑定</strong>，自动播放，与过渡的「状态触发」本质不同</li>
+                    <li>百分比站点随便加，<strong class="hl">0% 和 100% 写成一样</strong>才能无缝循环</li>
+                    <li>简写两个时间的规则与过渡相同：<strong class="hl">第一个是 duration，第二个是 delay</strong></li>
+                    <li><code>alternate</code> 做真往返；<code>fill-mode: both</code> 让延迟期藏首帧、结束停末帧</li>
+                    <li>多动画逗号分隔，<strong class="hl">同属性后者覆盖前者</strong>——想让它们叠加就分属性写</li>
+                    <li>性能铁律：只动 <strong class="hl">transform / opacity / filter</strong>；loading 三件套都是它们的变体</li>
+                </ul>
+                <div class="lx-note"><span><b>动手练习</b>：①给第二节的分镜表加一个 <code>10% { opacity: 0.4; }</code> 站点，看闪烁效果；
+                    ②把第六节弹跳点的 delay 间隔改成 0.4s，感受「节奏太散」；
+                    ③给跑马灯加 <code>animation-direction: reverse</code>，让它反着滚。
+                    最后用 <code>alternate</code> + <code>cubic-bezier(0.34, 1.56, 0.64, 1)</code> 复刻一个「回弹小球」。</span></div>
+            </section>
+
+        </article>
+    </main>
+    <script src="../assets/learn.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid 网格布局 · CSS 布局 — 前端自习室</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23B8552F'/%3E%3Ctext x='16' y='22' font-size='16' font-family='serif' font-weight='700' fill='%23FFF7EF' text-anchor='middle'%3E学%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="../assets/learn.css">
+</head>
+<body data-page="03-CSS布局/06-Grid网格布局.html">
+    <main class="lx-main">
+        <article class="lx-article">
+
+            <nav class="lx-crumb">
+                <a href="../教程中心页.html">学习路线</a><span class="sep">›</span>
+                <a href="index.html">CSS 布局</a><span class="sep">›</span>
+                <span class="here">Grid 网格布局</span>
+            </nav>
+            <h1><span class="h-no">06</span>Grid 网格布局</h1>
+            <p class="lx-lead">
+                Flex 管「一条线」，Grid 管「一张网」：行和列<strong class="hl">同时</strong>定义，
+                子项一个个放进格子里——<strong class="hl">二维布局的终极答案</strong>。
+                整页骨架、相册、仪表盘，从此不用任何 hack。
+            </p>
+            <div class="lx-meta-row">
+                <span class="lx-chip">约 25 分钟</span>
+                <span class="lx-chip">10 个动手实验</span>
+                <span class="lx-chip">二维布局终极答案</span>
+            </div>
+
+            <section>
+                <h2>一、Flex vs Grid：怎么选</h2>
+                <p>
+                    两个都是现代布局主力，维度不同、分工不同。先用一张表建立全局观，
+                    之后写页面先问自己一句：<strong class="hl">我是在排一条线，还是在铺一张网？</strong>
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>Flex 与 Grid 的定位对比</caption>
+                        <thead>
+                            <tr><th>对比项</th><th>Flex 弹性盒</th><th>Grid 网格</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>维度</td><td>一维（一行或一列）</td><td>二维（行 + 列）</td></tr>
+                            <tr><td>思维</td><td>从「内容」出发，排队伸缩</td><td>从「容器」出发，先画格子再放东西</td></tr>
+                            <tr><td>子项位置</td><td>沿主轴依次排，不看行也不看列</td><td>可以指定「第几行第几列」「跨几格」</td></tr>
+                            <tr><td>适合</td><td>导航栏、按钮组、一行卡片、垂直居中</td><td>整页骨架、相册、日历、仪表盘</td></tr>
+                            <tr><td>能混用吗</td><td colspan="2">完美配合：Grid 排大框架，每个格子里再用 Flex 排细节</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-tip"><span>一个判断技巧：<b>内容决定结构 → Flex；结构决定内容 → Grid</b>。
+                    比如「一组标签，多长都排一行」是内容说了算，用 Flex；
+                    「七列的日历、头身脚的页面」是格子说了算，用 Grid。</span></div>
+            </section>
+
+            <section>
+                <h2>二、display: grid 与网格基本概念</h2>
+                <p>
+                    在容器上写 <code>display: grid</code>，它就成了<strong class="hl">网格容器</strong>，
+                    直接子元素成为<strong class="hl">网格项目</strong>。先用几个术语把地图画清楚：
+                </p>
+                <ul>
+                    <li><strong>轨道（track）</strong>：一行或一列的统称，由 <code>grid-template-columns / grid-template-rows</code> 定义；</li>
+                    <li><strong>单元格（cell）</strong>：行和列交叉出的小格子；</li>
+                    <li><strong>网格线（grid line）</strong>：格子的边线，<strong class="hl">编号从 1 开始</strong>——竖线从左往右数，横线从上往下数，第 4 节定位全靠它；</li>
+                    <li><strong>网格区域（area）</strong>：由若干格子拼成的大块，可以命名（第 5 节）。</li>
+                </ul>
+                <p>
+                    只定义列、不指定位置时，项目会<strong class="hl">自动摆放</strong>：从左到右、放满一行换下一行，跟流水线一样。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="gd-basic.css">
+                    <script type="text/plain" class="lab-code">/* 三列等宽网格：6 个项目自动摆成 2 行 × 3 列 */
+.gd-basic .stage {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;   /* 三列，每列 1 份 */
+    gap: 8px;                             /* 行列间距（row-gap / column-gap 分开设） */
+    border: 1.5px dashed #9DB89B;
+    border-radius: 10px;
+    padding: 10px;
+    background: rgba(78,122,82,.03);
+}
+/* 行高不写 → 每行按内容自动撑开；写死也行： */
+.gd-basic .stage.rows { grid-template-rows: 40px 64px; }
+.gd-basic .it {
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    text-align: center;
+    padding: 12px 0;
+    font-size: 12.5px;
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="gd-basic-preview.css">
+                    <div class="lab-head"><span class="lab-cap">上面行高自动、下面 <code>grid-template-rows</code> 写死两行高度：把下面舞台的 <code>grid-template-rows</code> 删掉，两行立刻变回内容撑开</span></div>
+                    <template class="lab-html">
+                        <div class="gd-basic">
+                            <div class="lbl">行高自动：每行被内容撑开</div>
+                            <div class="stage">
+                                <div class="it">1</div><div class="it">2</div><div class="it">3</div>
+                                <div class="it">4</div><div class="it">5</div><div class="it">6</div>
+                            </div>
+                            <div class="lbl">grid-template-rows: 40px 64px：两行高度写死</div>
+                            <div class="stage rows">
+                                <div class="it">1</div><div class="it">2</div><div class="it">3</div>
+                                <div class="it">4</div><div class="it">5</div><div class="it">6</div>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.lbl { font-size: 12.5px; color: #6B5D4A; margin: 10px 0 6px; }
+.gd-basic .stage {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    border: 1.5px dashed #9DB89B;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: rgba(78,122,82,.03);
+}
+.gd-basic .stage.rows { grid-template-rows: 40px 64px; }
+.gd-basic .it {
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    text-align: center;
+    padding: 12px 0;
+    font-size: 12.5px;
+}</script>
+                </div>
+                <div class="lx-warn"><span><b>和 Flex 一样：</b>grid 只管直接子元素；子元素的 float / clear / vertical-align 同样失效。
+                    另外 <code>display: inline-grid</code> 可以让网格容器本身行内化，道理同 inline-flex。</span></div>
+            </section>
+
+            <section>
+                <h2>三、轨道尺寸六种写法</h2>
+                <p>
+                    <code>grid-template-columns</code> 的每一列，都能用不同单位描述。这六种写法覆盖了 99% 的场景：
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>轨道尺寸取值分析</caption>
+                        <thead>
+                            <tr><th>写法</th><th>含义</th><th>典型用途</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">90px</td><td>固定 90 像素，多一分不少</td><td>固定侧栏、图标列</td></tr>
+                            <tr><td class="td-val">50%</td><td>容器宽度的 50%</td><td>简单两栏</td></tr>
+                            <tr><td class="td-val">1fr</td><td>可用空间切成几份，占一份</td><td>等宽 / 按比例分栏</td></tr>
+                            <tr><td class="td-val">auto</td><td>按内容自适应宽窄</td><td>「这一列包住内容就行」</td></tr>
+                            <tr><td class="td-val">minmax(100px, 1fr)</td><td>最小 100px、最大 1fr 的弹性范围</td><td>防压坏内容</td></tr>
+                            <tr><td class="td-val">repeat(3, 1fr)</td><td>把 <code>1fr 1fr 1fr</code> 写三遍的简写</td><td>等分多列</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="gd-size.css">
+                    <script type="text/plain" class="lab-code">/* 五张网格，同一批项目，只有列定义不同 */
+.gd-size .stage {
+    display: grid;
+    gap: 8px;
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 10px;
+    padding: 10px;
+}
+.gd-size .it {
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    text-align: center;
+    padding: 12px 0;
+    font-size: 12.5px;
+}
+.gd-size .px     { grid-template-columns: 72px 72px 72px; }   /* 固定像素 */
+.gd-size .fr     { grid-template-columns: 1fr 2fr 1fr; }      /* 按 1:2:1 分份 */
+.gd-size .mix    { grid-template-columns: 90px 1fr auto; }    /* 混搭 */
+.gd-size .minmax { grid-template-columns: minmax(80px, 1fr) minmax(120px, 2fr); }
+.gd-size .rep    { grid-template-columns: repeat(4, 1fr); }   /* 四等分 */</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="gd-size-preview.css">
+                    <div class="lab-head"><span class="lab-cap">五种列定义对比：把 <code>.fr</code> 的 <code>1fr 2fr 1fr</code> 改成 <code>1fr 1fr 1fr</code>，中间的 2fr 立刻变细</span></div>
+                    <template class="lab-html">
+                        <div class="gd-size">
+                            <div class="lbl">72px × 3：固定宽，容器再宽也白搭</div>
+                            <div class="stage px"><div class="it">72px</div><div class="it">72px</div><div class="it">72px</div></div>
+                            <div class="lbl">1fr 2fr 1fr：按 1:2:1 吃满容器</div>
+                            <div class="stage fr"><div class="it">1fr</div><div class="it">2fr</div><div class="it">1fr</div></div>
+                            <div class="lbl">90px 1fr auto：固定 + 弹性 + 内容宽</div>
+                            <div class="stage mix"><div class="it">90px</div><div class="it">1fr</div><div class="it">auto</div></div>
+                            <div class="lbl">minmax(80px, 1fr) minmax(120px, 2fr)：有底线的弹性</div>
+                            <div class="stage minmax"><div class="it">80px~1fr</div><div class="it">120px~2fr</div></div>
+                            <div class="lbl">repeat(4, 1fr)：四等分</div>
+                            <div class="stage rep"><div class="it">1</div><div class="it">2</div><div class="it">3</div><div class="it">4</div></div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.lbl { font-size: 12.5px; color: #6B5D4A; margin: 8px 0 4px; }
+.gd-size .stage {
+    display: grid;
+    gap: 8px;
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+.gd-size .it {
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    text-align: center;
+    padding: 12px 0;
+    font-size: 12.5px;
+}
+.gd-size .px     { grid-template-columns: 72px 72px 72px; }
+.gd-size .fr     { grid-template-columns: 1fr 2fr 1fr; }
+.gd-size .mix    { grid-template-columns: 90px 1fr auto; }
+.gd-size .minmax { grid-template-columns: minmax(80px, 1fr) minmax(120px, 2fr); }
+.gd-size .rep    { grid-template-columns: repeat(4, 1fr); }</script>
+                </div>
+                <div class="lx-tip"><span><code>fr</code> = fraction（份数），思路和 Flex 的 grow 一样：
+                    先扣掉固定尺寸的列和 gap，<strong>剩下的</strong>空间再按份数切。
+                    所以 <code>200px 1fr 1fr</code> 的意思是「先留 200px，剩下一人一半」。</span></div>
+            </section>
+
+            <section>
+                <h2>四、网格线定位：grid-column / grid-row</h2>
+                <p>
+                    Grid 最强大的地方：想让某个项目「从第 1 条竖线到第 3 条竖线、从第 1 条横线到第 3 条横线」，直接写。
+                    语法是 <code>起始线 / 结束线</code>，编号从 1 开始；也可以用 <code>span n</code> 表示「从当前位置跨 n 格」。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="gd-line.css">
+                    <script type="text/plain" class="lab-code">/* 照片墙：主角图占左上 2×2 大格，其余自动摆放 */
+.gd-line {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 72px);
+    gap: 8px;
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 10px;
+    padding: 10px;
+    background: rgba(78,122,82,.03);
+}
+.gd-line .hero {
+    grid-column: 1 / 3;   /* 竖线 1 → 3：横跨前两列 */
+    grid-row: 1 / 3;      /* 横线 1 → 3：纵跨两行 */
+    background: rgba(192,138,62,.30);
+    border-color: #C08A3E;
+    color: #7A5A26;
+}
+.gd-line .it {
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    font-size: 12.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="gd-line-preview.css">
+                    <div class="lab-head"><span class="lab-cap">hero 用线编号占了 2×2 大格：把 <code>.hero</code> 的 <code>grid-column: 1 / 3</code> 改成 <code>1 / 2</code>，它立刻缩回一列宽</span></div>
+                    <template class="lab-html">
+                        <div class="gd-line">
+                            <div class="it hero">hero：1/3 行 × 1/3 列</div>
+                            <div class="it">2</div>
+                            <div class="it">3</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.gd-line {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 72px);
+    gap: 8px;
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: rgba(78,122,82,.03);
+}
+.gd-line .it {
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    font-size: 12.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.gd-line .hero {
+    grid-column: 1 / 3;
+    grid-row: 1 / 3;
+    background: rgba(192,138,62,.30);
+    border-color: #C08A3E;
+    color: #7A5A26;
+}</script>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="gd-span.css">
+                    <script type="text/plain" class="lab-code">/* 不想数线？span 写法：从当前位置跨 n 格 */
+.gd-span {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 10px;
+    padding: 10px;
+    background: rgba(78,122,82,.03);
+}
+.gd-span .it {
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    font-size: 12.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.gd-span .wide { grid-column: span 2; background: rgba(192,138,62,.30); border-color: #C08A3E; color: #7A5A26; }
+.gd-span .tall { grid-row: span 2; background: rgba(179,71,46,.22); border-color: #B3472E; color: #8A3A28; }</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="gd-span-preview.css">
+                    <div class="lab-head"><span class="lab-cap">wide 横跨 2 列、tall 纵跨 2 行：把 <code>.wide</code> 的 <code>grid-column: span 2</code> 改成 <code>span 3</code>，它立刻占满整行</span></div>
+                    <template class="lab-html">
+                        <div class="gd-span">
+                            <div class="it wide">wide：span 2</div>
+                            <div class="it">2</div>
+                            <div class="it tall">tall：span 2</div>
+                            <div class="it">4</div>
+                            <div class="it">5</div>
+                            <div class="it">6</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.gd-span {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: rgba(78,122,82,.03);
+}
+.gd-span .it {
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    font-size: 12.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.gd-span .wide { grid-column: span 2; background: rgba(192,138,62,.30); border-color: #C08A3E; color: #7A5A26; }
+.gd-span .tall { grid-row: span 2; background: rgba(179,71,46,.22); border-color: #B3472E; color: #8A3A28; }</script>
+                </div>
+                <div class="lx-warn"><span>数线规则：<b>3 列网格有 4 条竖线</b>，编号 1～4；<code>grid-column: 1 / 3</code> 与
+                    <code>grid-column: span 2</code> 在起点恰好是 1 时结果相同，起点不同就不同。
+                    另外「结束线 = 起始线 + 跨越数」，想不通就在纸上画格子。</span></div>
+            </section>
+
+            <section>
+                <h2>五、命名区域：grid-template-areas</h2>
+                <p>
+                    逐个数线太累？把布局<strong class="hl">画成 ASCII 图</strong>直接写进 CSS：
+                    <code>grid-template-areas</code> 用字符串描述每一行，每个名字是一块区域，
+                    项目再用 <code>grid-area: 名字</code> 报到。整页骨架的首选写法。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="gd-areas.css">
+                    <script type="text/plain" class="lab-code">/* 页面骨架：边栏 + 内容区 + 头脚通栏 */
+.gd-areas {
+    display: grid;
+    grid-template-columns: 110px 1fr;      /* 两列：边栏 + 内容 */
+    grid-template-rows: 46px 1fr 40px;     /* 三行：头 / 身 / 脚 */
+    grid-template-areas:
+        "hd hd"        /* 头部：占满两列 */
+        "nv mn"        /* 边栏 + 主区 */
+        "ft ft";       /* 页脚：占满两列 */
+    gap: 8px;
+    min-height: 216px;
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 10px;
+    padding: 10px;
+}
+.gd-areas .it {
+    border-radius: 8px;
+    display: flex;              /* 格子里混一点 Flex 做文字居中 */
+    align-items: center;
+    justify-content: center;
+    font-size: 12.5px;
+}
+.gd-areas .hd { grid-area: hd; background: #4E7A52; color: #fff; }
+.gd-areas .nv { grid-area: nv; background: rgba(78,122,82,.28); border: 1.5px solid #4E7A52; color: #3A5F3E; }
+.gd-areas .mn { grid-area: mn; background: rgba(192,138,62,.18); border: 1.5px solid #C08A3E; color: #7A5A26; }
+.gd-areas .ft { grid-area: ft; background: rgba(179,71,46,.16); border: 1.5px solid #B3472E; color: #8A3A28; }</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="gd-areas-preview.css">
+                    <div class="lab-head"><span class="lab-cap">template-areas 搭的页面骨架：把 <code>"nv mn"</code> 和 <code>"ft ft"</code> 两行顺序对调，页面立刻上下翻过来</span></div>
+                    <template class="lab-html">
+                        <div class="gd-areas">
+                            <div class="it hd">header</div>
+                            <div class="it nv">nav</div>
+                            <div class="it mn">main</div>
+                            <div class="it ft">footer</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.gd-areas {
+    display: grid;
+    min-height: 216px;
+    background: rgba(78,122,82,.03);
+}
+.gd-areas {
+    grid-template-columns: 110px 1fr;
+    grid-template-rows: 46px 1fr 40px;
+    grid-template-areas:
+        "hd hd"
+        "nv mn"
+        "ft ft";
+    gap: 8px;
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 10px;
+    padding: 10px;
+}
+.gd-areas .it {
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12.5px;
+}
+.gd-areas .hd { grid-area: hd; background: #4E7A52; color: #fff; }
+.gd-areas .nv { grid-area: nv; background: rgba(78,122,82,.28); border: 1.5px solid #4E7A52; color: #3A5F3E; }
+.gd-areas .mn { grid-area: mn; background: rgba(192,138,62,.18); border: 1.5px solid #C08A3E; color: #7A5A26; }
+.gd-areas .ft { grid-area: ft; background: rgba(179,71,46,.16); border: 1.5px solid #B3472E; color: #8A3A28; }</script>
+                </div>
+                <div class="lx-note"><span>「ASCII 布局图」直接翻译成 CSS——这就是 template-areas 的魅力：
+                    结构一目了然，改布局只动几行字符串。规则只有两条：<b>每行的格子数要相同</b>；
+                    想留空写个句点 <code>.</code>（如 <code>"hd hd" ". mn"</code>）。</span></div>
+            </section>
+
+            <section>
+                <h2>六、隐式轨道与自动流：grid-auto-rows / grid-auto-flow</h2>
+                <p>
+                    项目比定义的格子多怎么办？Grid 会<strong class="hl">自动补轨道</strong>（叫隐式轨道）：
+                    行方向默认按内容高、列方向默认按内容宽。<code>grid-auto-rows / grid-auto-columns</code>
+                    就是给这些「计划外轨道」定尺寸的；<code>grid-auto-flow</code> 则决定自动摆放的方向。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>grid-auto-* / grid-auto-flow 取值说明</caption>
+                        <thead>
+                            <tr><th>属性</th><th>含义</th><th>关键点</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">grid-auto-rows</td><td>隐式行的高度</td><td>项目超出定义行时自动补高</td></tr>
+                            <tr><td class="td-val">grid-auto-columns</td><td>隐式列的宽度</td><td>同理，补列时生效</td></tr>
+                            <tr><td class="td-val">grid-auto-flow</td><td>row（默认）按行填 / column 按列填 / row dense · column dense 回头填坑</td><td>dense 会把前面空的小格塞满</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="gd-auto.css">
+                    <script type="text/plain" class="lab-code">/* 只定义 3 列，项目有 7 个 → 多出的行是「隐式行」 */
+.gd-auto .stage {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 44px;       /* 隐式行统一 44px 高 */
+    gap: 8px;
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 10px;
+    padding: 10px;
+}
+/* 自动流改成「按列填充」：不定义列，改定义行 */
+.gd-auto .flow {
+    grid-auto-flow: column;     /* 自动摆放方向：竖着来 */
+    grid-template-columns: none;
+    grid-template-rows: repeat(3, 44px);
+}
+.gd-auto .it {
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12.5px;
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="gd-auto-preview.css">
+                    <div class="lab-head"><span class="lab-cap">上面 7 个项目挤 3 列、行高统一 44px：把 <code>grid-auto-rows</code> 改成 <code>30px</code>，多出的行立刻变矮</span></div>
+                    <template class="lab-html">
+                        <div class="gd-auto">
+                            <div class="lbl">只定义 3 列，7 个项目 → 多出的行被 grid-auto-rows 统一成 44px</div>
+                            <div class="stage">
+                                <div class="it">1</div><div class="it">2</div><div class="it">3</div>
+                                <div class="it">4</div><div class="it">5</div><div class="it">6</div>
+                                <div class="it">7</div>
+                            </div>
+                            <div class="lbl">grid-auto-flow: column：一列排满 3 个，再开新列</div>
+                            <div class="stage flow">
+                                <div class="it">1</div><div class="it">2</div><div class="it">3</div>
+                                <div class="it">4</div><div class="it">5</div><div class="it">6</div>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.lbl { font-size: 12.5px; color: #6B5D4A; margin: 10px 0 6px; }
+.gd-auto .stage {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 44px;
+    gap: 8px;
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: rgba(78,122,82,.03);
+}
+.gd-auto .flow {
+    grid-auto-flow: column;
+    grid-template-columns: none;
+    grid-template-rows: repeat(3, 44px);
+}
+.gd-auto .it {
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12.5px;
+}</script>
+                </div>
+                <div class="lx-tip"><span>「图片高度不一的瀑布流」常用 <code>grid-auto-rows: 10px</code> + 每张图
+                    <code>grid-row: span n</code> 的组合控制精确行数；另有取值 <code>dense</code>
+                    （写成 <code>grid-auto-flow: row dense</code>）会让浏览器「回头填坑」，把前面留下的小空格塞满。</span></div>
+            </section>
+
+            <section>
+                <h2>七、对齐全家桶：items 管格子内，content 管整张网</h2>
+                <p>
+                    Grid 的对齐比 Flex 多一层——因为它有<strong class="hl">两层空间</strong>：项目在「单元格内」的位置，
+                    以及「整张网格」在容器里的位置。记住两条名字规律就不混：
+                </p>
+                <ul>
+                    <li><code>justify-items / align-items</code> —— 项目在<strong class="hl">自己的格子里</strong>怎么摆（水平 / 垂直）；</li>
+                    <li><code>justify-content / align-content</code> —— <strong class="hl">整张网格</strong>在容器里怎么摆（轨道有剩余空间时才看得出效果）；</li>
+                    <li><code>place-items / place-content</code> —— 上面两个的「竖写简写」：<code>place-items: 垂直 水平</code>。</li>
+                </ul>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>Grid 对齐六兄弟（名称规律）</caption>
+                        <thead>
+                            <tr><th>作用层次</th><th>水平</th><th>垂直</th><th>竖写简写</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>项目在格子内</td><td>justify-items</td><td>align-items</td><td>place-items</td></tr>
+                            <tr><td>整张网格在容器内</td><td>justify-content</td><td>align-content</td><td>place-content</td></tr>
+                            <tr><td>单个项目覆盖</td><td>justify-self</td><td>align-self</td><td>—</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="gd-align.css">
+                    <script type="text/plain" class="lab-code">/* 第一组：项目在单元格内的对齐（行高 72px，项目宽随内容） */
+.gd-align .stage {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 72px;
+    gap: 8px;
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 10px;
+    padding: 10px;
+}
+.gd-align .it {
+    width: fit-content;          /* 宽随内容：水平对齐才看得见 */
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    font-size: 12.5px;
+    padding: 6px 10px;
+}
+.gd-align .jstart  { justify-items: start; }    /* 格内靠左 */
+.gd-align .jcenter { justify-items: center; }   /* 格内居中 */
+.gd-align .jend    { justify-items: end; }      /* 格内靠右 */
+.gd-align .astart  { align-items: start; }      /* 格内靠上 */
+.gd-align .acenter { align-items: center; }     /* 格内垂直居中 */
+.gd-align .aend    { align-items: end; }        /* 格内靠下 */
+.gd-align .place   { place-items: center; }     /* 简写：垂直+水平 一起居中 */</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="gd-align-preview.css">
+                    <div class="lab-head"><span class="lab-cap">项目在各自 72px 高的格子里对齐：把 <code>.place</code> 的 <code>place-items: center</code> 改成 <code>place-items: end end</code>，文字立刻滑到右下角</span></div>
+                    <template class="lab-html">
+                        <div class="gd-align">
+                            <div class="lbl">justify-items: start / center / end（水平方向）</div>
+                            <div class="stage jstart"><div class="it">靠左</div></div>
+                            <div class="stage jcenter"><div class="it">居中</div></div>
+                            <div class="stage jend"><div class="it">靠右</div></div>
+                            <div class="lbl">align-items: start / center / end（垂直方向）</div>
+                            <div class="stage astart"><div class="it">靠上</div></div>
+                            <div class="stage acenter"><div class="it">垂直居中</div></div>
+                            <div class="stage aend"><div class="it">靠下</div></div>
+                            <div class="lbl">place-items: center：一个属性搞定格子内居中</div>
+                            <div class="stage place"><div class="it">正中</div></div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.lbl { font-size: 12.5px; color: #6B5D4A; margin: 8px 0 4px; }
+.gd-align .stage {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 72px;
+    gap: 8px;
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 8px;
+    background: rgba(78,122,82,.03);
+}
+.gd-align .it {
+    width: fit-content;
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    font-size: 12.5px;
+    padding: 6px 10px;
+}
+.gd-align .jstart  { justify-items: start; }
+.gd-align .jcenter { justify-items: center; }
+.gd-align .jend    { justify-items: end; }
+.gd-align .astart  { align-items: start; }
+.gd-align .acenter { align-items: center; }
+.gd-align .aend    { align-items: end; }
+.gd-align .place   { place-items: center; }</script>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="gd-pack.css">
+                    <script type="text/plain" class="lab-code">/* 第二组：整张网格在容器里的位置（轨道写死 104px，容器 118px 高 → 有空可挪） */
+.gd-pack .stage {
+    display: grid;
+    grid-template-columns: 104px 104px;   /* 网格总宽固定 */
+    grid-template-rows: 54px;             /* 网格总高固定 */
+    gap: 8px;
+    height: 118px;                        /* 容器比网格高：纵向有空隙 */
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 10px;
+    padding: 10px;
+    background: rgba(78,122,82,.03);
+}
+.gd-pack .it {
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12.5px;
+}
+.gd-pack .p1 { justify-content: start;  align-content: start; }
+.gd-pack .p2 { justify-content: center; align-content: center; }
+.gd-pack .p3 { justify-content: space-between; align-content: end; }</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="gd-pack-preview.css">
+                    <div class="lab-head"><span class="lab-cap">整张网格（虚线框内的格子组）在容器里的三种摆法：把 <code>.p3</code> 的 <code>align-content: end</code> 改成 <code>start</code>，它立刻弹回顶部</span></div>
+                    <template class="lab-html">
+                        <div class="gd-pack">
+                            <div class="lbl">整张网格在容器里的三种摆法</div>
+                            <div class="stage p1"><div class="it">1</div><div class="it">2</div></div>
+                            <div class="stage p2"><div class="it">1</div><div class="it">2</div></div>
+                            <div class="stage p3"><div class="it">1</div><div class="it">2</div></div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.lbl { font-size: 12.5px; color: #6B5D4A; margin: 8px 0 4px; }
+.gd-pack .stage {
+    display: grid;
+    grid-template-columns: 104px 104px;
+    grid-template-rows: 54px;
+    gap: 8px;
+    height: 118px;
+    border: 1.5px dashed #C9B9A0;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 8px;
+    background: rgba(78,122,82,.03);
+}
+.gd-pack .it {
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12.5px;
+}
+.gd-pack .p1 { justify-content: start;  align-content: start; }
+.gd-pack .p2 { justify-content: center; align-content: center; }
+.gd-pack .p3 { justify-content: space-between; align-content: end; }</script>
+                </div>
+                <div class="lx-tip"><span>项目级也有对应的 <code>justify-self / align-self</code>（覆盖容器设置），和 Flex 的 align-self 同理。
+                    默认值都是 <code>stretch</code>：所以 Grid 项目不写宽高时，<strong class="hl">默认就撑满整个格子</strong>。</span></div>
+            </section>
+
+            <section>
+                <h2>八、经典实战：响应式卡片墙与日历</h2>
+                <p>
+                    两个 Grid 招牌菜。<strong>卡片墙</strong>的精髓是
+                    <code>repeat(auto-fill, minmax(108px, 1fr))</code>：
+                    「每列至少 108px，能塞几列塞几列，剩下的空间平分」——<strong class="hl">零媒体查询的响应式</strong>。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="gd-wall.css">
+                    <script type="text/plain" class="lab-code">/* 响应式卡片墙：窗口宽 → 一行多张；窗口窄 → 自动减列 */
+.gd-wall {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
+    gap: 10px;
+    border: 1.5px dashed #9DB89B;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 12px;
+}
+.gd-wall .card {
+    background: rgba(78,122,82,.20);
+    border: 1.5px solid #4E7A52;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: #3A5F3E;
+}
+.gd-wall .card b { display: block; font-size: 12.5px; margin-bottom: 2px; color: #26201B; }
+.gd-wall .row {
+    display: flex;                  /* 卡片内部交给 Flex：Grid 画格，Flex 排细节 */
+    justify-content: space-between; /* 价格靠左、销量靠右 */
+    align-items: center;
+    margin-top: 6px;
+    font-size: 12px;
+}
+.gd-wall .row .price { color: #B3472E; font-weight: 600; }
+.gd-wall .row .sold  { color: #8A7F72; font-size: 11.5px; }</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="gd-wall-preview.css">
+                    <div class="lab-head"><span class="lab-cap">商品卡片墙：把 <code>minmax(108px, 1fr)</code> 里的 <code>108px</code> 改成 <code>180px</code>，一行能放的卡片立刻变少</span></div>
+                    <template class="lab-html">
+                        <div class="gd-wall">
+                            <div class="card"><b>手冲壶</b>细口慢注<div class="row"><span class="price">¥168</span><span class="sold">已售 2.3k</span></div></div>
+                            <div class="card"><b>磨豆机</b>不锈钢芯<div class="row"><span class="price">¥329</span><span class="sold">已售 1.1k</span></div></div>
+                            <div class="card"><b>滤纸</b>100 张装<div class="row"><span class="price">¥19</span><span class="sold">已售 8.9k</span></div></div>
+                            <div class="card"><b>分享壶</b>耐热玻璃<div class="row"><span class="price">¥89</span><span class="sold">已售 640</span></div></div>
+                            <div class="card"><b>电子秤</b>0.1g 精度<div class="row"><span class="price">¥199</span><span class="sold">已售 3.2k</span></div></div>
+                            <div class="card"><b>温度计</b>直插式<div class="row"><span class="price">¥45</span><span class="sold">已售 508</span></div></div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.gd-wall {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
+    gap: 10px;
+    border: 1.5px dashed #9DB89B;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 12px;
+}
+.gd-wall .card {
+    background: rgba(78,122,82,.20);
+    border: 1.5px solid #4E7A52;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: #3A5F3E;
+}
+.gd-wall .card b { display: block; font-size: 12.5px; margin-bottom: 2px; color: #26201B; }
+.gd-wall .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 6px;
+    font-size: 12px;
+}
+.gd-wall .row .price { color: #B3472E; font-weight: 600; }
+.gd-wall .row .sold  { color: #8A7F72; font-size: 11.5px; }</script>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="gd-cal.css">
+                    <script type="text/plain" class="lab-code">/* 日历：7 列固定；1 号用网格线定位到第 5 列（周四） */
+.gd-cal {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);   /* 一周七天 */
+    gap: 4px;
+}
+.gd-cal .d {
+    text-align: center;
+    padding: 8px 0;
+    font-size: 12px;
+    border-radius: 6px;
+    background: rgba(78,122,82,.14);
+    color: #3A5F3E;
+}
+.gd-cal .first { grid-column: 5; }        /* 1 号从第 5 条竖线开始：跳过周日前 4 格 */
+.gd-cal .today { background: #4E7A52; color: #fff; font-weight: 600; }</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="gd-cal-preview.css">
+                    <div class="lab-head"><span class="lab-cap">日历网格：把 <code>.first</code> 的 <code>grid-column: 5</code> 改成 <code>2</code>，整个月立刻从周二开头</span></div>
+                    <template class="lab-html">
+                        <div class="gd-cal">
+                            <div class="d">周日</div><div class="d">周一</div><div class="d">周二</div><div class="d">周三</div><div class="d">周四</div><div class="d">周五</div><div class="d">周六</div>
+                            <div class="d first">1</div><div class="d">2</div><div class="d">3</div><div class="d">4</div><div class="d">5</div><div class="d">6</div><div class="d">7</div>
+                            <div class="d">8</div><div class="d">9</div><div class="d">10</div><div class="d">11</div><div class="d today">12</div><div class="d">13</div><div class="d">14</div>
+                            <div class="d">15</div><div class="d">16</div><div class="d">17</div><div class="d">18</div><div class="d">19</div><div class="d">20</div><div class="d">21</div>
+                            <div class="d">22</div><div class="d">23</div><div class="d">24</div><div class="d">25</div><div class="d">26</div><div class="d">27</div><div class="d">28</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.gd-cal {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+.gd-cal .d {
+    text-align: center;
+    padding: 8px 0;
+    font-size: 12px;
+    border-radius: 6px;
+    background: rgba(78,122,82,.14);
+    color: #3A5F3E;
+}
+.gd-cal .first { grid-column: 5; }
+.gd-cal .today { background: #4E7A52; color: #fff; font-weight: 600; }</script>
+                </div>
+                <div class="lx-tip"><span><b>auto-fill 与 auto-fit 的微妙差别：</b>两者都是「能塞几列塞几列」；
+                    区别在<strong>项目不够多</strong>时——auto-fill 会保留空列占位，auto-fit 把空列收掉、让现有列拉伸铺满。
+                    卡片墙一般用 auto-fill，数量少还想铺满就用 auto-fit。</span></div>
+            </section>
+
+            <section>
+                <h2>九、Grid 属性速查表</h2>
+                <p>把整章用到的容器与项目属性归拢到两张表，之后写 Grid 忘哪个查哪个。</p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>Grid 容器属性速查</caption>
+                        <thead>
+                            <tr><th>属性</th><th>作用</th><th>常见取值</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">grid-template-columns</td><td>定义列轨道</td><td>px / % / fr / auto / minmax() / repeat()</td></tr>
+                            <tr><td class="td-val">grid-template-rows</td><td>定义行轨道</td><td>同上</td></tr>
+                            <tr><td class="td-val">grid-template-areas</td><td>用 ASCII 图命名区域</td><td>「hd hd」…+ 句点表示空</td></tr>
+                            <tr><td class="td-val">grid-auto-rows</td><td>隐式行高度</td><td>如 44px</td></tr>
+                            <tr><td class="td-val">grid-auto-columns</td><td>隐式列宽度</td><td>长度值</td></tr>
+                            <tr><td class="td-val">grid-auto-flow</td><td>自动摆放方向</td><td>row / column / dense</td></tr>
+                            <tr><td class="td-val">gap</td><td>行列间距</td><td>row-gap / column-gap 分开设</td></tr>
+                            <tr><td class="td-val">justify-items / align-items</td><td>项目在格子内对齐</td><td>start / center / end / stretch</td></tr>
+                            <tr><td class="td-val">justify-content / align-content</td><td>整张网格在容器内对齐</td><td>+ space-between 等</td></tr>
+                            <tr><td class="td-val">place-items / place-content</td><td>上面两组竖写简写</td><td>place-items: 垂直 水平</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>Grid 项目属性速查</caption>
+                        <thead>
+                            <tr><th>属性</th><th>作用</th><th>取值</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">grid-column</td><td>水平定位（线号 / span）</td><td><code>1 / 3</code> · <code>span 2</code></td></tr>
+                            <tr><td class="td-val">grid-row</td><td>垂直定位（线号 / span）</td><td><code>1 / 3</code> · <code>span 2</code></td></tr>
+                            <tr><td class="td-val">grid-area</td><td>抱一个命名区域</td><td>区域名 / 四项线号缩写</td></tr>
+                            <tr><td class="td-val">justify-self / align-self</td><td>覆盖容器的格子内对齐</td><td>start / center / end / stretch</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section>
+                <h2>十、本章小结 · 布局模块收官</h2>
+                <p>
+                    至此，六种布局手段全部到手：<strong class="hl">文档流 → 浮动（读懂老代码）→
+                    定位（叠放钉住）→ 溢出（收拾残局）→ Flex（一维排队）→ Grid（二维铺格）</strong>。
+                    实战中 90% 的页面 = Grid / Flex 搭框架 + 定位做点缀：
+                </p>
+                <ul>
+                    <li>整页骨架：<code>grid-template-areas</code> 画头 / 身 / 脚、边栏 + 主区；</li>
+                    <li>格子内部：导航、按钮组、卡片行交给 Flex；</li>
+                    <li>点睛之笔：角标、吸顶、弹层交给定位；</li>
+                    <li>长内容：省略号、滚动区交给 overflow。</li>
+                </ul>
+                <div class="lx-note"><span><b>毕业自测：</b>用 Grid areas 画出「header / 左侧 nav / 主区 / footer」骨架，
+                    主区里用 <code>repeat(auto-fill, minmax(…))</code> 铺一排响应式商品卡，
+                    卡片内部价格和销量用 Flex 两端对齐，卡片右上角再用定位加一个「热销」角标。
+                    四种手段各就各位，布局模块就真正毕业了。</span></div>
+            </section>
+
+        </article>
+    </main>
+    <script src="../assets/learn.js" defer></script>
+</body>
+</html>

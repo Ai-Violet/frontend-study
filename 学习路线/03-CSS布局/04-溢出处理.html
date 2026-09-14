@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>溢出处理 · CSS 布局 — 前端自习室</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23B8552F'/%3E%3Ctext x='16' y='22' font-size='16' font-family='serif' font-weight='700' fill='%23FFF7EF' text-anchor='middle'%3E学%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="../assets/learn.css">
+</head>
+<body data-page="03-CSS布局/04-溢出处理.html">
+    <main class="lx-main">
+        <article class="lx-article">
+
+            <nav class="lx-crumb">
+                <a href="../教程中心页.html">学习路线</a><span class="sep">›</span>
+                <a href="index.html">CSS 布局</a><span class="sep">›</span>
+                <span class="here">溢出处理</span>
+            </nav>
+            <h1><span class="h-no">04</span>溢出处理</h1>
+            <p class="lx-lead">
+                盒子定了尺寸，内容却装不下，怎么办？<code>overflow</code> 一家子负责收场：
+                裁掉、滚动、还是显示省略号。长标题截断、聊天记录滚动区、横向滑动卡片，
+                都是这一课的配方。
+            </p>
+            <div class="lx-meta-row">
+                <span class="lx-chip">约 15 分钟</span>
+                <span class="lx-chip">6 个动手实验</span>
+                <span class="lx-chip">每个布局都会用到</span>
+            </div>
+
+            <section>
+                <h2>一、为什么会溢出</h2>
+                <p>
+                    给盒子设了<strong class="hl">固定的宽或高</strong>，而内容（文字、图片、子元素）比盒子大，
+                    多出来的部分就叫<strong class="hl">溢出（overflow）</strong>。
+                    默认情况下浏览器不会报错，而是让内容「露」到盒子外面——你以为它在里面，其实它已经越界了。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="why.css">
+                    <script type="text/plain" class="lab-code">/* 一个 200×96 的盒子，装了远超容量的文字 */
+.ov-why {
+    width: 200px;
+    height: 96px;          /* 高度写死了，内容装不下 */
+    background: rgba(78,122,82,.18);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    padding: 8px 10px;
+    color: #3A5F3E;
+    font-size: 12.5px;
+    line-height: 1.7;
+    /* 没写 overflow → 默认 visible：内容直接露出来 */
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="why-preview.css">
+                    <div class="lab-head"><span class="lab-cap">文字从固定高度的盒子里溢出来了：把 <code>.ov-why</code> 的 <code>overflow</code> 改成 <code>hidden</code>，越界的字立刻消失</span></div>
+                    <template class="lab-html">
+                        <div style="padding-bottom: 56px">
+                            <div class="ov-why">
+                                我是一个 200 像素宽、96 像素高的小盒子，可我肚子里的文字实在太多了：
+                                装不下的部分并不会被自动裁剪或压缩，而是原样画出盒子的边界，
+                                直接压到下面的内容上——这就是「溢出」。接下来看怎么收拾这个局面。
+                            </div>
+                            <div class="ov-lab" style="margin-top:-40px">↑ 被溢出内容压住的说明文字</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.ov-why {
+    width: 200px;
+    height: 96px;
+    background: rgba(78,122,82,.18);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    padding: 8px 10px;
+    color: #3A5F3E;
+    font-size: 12.5px;
+    line-height: 1.7;
+    overflow: visible;     /* 改成 hidden，越界文字消失 */
+}
+.ov-lab { font-size: 12.5px; color: #8B7E6C; margin-top: 12px 0; }</script>
+                </div>
+                <div class="lx-tip"><span>溢出不一定是坏事：前面的《定位》一课的「角标」就是故意让元素溢出卡片边缘。
+                    <b>该露的露，该藏的藏</b>——overflow 就是那道闸门。</span></div>
+            </section>
+
+            <section>
+                <h2>二、overflow 的四种取值</h2>
+                <p>
+                    <code>overflow</code> 决定「装不下的内容怎么处理」，四个取值一张表看全：
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>overflow 取值行为分析</caption>
+                        <thead>
+                            <tr><th>取值</th><th>行为</th><th>典型场景</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">visible</td><td>默认：内容露出来，压到外面</td><td>角标、装饰性溢出</td></tr>
+                            <tr><td class="td-val">hidden</td><td>直接裁掉，不给滚动条</td><td>裁圆角图片、隐藏多余部分</td></tr>
+                            <tr><td class="td-val">scroll</td><td>内容裁剪，<strong class="hl">滚动条常驻</strong>（横竖都有）</td><td>固定区域强制可滚</td></tr>
+                            <tr><td class="td-val">auto</td><td>内容裁剪，<strong class="hl">需要时才出现</strong>滚动条</td><td>日常首选，最省心</td></tr>
+                            <tr><td class="td-val">clip</td><td>类似 hidden，但禁止任何滚动（含编程式滚动）</td><td>较少用</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="4val.css">
+                    <script type="text/plain" class="lab-code">/* 四个盒子内容完全相同，只有 overflow 不同（排版用了 flex，第 05 课细讲） */
+.ov-demo { display: flex; flex-wrap: wrap; gap: 12px; }
+.ov-demo .box {
+    flex: 1 1 42%;
+    height: 104px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1.5px solid #4E7A52;
+    background: rgba(78,122,82,.12);
+    color: #3A5F3E;
+    font-size: 12.5px;
+    line-height: 1.65;
+}
+.ov-demo .v1 { overflow: visible; }   /* 默认：露出来（压到了下面的盒子） */
+.ov-demo .v2 { overflow: hidden; }    /* 裁掉：多出的文字直接消失 */
+.ov-demo .v3 { overflow: scroll; }    /* 滚动条常驻：不需要也占位 */
+.ov-demo .v4 { overflow: auto; }      /* 智能：装不下才给滚动条 */</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="4val-preview.css">
+                    <div class="lab-head"><span class="lab-cap">同样内容四种处理：把第四个盒子的 <code>overflow: auto</code> 改成 <code>hidden</code>，滚动条立刻消失、文字被裁</span></div>
+                    <template class="lab-html">
+                        <div class="ov-demo">
+                            <div class="box v1"><b>overflow: visible（默认）</b>文字露到盒子外面，还会压到下面的兄弟元素，页面看起来像出了 bug。</div>
+                            <div class="box v2"><b>overflow: hidden</b>超出盒子的文字被直接裁掉，干净利落，但用户永远看不到被裁的内容。</div>
+                            <div class="box v3"><b>overflow: scroll</b>内容被裁剪，同时滚动条永远显示——哪怕内容其实装得下，也照样占着位置。</div>
+                            <div class="box v4"><b>overflow: auto</b>交给浏览器判断：装得下就不显示滚动条，装不下才出现。日常首选。</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.ov-demo { display: flex; flex-wrap: wrap; gap: 12px; }
+.ov-demo .box {
+    flex: 1 1 42%;
+    height: 104px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1.5px solid #4E7A52;
+    background: rgba(78,122,82,.12);
+    color: #3A5F3E;
+    font-size: 12.5px;
+    line-height: 1.65;
+}
+.ov-demo .box b { display: block; margin-bottom: 2px; font-size: 12.5px; }
+.ov-demo .v1 { overflow: visible; }
+.ov-demo .v2 { overflow: hidden; }
+.ov-demo .v3 { overflow: scroll; }
+.ov-demo .v4 { overflow: auto; }</script>
+                </div>
+                <div class="lx-warn"><span><b>scroll 与 auto 的区别</b>一句话：scroll 是「我先占好滚动条的位」，auto 是「需要时再说」。
+                    另外注意：在 macOS 等默认隐藏滚动条的系统上两者观感可能一样，Windows 上差异明显。</span></div>
+            </section>
+
+            <section>
+                <h2>三、overflow-x / overflow-y：分轴控制</h2>
+                <p>
+                    溢出可以只管一个方向：<code>overflow-x</code> 管横向、<code>overflow-y</code> 管纵向，
+                    组合出「横向能滚、纵向锁死」这类效果——手机 App 里左右滑动的标签栏就是这么做的。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="axis.css">
+                    <script type="text/plain" class="lab-code">/* 横向滚动条 + 纵向禁止 */
+.ov-axis {
+    overflow-x: auto;       /* 横向：装不下就出滚动条 */
+    overflow-y: hidden;     /* 纵向：直接裁掉 */
+    white-space: nowrap;    /* 文字不许换行 → 才会产生横向溢出 */
+    border: 1.5px dashed #9DB89B;
+    border-radius: 8px;
+    padding: 10px;
+    background: rgba(78,122,82,.05);
+}
+.ov-axis .chip {
+    display: inline-block;  /* 行内块：一个个排队 */
+    width: 92px;
+    margin-right: 8px;
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 13px;
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="axis-preview.css">
+                    <div class="lab-head"><span class="lab-cap">横向滚动的标签栏：把 <code>overflow-x: auto</code> 改成 <code>hidden</code>，溢出到右侧的标签立刻被裁没</span></div>
+                    <template class="lab-html">
+                        <div class="ov-axis">
+                            <span class="chip">推荐</span><span class="chip">热销</span><span class="chip">新品</span><span class="chip">限时折扣</span><span class="chip">进口好物</span><span class="chip">本地生活</span><span class="chip">会员专区</span><span class="chip">更多</span>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.ov-axis {
+    overflow-x: auto;       /* 改成 hidden：右侧标签被裁掉 */
+    overflow-y: hidden;
+    white-space: nowrap;
+    border: 1.5px dashed #9DB89B;
+    border-radius: 8px;
+    padding: 10px;
+    background: rgba(78,122,82,.05);
+}
+.ov-axis .chip {
+    display: inline-block;
+    width: 92px;
+    margin-right: 8px;
+    background: rgba(78,122,82,.28);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    color: #3A5F3E;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 13px;
+}</script>
+                </div>
+                <div class="lx-warn"><span>规范规定：如果一个轴设成了 hidden / scroll / auto，另一个轴的 <code>visible</code> 会被
+                    <strong>自动转成 auto</strong>（不能一边说裁剪一边说露出来）。所以「x 设了 hidden、y 想保持 visible」是做不到的。</span></div>
+            </section>
+
+            <section>
+                <h2>四、单行文本省略号三件套</h2>
+                <p>
+                    商品列表的长标题、表格里的长字段，最优雅的截断是<strong class="hl">单行显示 + 末尾省略号</strong>。
+                    它需要三个属性配合，缺一个都不行：
+                </p>
+                <ul>
+                    <li><code>white-space: nowrap</code> —— 不许换行（先把内容「挤」出去）；</li>
+                    <li><code>overflow: hidden</code> —— 超出部分裁掉；</li>
+                    <li><code>text-overflow: ellipsis</code> —— 裁掉的位置显示「…」。</li>
+                </ul>
+                <div class="lx-codeblock" data-lang="css" data-file="elli.css">
+                    <script type="text/plain" class="lab-code">/* 长标题卡片：上面未处理（自动换行），下面三件套截断 */
+.ov-elli-card {
+    width: 240px;
+    background: #fff;
+    border: 1.5px solid #E3D5C4;
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: 0 2px 8px rgba(45,40,36,.05);
+}
+/* 未处理：标题太长自动折成两行 */
+.ov-elli-title { font-size: 14.5px; font-weight: 600; color: #26201B; margin-bottom: 6px; }
+
+/* 三件套：单行 + 省略号 */
+.ov-elli-cut {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: #26201B;
+    margin-bottom: 6px;
+    white-space: nowrap;        /* 1. 不换行 */
+    overflow: hidden;           /* 2. 溢出裁掉 */
+    text-overflow: ellipsis;    /* 3. 裁口处显示省略号 */
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="elli-preview.css">
+                    <div class="lab-head"><span class="lab-cap">同一个长标题，上面折行、下面省略号：把 <code>.ov-elli-cut</code> 的 <code>text-overflow: ellipsis</code> 删掉，末尾的「…」立刻消失（只剩硬切）</span></div>
+                    <template class="lab-html">
+                        <div class="ov-elli-card">
+                            <div class="ov-elli-title">未处理：秋日限定手工焦糖海盐拿铁大杯双份浓缩加燕麦奶</div>
+                            <div class="desc">标题太长会自动换行，把卡片撑高，列表参差不齐。</div>
+                        </div>
+                        <div class="ov-elli-card">
+                            <div class="ov-elli-cut">三件套：秋日限定手工焦糖海盐拿铁大杯双份浓缩加燕麦奶</div>
+                            <div class="desc">单行显示，末尾省略号，卡片高度整齐划一。</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.ov-elli-card {
+    width: 240px;
+    max-width: 100%;
+    background: #fff;
+    border: 1.5px solid #E3D5C4;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(45,40,36,.05);
+}
+.ov-elli-card .ov-elli-title {
+    font-size: 14.5px; font-weight: 600; color: #26201B; margin-bottom: 6px;
+}
+.ov-elli-cut {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: #26201B;
+    margin-bottom: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;      /* 删掉这行，省略号消失 */
+}
+.ov-elli-card .desc { font-size: 12.5px; color: #6B5D4A; line-height: 1.7; }</script>
+                </div>
+                <div class="lx-tip"><span>三件套必须写在<strong>装文字的那个元素</strong>上（通常是标题本身，不是卡片）；
+                    另外 <code>text-overflow</code> 只有配合 <code>overflow: hidden</code> 才会生效，单独写没有任何效果。</span></div>
+            </section>
+
+            <section>
+                <h2>五、多行省略号：-webkit-line-clamp</h2>
+                <p>
+                    只显示两三行、多余的省略——摘要卡片、评论区的标配。
+                    标准的省略号三件套只管「单行」，多行截断要请出 WebKit 时代的私有属性组合
+                    （名字带 <code>-webkit-</code> 前缀，但主流浏览器全都支持，放心用）：
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>多行省略号四件套：一个都不能少</caption>
+                        <thead>
+                            <tr><th>属性</th><th>作用</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">display: -webkit-box</td><td>启用 WebKit 弹性盒布局（行数截断的基础）</td></tr>
+                            <tr><td class="td-val">-webkit-line-clamp: N</td><td>最多显示 N 行，之后出省略号</td></tr>
+                            <tr><td class="td-val">-webkit-box-orient: vertical</td><td>子元素纵向排列</td></tr>
+                            <tr><td class="td-val">overflow: hidden</td><td>配合裁剪，多余内容不外露</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="clamp.css">
+                    <script type="text/plain" class="lab-code">/* 多行省略号：最多显示 3 行 */
+.ov-clamp {
+    display: -webkit-box;            /* 1. 老版弹性盒（WebKit 私有） */
+    -webkit-line-clamp: 3;           /* 2. 最多 3 行，之后省略号 */
+    -webkit-box-orient: vertical;    /* 3. 子元素纵向排列 */
+    overflow: hidden;                /* 4. 配合裁剪 */
+    background: rgba(78,122,82,.18);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: #3A5F3E;
+    line-height: 1.8;
+}
+/* 对照组：同样的文字不做任何处理 */
+.ov-clamp-full {
+    background: rgba(78,122,82,.10);
+    border: 1.5px dashed #9DB89B;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: #6B5D4A;
+    line-height: 1.8;
+    margin-bottom: 10px;
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="clamp-preview.css">
+                    <div class="lab-head"><span class="lab-cap">上面原样显示、下面截成 3 行：把 <code>-webkit-line-clamp: 3</code> 改成 <code>2</code>，下面立刻变成两行省略</span></div>
+                    <template class="lab-html">
+                        <div class="ov-clamp-wrap">
+                            <div class="ov-clamp-full">未截断：弹性布局出现之前，网页排版基本靠文档流和浮动硬凑，开发者为了实现等高栏、垂直居中这些今天看来理所当然的效果，发明了无数 hack 技巧。</div>
+                            <div class="ov-clamp">截断为 3 行：弹性布局出现之前，网页排版基本靠文档流和浮动硬凑，开发者为了实现等高栏、垂直居中这些今天看来理所当然的效果，发明了无数 hack 技巧。</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.ov-clamp-wrap { width: 270px; max-width: 100%; }
+.ov-clamp-full {
+    background: rgba(78,122,82,.10);
+    border: 1.5px dashed #9DB89B;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: #6B5D4A;
+    line-height: 1.8;
+    margin-bottom: 10px;
+}
+.ov-clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;           /* 改成 2 试试 */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    background: rgba(78,122,82,.18);
+    border: 1.5px solid #4E7A52;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: #3A5F3E;
+    line-height: 1.8;
+}</script>
+                </div>
+                <div class="lx-tip"><span>想给截断处加「展开全文」按钮、或截断后仍要完整内容的场景，通常改用 JS 计算行数——
+                    纯 CSS 的 line-clamp 只负责「剪」，不负责「交互」。</span></div>
+            </section>
+
+            <section>
+                <h2>六、定制滚动区域：固定高度 + overflow-y: auto</h2>
+                <p>
+                    「页面很长，但聊天记录 / 歌曲列表 / 评论区想锁在自己的框里滚动」——
+                    配方固定：<strong class="hl">容器写死高度 + overflow-y: auto</strong>，里面放任意多的内容。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="chat.css">
+                    <script type="text/plain" class="lab-code">/* 聊天气泡容器：192px 高，纵向滚动 */
+.ov-chat {
+    height: 192px;
+    overflow-y: auto;      /* 超出高度 → 出纵向滚动条 */
+    background: #F7F1E6;
+    border: 1.5px solid #E3D5C4;
+    border-radius: 12px;
+    padding: 12px;
+}
+/* 气泡：宽随内容（fit-content），最大 78% */
+.ov-chat .msg {
+    width: fit-content;
+    max-width: 78%;
+    margin-bottom: 8px;
+    padding: 7px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.6;
+}
+.ov-chat .other { background: #fff; border: 1px solid #E3D5C4; color: #473F35; }
+.ov-chat .me {
+    background: #4E7A52;
+    color: #fff;
+    margin-left: auto;     /* 靠右：自己的消息 */
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="chat-preview.css">
+                    <div class="lab-head"><span class="lab-cap">聊天记录式滚动列表：把 <code>overflow-y: auto</code> 改成 <code>hidden</code>，下面几条消息立刻被裁掉</span></div>
+                    <template class="lab-html">
+                        <div class="ov-chat">
+                            <div class="msg other">在吗？</div>
+                            <div class="msg me">在的，什么事？</div>
+                            <div class="msg other">CSS 布局学到这里，是不是感觉开始有意思了？</div>
+                            <div class="msg me">对！文档流、浮动、定位都过了一遍，套路越来越清楚了。</div>
+                            <div class="msg other">那 overflow 这课呢？</div>
+                            <div class="msg me">就是个收尾：装不下的内容，要么裁、要么滚、要么省略号。</div>
+                            <div class="msg other">说得好，下面就是重头戏 Flex 了！</div>
+                            <div class="msg me">冲！</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.ov-chat {
+    height: 192px;
+    overflow-y: auto;
+    background: #F7F1E6;
+    border: 1.5px solid #E3D5C4;
+    border-radius: 12px;
+    padding: 12px;
+}
+.ov-chat .msg {
+    width: fit-content;
+    max-width: 78%;
+    margin-bottom: 8px;
+    padding: 7px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.6;
+}
+.ov-chat .other { background: #fff; border: 1px solid #E3D5C4; color: #473F35; }
+.ov-chat .me { background: #4E7A52; color: #fff; margin-left: auto; }</script>
+                </div>
+                <div class="lx-note"><span>进阶小技巧：默认滚动条又粗又丑？可以用 <code>::-webkit-scrollbar</code> 系列伪元素定制宽度、颜色和圆角
+                    （如 <code>.ov-chat::-webkit-scrollbar { width: 6px; }</code>），让滚动区域更精致。</span></div>
+            </section>
+
+            <section>
+                <h2>七、本章小结</h2>
+                <ul>
+                    <li>内容超出固定尺寸的盒子就是<strong class="hl">溢出</strong>，默认 <code>visible</code> 露出来。</li>
+                    <li><code>overflow</code> 四值：<code>visible</code> 露出 / <code>hidden</code> 裁掉 / <code>scroll</code> 滚动条常驻 / <code>auto</code> 按需出现（日常首选）。</li>
+                    <li><code>overflow-x / overflow-y</code> 分轴控制；一轴裁剪时另一轴的 visible 会自动变 auto。</li>
+                    <li>单行省略号三件套：<code>white-space: nowrap</code> + <code>overflow: hidden</code> + <code>text-overflow: ellipsis</code>，缺一不可。</li>
+                    <li>多行省略号：<code>display: -webkit-box</code> + <code>-webkit-line-clamp</code> + <code>-webkit-box-orient: vertical</code> + <code>overflow: hidden</code>。</li>
+                    <li>定制滚动区域 = 固定高度 + <code>overflow-y: auto</code>；<code>overflow: hidden</code> 还能顺手包住浮动（BFC 特性）。</li>
+                </ul>
+                <div class="lx-note"><span><b>动手练习：</b>做一张「商品卡片」：标题用三件套单行截断，描述用 line-clamp 截成两行；
+                    再做一个 160px 高的滚动评论区，自己的消息靠右、别人的靠左；
+                    最后把标题的 <code>overflow: hidden</code> 删掉，亲眼看看省略号是怎么消失的。</span></div>
+            </section>
+
+        </article>
+    </main>
+    <script src="../assets/learn.js" defer></script>
+</body>
+</html>

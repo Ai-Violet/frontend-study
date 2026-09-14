@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>显示与尺寸 · CSS 基础 — 前端自习室</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23B8552F'/%3E%3Ctext x='16' y='22' font-size='16' font-family='serif' font-weight='700' fill='%23FFF7EF' text-anchor='middle'%3E学%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="../assets/learn.css">
+</head>
+<body data-page="02-CSS基础/06-显示与尺寸.html">
+    <main class="lx-main">
+        <article class="lx-article">
+
+            <nav class="lx-crumb">
+                <a href="../教程中心页.html">学习路线</a><span class="sep">›</span>
+                <a href="index.html">CSS 基础</a><span class="sep">›</span>
+                <span class="here">显示与尺寸</span>
+            </nav>
+            <h1><span class="h-no">06</span>显示与尺寸</h1>
+            <p class="lx-lead">
+                display 决定元素「怎么排队」：独占一行还是并排站？能不能设宽高？
+                尺寸单位决定「量多大」：写死像素还是跟着容器走？
+                本课搞定 display 三巨头、三种「消失」、尺寸约束，以及 px / % / em / vw 的选法。
+            </p>
+            <div class="lx-meta-row">
+                <span class="lx-chip">约 20 分钟</span>
+                <span class="lx-chip">6 个动手实验</span>
+                <span class="lx-chip">布局地基课</span>
+            </div>
+
+            <section>
+                <h2>一、display 三巨头：block / inline / inline-block</h2>
+                <p>
+                    每个元素出厂自带一种 display。<strong class="hl">block 独占一行、能设宽高</strong>；
+                    <strong class="hl">inline 像文字一样排队、宽高无效</strong>；
+                    <strong class="hl">inline-block 二合一</strong>——像文字排队，但能设宽高。
+                    先把三兄弟（外加「蒸发」的 none）摆在一起逐项对比：
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>display 四值对照表：宽高是否生效、是否换行、垂直 margin/padding 的行为</caption>
+                        <thead>
+                            <tr><th>特性</th><th><code>block</code></th><th><code>inline</code></th><th><code>inline-block</code></th><th><code>none</code></th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>换行</td><td>独占一行</td><td>一行排到装不下</td><td>一行排到装不下</td><td>整盒消失，不占位</td></tr>
+                            <tr><td>width / height</td><td>✓ 生效</td><td>✗ 无效</td><td>✓ 生效</td><td>—（盒子都不渲染）</td></tr>
+                            <tr><td>上下 margin / padding</td><td>✓ 生效</td><td>✗ 不撑开（会叠到文字上）</td><td>✓ 生效</td><td>—</td></tr>
+                            <tr><td>默认宽</td><td>撑满父容器</td><td>由内容决定</td><td>由内容决定</td><td>—</td></tr>
+                            <tr><td>代表元素</td><td>div / p / h1 / ul</td><td>span / a / strong</td><td>img / input（天生）</td><td>任何元素都可被设成 none</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>display 常用属性值逐项分析</caption>
+                        <thead>
+                            <tr><th>属性值</th><th>效果</th><th>使用场景</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">block</td><td>独占一行，宽高与四个方向的 margin/padding 全部生效</td><td>段落、卡片、容器等纵向堆叠的结构块</td></tr>
+                            <tr><td class="td-val">inline</td><td>融入文字流并排排列，宽高无效，上下 margin/padding 不撑开行高</td><td>段落中需要局部变样的文字（span、a、strong）</td></tr>
+                            <tr><td class="td-val">inline-block</td><td>像文字一样排队，但宽高、上下边距全部生效</td><td>导航按钮、标签墙、一排小卡片</td></tr>
+                            <tr><td class="td-val">none</td><td>元素从渲染树中彻底移除，不占位、点不到、读屏读不到</td><td>配合 JS 切换显示隐藏、响应式隐藏模块</td></tr>
+                            <tr><td class="td-val">flex</td><td>变成弹性容器，孩子沿一根轴排队，对齐能力极强</td><td>一维布局：导航条、居中对齐、均分（布局课细讲）</td></tr>
+                            <tr><td class="td-val">grid</td><td>变成网格容器，行列二维铺格</td><td>二维布局：整页骨架、相册网格（布局课细讲）</td></tr>
+                            <tr><td class="td-val">inline-flex / inline-grid</td><td>容器本身像 inline-block 排队，内部仍是 flex / grid</td><td>需要「既是行内块又是弹性容器」的小组件</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>眼见为实——下面三种排队方式并排对比，金黄是 block、粉紫是 inline、绿是 inline-block：</p>
+
+                <div class="lab" data-lang="css" data-file="display-trio.css">
+                    <div class="lab-head"><span class="lab-cap">三种排队方式对比：把 <code>.inlk</code> 的 <code>width</code> 改大，只有它和 block 会变；改 <code>.inl</code> 的宽高则纹丝不动</span></div>
+                    <template class="lab-html">
+                        <div class="blk">我是 block：独占一行</div>
+                        <div class="blk">我又独占一行</div>
+                        <div style="margin:8px 0">
+                            <span class="inl">inline 1</span>
+                            <span class="inl">inline 2</span>
+                            <span class="inl">inline 3</span>
+                            <span class="inl">排队走</span>
+                        </div>
+                        <div>
+                            <span class="inlk">inline-block 130×40</span>
+                            <span class="inlk">也能排一起</span>
+                            <span class="inlk">还有宽高</span>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">/* 块级：独占一行 */
+.blk {
+    display: block;
+    background: #F3E9D8; border: 1.5px solid #C08A3E; color: #8F6A2E;
+    padding: 8px 14px; margin: 6px 0; border-radius: 6px; font-size: 13px;
+}
+
+/* 行内：像文字一样排队（设了宽高也不生效） */
+.inl {
+    display: inline;
+    background: #EFE4EC; border: 1.5px solid #A67899; color: #7A4E6D;
+    padding: 2px 10px; border-radius: 6px; font-size: 13px;
+}
+
+/* 行内块：排队 + 可设宽高（导航按钮组最爱） */
+.inlk {
+    display: inline-block;
+    width: 130px; height: 40px;
+    line-height: 40px; text-align: center;
+    background: #E4EDDD; border: 1.5px solid #7B9B6B; color: #4E6A3F;
+    border-radius: 6px; font-size: 13px;
+}</script>
+                </div>
+                <div class="lx-tip"><span>display 可以<b>后天改造</b>：给 span 加 <code>display: block</code> 它就独占一行；给 li 加 <code>display: inline-block</code>，竖列表立刻变横导航。标签只是出厂设置，CSS 说了才算。</span></div>
+            </section>
+
+            <section>
+                <h2>二、三种「消失」：display:none / visibility:hidden / opacity:0</h2>
+                <p>
+                    让元素消失有三种方式，<strong class="hl">差别在于「占不占位置」和「能不能被点到」</strong>。
+                    面试高频题，也是做模态框、过渡动画的理论基础：
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>三种隐藏方式的占位 / 事件 / 渲染差异</caption>
+                        <thead>
+                            <tr><th>写法</th><th>还占位置吗</th><th>还能点到吗</th><th>能做过渡动画</th><th>读屏软件</th><th>渲染层面</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>display: none</code></td><td>✗ 彻底消失</td><td>✗</td><td>✗（跳变）</td><td>读不到</td><td>不参与布局也不绘制（触发回流）</td></tr>
+                            <tr><td><code>visibility: hidden</code></td><td>✓ 留下空洞</td><td>✗</td><td>✓（渐隐）</td><td>读不到</td><td>参与布局但不绘制（只触发重绘）</td></tr>
+                            <tr><td><code>opacity: 0</code></td><td>✓ 留下空洞</td><td><b>✓ 还能点！</b></td><td>✓（最顺滑）</td><td>读得到</td><td>正常布局和绘制，只是完全透明</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="lab" data-lang="css" data-file="three-ways-hide.css">
+                    <div class="lab-head"><span class="lab-cap">三个盒子依次用三种方式隐藏：第一格直接蒸发，后面的兄弟立刻补位。试试把 <code>.gone</code> 的 <code>display:none</code> 注释掉</span></div>
+                    <template class="lab-html">
+                        <div class="row">
+                            <div class="cell">正常显示<br><b>看得见 · 点得到</b></div>
+                            <div class="cell gone">display:none<br><b>→ 已蒸发</b></div>
+                            <div class="cell invis">visibility:hidden<br><b>→ 留下空洞</b></div>
+                            <div class="cell ghost">opacity:0<br><b>→ 占位 · 可点</b></div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.cell {
+    width: 150px; padding: 10px 12px; border-radius: 8px;
+    font-size: 12.5px; text-align: center; line-height: 1.6;
+    border: 1.5px solid #C08A3E; background: #FDF9F4;
+}
+.cell b {
+    display: block; margin-bottom: 3px;
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 11.5px; color: #96652C;
+}
+
+.gone  { display: none; }      /* 蒸发：位置都没了 */
+.invis { visibility: hidden; } /* 隐身衣：位置还在 */
+.ghost { opacity: 0; }         /* 幽灵：看不见、占着位、点得到 */</script>
+                </div>
+                <div class="lx-warn"><span><code>opacity: 0</code> 的元素<b>依然可以接收点击</b>——隐形按钮挡住下面内容的事故就是这么来的。需要彻底禁用时配合 <code>pointer-events: none</code>。做淡入淡出动画首选 opacity（后面过渡章细讲）。</span></div>
+            </section>
+
+            <section>
+                <h2>三、尺寸单位怎么选：px / % / em / vw</h2>
+                <p>
+                    <code>px</code> 写死不变；<code>%</code> 相对父容器；<code>em</code> 相对自身字号；
+                    <code>vw/vh</code> 相对<strong class="hl">视口（浏览器窗口）</strong>宽高。选对单位，
+                    布局才能「随屏幕伸缩」。
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>常用尺寸单位速查</caption>
+                        <thead>
+                            <tr><th>单位</th><th>相对谁</th><th>适用场景</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>px</code></td><td>谁都不相对，绝对像素</td><td>边框、间距等「精确小尺寸」</td></tr>
+                            <tr><td><code>%</code></td><td>父容器</td><td>宽度自适应：宽度是 % 的天下</td></tr>
+                            <tr><td><code>em</code></td><td>自身字号（16px 字号下 1em=16px）</td><td>随字号缩放的间距；注意嵌套会复利</td></tr>
+                            <tr><td><code>rem</code></td><td>根元素 html 的字号</td><td>全站统一的响应式字号首选</td></tr>
+                            <tr><td><code>vw / vh</code></td><td>视口宽 / 高的 1%</td><td>首屏大图铺满、满屏布局</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>width / height 的属性值逐项分析</h3>
+                <p>宽度和高度本身能写什么值，也值得逐项过一遍——<code>auto</code> 和百分比的「相对谁」最容易搞混：</p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>width / height 常用属性值逐项分析（height 的百分比要求父级有确定高度）</caption>
+                        <thead>
+                            <tr><th>属性值</th><th>效果</th><th>使用场景</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">auto</td><td>默认值。block 宽度撑满父容器、高度由内容撑开；inline-block 宽高都由内容决定</td><td>交给浏览器算的「自然尺寸」，布局的大多数时候</td></tr>
+                            <tr><td class="td-val">&lt;length&gt;（如 200px / 14em）</td><td>固定尺寸，雷打不动</td><td>头像、图标、按钮等需要精确控死的小元素</td></tr>
+                            <tr><td class="td-val">&lt;percentage&gt;（如 60%）</td><td>宽度相对父容器宽度；高度相对父容器高度（父级没写死高度时 height:% 会失效）</td><td>分栏、自适应宽度</td></tr>
+                            <tr><td class="td-val">vw / vh</td><td>相对视口宽 / 高，和父容器无关</td><td>满屏首屏、遮罩层</td></tr>
+                            <tr><td class="td-val">max-content</td><td>内容不换行时的「理想宽度」</td><td>让按钮、标签刚好包住一行文字</td></tr>
+                            <tr><td class="td-val">min-content</td><td>内容能压缩到的最小宽度</td><td>少用，了解即可</td></tr>
+                            <tr><td class="td-val">fit-content</td><td>auto 与 max-content 的折中：随内容伸缩但不超上限</td><td>居中的弹窗、自适应的标题块</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="lab" data-lang="css" data-file="units.css">
+                    <div class="lab-head"><span class="lab-cap">拖动浏览器窗口宽度，只有 % 和 vw 的条会跟着变；改 <code>.cs-u-em</code> 的 <code>font-size</code> 看 em 如何跟着字号走</span></div>
+                    <template class="lab-html">
+                        <div class="bar cs-u-px">width: 260px（不变）</div>
+                        <div class="bar cs-u-pct">width: 60%（跟随父容器）</div>
+                        <div class="bar cs-u-em">width: 14em（跟随字号）</div>
+                        <div class="bar cs-u-vw">width: 42vw（跟随窗口）</div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.bar {
+    border-radius: 6px; margin: 4px 0;
+    font-size: 12px; color: #fff; padding: 5px 10px;
+    font-family: "Cascadia Code", Consolas, monospace;
+    white-space: nowrap;
+}
+
+.cs-u-px  { width: 260px; background: #C08A3E; }  /* 固定 260 像素，雷打不动 */
+.cs-u-pct { width: 60%;   background: #96652C; }  /* 父容器的 60%，父变我变 */
+.cs-u-em  { width: 14em;  background: #7A4E6D; }  /* 自身字号的 14 倍 */
+.cs-u-vw  { width: 42vw;  background: #4E7A52;    /* 视口宽的 42%，窗口拉大它变大 */
+            max-width: 100%; }</script>
+                </div>
+                <div class="lx-note"><span>实战心法：<b>宽度用 %（或不写），字号用 rem，边距用 px 或 em，满屏区块用 vw/vh</b>。布局模块的响应式一章会把这套组合拳打完整。</span></div>
+            </section>
+
+            <section>
+                <h2>四、max-width 与尺寸约束：响应式的守护神</h2>
+                <p>
+                    <code>width: 100%</code> 让元素撑满，但在超宽屏幕上会「胖得离谱」；
+                    <code>max-width</code> 上限封顶——<strong class="hl">「跟随但不超过」</strong>，
+                    一行代码就是最经典的响应式方案。
+                </p>
+
+                <div class="lab" data-lang="css" data-file="max-width.css">
+                    <div class="lab-head"><span class="lab-cap">第一个盒子永远撑满；第二个跟随但在 280px 封顶。把 <code>max-width</code> 改成 <code>120px</code> 看它立刻变窄</span></div>
+                    <template class="lab-html">
+                        <div class="wrap">
+                            <div class="mw-a">width: 100% —— 父容器多宽我多宽</div>
+                            <div class="mw-b">width:100% + max-width:280px —— 跟随但封顶</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.wrap {
+    background: #F6F1E7; border: 1.5px dashed #C9B995;
+    border-radius: 10px; padding: 12px;
+}
+
+.mw-a {
+    width: 100%;                      /* 撑满，多宽都跟着 */
+    background: #F3E9D8; border: 1.5px solid #C08A3E; color: #8F6A2E;
+    padding: 8px 12px; border-radius: 6px; font-size: 12.5px;
+}
+
+.mw-b {
+    width: 100%;          /* 小容器时跟随 */
+    max-width: 280px;     /* 但最多 280px，到此为止 */
+    background: #E4EDDD; border: 1.5px solid #7B9B6B; color: #4E6A3F;
+    padding: 8px 12px; border-radius: 6px; font-size: 12.5px;
+    margin-top: 8px;
+}
+
+/* 全网通用的图片响应式 */
+img { max-width: 100%; height: auto; }</script>
+                </div>
+
+                <h3>尺寸约束四兄弟</h3>
+                <p>除了 max-width，还有三位兄弟管下限和高度，写法与用途一一对应：</p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>min/max 约束属性逐项分析（约束值永远优先于 width/height）</caption>
+                        <thead>
+                            <tr><th>属性</th><th>管什么</th><th>常用值</th><th>使用场景</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>max-width</code></td><td>宽度上限：再宽也不许超过</td><td><code>px</code>、<code>em</code>、<code>none</code>（默认，无上限）</td><td>文字栏限宽护眼、图片不超出容器</td></tr>
+                            <tr><td><code>min-width</code></td><td>宽度下限：再窄也不许低于</td><td><code>px</code>、<code>auto</code>（默认）</td><td>按钮最小宽度、侧栏不被挤没</td></tr>
+                            <tr><td><code>max-height</code></td><td>高度上限</td><td><code>px</code>、<code>%</code>、<code>none</code></td><td>评论区限高 + 内部滚动（常配 <code>overflow</code>，第 03 章布局课细讲）</td></tr>
+                            <tr><td><code>min-height</code></td><td>高度下限</td><td><code>px</code>、<code>vh</code></td><td>页面再空也要撑满一屏：<code>min-height: 100vh</code></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>顺便回顾：box-sizing 还在管事</h3>
+                <p>
+                    第 05 课的 <code>box-sizing</code> 和本课直接相关：设了 <code>width: 280px</code>，
+                    padding 和 border 到底算不算在这 280 里，由它说了算。
+                    没写 <code>box-sizing: border-box</code> 的项目里，「设了 280 实际 300」的诡异加宽就是这么来的：
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>box-sizing 属性值回顾（详见第 05 课盒模型）</caption>
+                        <thead>
+                            <tr><th>属性值</th><th>效果</th><th>使用场景</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">content-box</td><td>默认值。width 只管内容，padding / border 往外再加</td><td>历史遗留，基本不用主动写</td></tr>
+                            <tr><td class="td-val">border-box</td><td>width 一口价：内容 + padding + border 全包在内</td><td>现代项目标配：<code>* { box-sizing: border-box }</code></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-tip"><span><code>img { max-width: 100%; height: auto }</code> 值得背下来：图片永远不超出容器、高度按比例自动算——手机上看电脑版网页不出横向滚动条的秘密之一。</span></div>
+            </section>
+
+            <section>
+                <h2>五、行内元素为什么设不了宽高</h2>
+                <p>
+                    给 span 写 <code>width: 200px</code> 毫无反应——这不是 bug，是 inline 的设计：
+                    行内元素是「文字流的一部分」，尺寸完全由内容撑开。想让它有宽高，先升格成
+                    <code>inline-block</code>。
+                </p>
+
+                <div class="lab" data-lang="css" data-file="inline-size.css">
+                    <div class="lab-head"><span class="lab-cap">同样的 200×60，inline 无动于衷，inline-block 立竿见影。把 <code>.fixed-inb</code> 的 <code>display</code> 删掉对比</span></div>
+                    <template class="lab-html">
+                        <p><span class="fixed-span">inline：写着 200×60，实际还是内容大小</span></p>
+                        <p><b class="fixed-inb">inline-block：200×60 生效</b></p>
+                    </template>
+                    <script type="text/plain" class="lab-code">.fixed-span {
+    width: 200px; height: 60px;     /* ✗ 无效：inline */
+    background: #F3E9D8; border: 1.5px solid #C08A3E; color: #8F6A2E;
+    padding: 2px 8px; border-radius: 6px; font-size: 13px;
+}
+
+.fixed-inb {
+    display: inline-block;          /* ✓ 先升格 */
+    width: 200px; height: 60px;     /* 再设尺寸就生效 */
+    line-height: 60px; text-align: center;
+    background: #F3E9D8; border: 1.5px solid #C08A3E; color: #8F6A2E;
+    border-radius: 6px; font-size: 13px;
+}</script>
+                </div>
+                <div class="lx-warn"><span>inline 的上下 padding 虽然能写、也「看得到」背景色，但<b>不会把行撑开</b>，会和上下行的文字叠在一起。要正经做「带内边距的标签」就别用 inline。</span></div>
+            </section>
+
+            <section>
+                <h2>六、预告：display 的进阶家族</h2>
+                <p>
+                    display 还有两个改变命运的大招：<code>flex</code> 和 <code>grid</code>——
+                    现代布局的两大基石，专门用来替代 float / inline-block 的排队 hack。
+                    这里先混个脸熟，布局模块细讲。
+                </p>
+
+                <div class="lab" data-lang="css" data-file="flex-grid-preview.css">
+                    <div class="lab-head"><span class="lab-cap">flex 一行排队 / grid 三列铺格：把 <code>1fr 1fr 1fr</code> 改成 <code>1fr 1fr</code> 看网格变两列</span></div>
+                    <template class="lab-html">
+                        <div class="fam">
+                            <div class="df-flex"><i>flex</i><i>排队</i><i>对齐</i></div>
+                            <div class="df-grid"><i>格1</i><i>格2</i><i>格3</i></div>
+                            <div class="df-none">display: none → 蒸发（复习第 2 节）</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.fam { display: grid; gap: 8px; font-size: 13px; }
+.fam > div {
+    border-radius: 8px; padding: 8px 12px;
+    font-family: "Cascadia Code", Consolas, monospace; font-size: 12.5px;
+}
+
+/* flex：一维排队（一行/一列），对齐神器 */
+.df-flex {
+    display: flex; gap: 8px;
+    background: #F3E9D8; border: 1.5px solid #C08A3E; color: #8F6A2E;
+}
+.df-flex i {
+    background: #C08A3E; color: #fff; font-style: normal;
+    padding: 4px 12px; border-radius: 5px;
+}
+
+/* grid：二维铺格（行+列），骨架神器 */
+.df-grid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;
+    background: #E4EDDD; border: 1.5px solid #7B9B6B; color: #4E6A3F;
+}
+.df-grid i {
+    background: #7B9B6B; color: #fff; font-style: normal;
+    padding: 4px 8px; border-radius: 5px; text-align: center;
+}
+
+/* 还可以行内化：inline-flex / inline-grid */
+.df-none {
+    background: #F6F1E7; border: 1.5px dashed #C9B995; color: #96652C;
+}</script>
+                </div>
+            </section>
+
+            <section>
+                <h2>七、本章小结</h2>
+                <ul>
+                    <li>display 三巨头：block 独占一行有宽高、inline 排队无宽高、inline-block 排队且有宽高。</li>
+                    <li>三种消失：<strong class="hl">display:none 蒸发、visibility:hidden 隐身、opacity:0 幽灵（占位可点）</strong>。</li>
+                    <li>单位选择：宽度 %、字号 rem、边距 px/em、满屏 vw/vh、精确小尺寸 px。</li>
+                    <li><code>max-width</code> 实现「跟随但不超过」；<code>img { max-width:100%; height:auto }</code> 是响应式图片标配。</li>
+                    <li>inline 元素设宽高无效，先升格 inline-block；inline 的上下 padding 不撑行。</li>
+                    <li>display 还能一键变身 flex / grid——布局模块的入场券。</li>
+                </ul>
+                <div class="lx-note"><span><b>动手练习</b>：做一排「标签墙」——用 inline-block 做五个带 padding 的彩色标签，再用 display:none 藏起一个、visibility:hidden 隐身一个，鼠标 hover 时把隐身的 visibility 改回 visible，观察「原位显形」和「挤开别人」的区别。</span></div>
+            </section>
+
+        </article>
+    </main>
+    <script src="../assets/learn.js" defer></script>
+</body>
+</html>

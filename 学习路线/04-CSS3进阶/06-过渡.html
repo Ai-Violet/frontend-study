@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>过渡 · CSS3 进阶 — 前端自习室</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23B8552F'/%3E%3Ctext x='16' y='22' font-size='16' font-family='serif' font-weight='700' fill='%23FFF7EF' text-anchor='middle'%3E学%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="../assets/learn.css">
+</head>
+<body data-page="04-CSS3进阶/06-过渡.html">
+    <main class="lx-main">
+        <article class="lx-article">
+
+            <nav class="lx-crumb">
+                <a href="../教程中心页.html">学习路线</a><span class="sep">›</span>
+                <a href="index.html">CSS3 进阶</a><span class="sep">›</span>
+                <span class="here">过渡</span>
+            </nav>
+            <h1><span class="h-no">06</span>过渡</h1>
+            <p class="lx-lead">
+                <code>transition</code> 让样式变化<strong class="hl">不再瞬间跳变</strong>，而是平滑地滑过去。
+                你只声明「起点」和「终点」，中间的每一帧浏览器替你补——它是 CSS 动效里
+                <strong class="hl">性价比最高的一行代码</strong>。
+            </p>
+            <div class="lx-meta-row">
+                <span class="lx-chip">约 40 分钟</span>
+                <span class="lx-chip">8 个动手实验</span>
+                <span class="lx-chip">动效四要素</span>
+            </div>
+
+            <section>
+                <h2>一、过渡的本质：状态 A 到状态 B 的补间</h2>
+                <p>
+                    过渡是一种<strong class="hl">补间动画（tweening）</strong>：
+                    样式从旧值到新值变化时，浏览器自动生成中间帧。它<strong class="hl">不能自己发动</strong>，
+                    必须由一次「状态变化」触发——hover 移入移出、聚焦失焦、类名增删、媒体查询命中，都算。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="transition-base.css">
+                    <script type="text/plain" class="lab-code">/* 基态：transition 必须写在这里！ */
+.btn { background: #8A4E63; transform: translateY(0); }
+
+.smooth { transition: background 0.35s ease, transform 0.35s ease; }  /* 有过渡 */
+.plain  { }                                                            /* 无过渡：瞬间跳变 */
+
+/* 终点状态：只写变化，不写动画 */
+.btn:hover { background: #6C3B4C; transform: translateY(-4px); }</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="nt-demo.css">
+                    <div class="lab-head"><span class="lab-cap">同一份 hover 样式：把 <code>.smooth</code> 的 transition 删掉，两枚按钮就都“瞬移”了</span></div>
+                    <template class="lab-html">
+                        <div class="c3-nt-stage">
+                            <button class="btn plain">无过渡（瞬移）</button>
+                            <button class="btn smooth">有过渡（滑过去）</button>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.c3-nt-stage {
+    display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; padding: 14px 0;
+}
+.c3-nt-stage .btn {
+    padding: 13px 28px; border-radius: 999px; font-size: 13.5px;
+    cursor: pointer; font-family: inherit; border: none; background: #8A4E63; color: #fff;
+}
+.c3-nt-stage .smooth { transition: background 0.35s ease, transform 0.35s ease; }
+.c3-nt-stage .btn:hover { background: #6C3B4C; transform: translateY(-4px); }</script>
+                </div>
+                <div class="lx-warn"><span>头号新手坑：<b>transition 要写在基态（.btn）而不是触发态（.btn:hover）</b>。
+                    写在 hover 里，移入时有动画、移出时瞬间弹回——因为移出时 hover 规则连同 transition 一起失效了。</span></div>
+                <p>
+                    除 hover 外，一切「能让属性值变化」的场合都能触发过渡：
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="transition-triggers.css">
+                    <script type="text/plain" class="lab-code">.box { transition: all 0.3s ease; }
+
+.box:hover   { transform: scale(1.05); }   /* 悬停：最常见 */
+.box:focus   { border-color: #8A4E63; }    /* 聚焦：输入框高亮 */
+.box:checked { background: #8A4E63; }      /* 选中：开关、复选框 */
+.box.active  { left: 0; }                  /* JS 加类名：抽屉滑入 */
+@media (min-width: 768px) { .box { font-size: 16px; } }  /* 断点切换也能过渡 */</script>
+                </div>
+                <div class="lx-note"><span>最实用的工程模式：<b>CSS 管效果，JS 只负责加/删一个类名</b>——
+                    职责分离，各干各的。第七节的抽屉就是纯 CSS 版本的同一思想。</span></div>
+            </section>
+
+            <section>
+                <h2>二、transition-property 与 duration：动什么、动多久</h2>
+                <p>
+                    过渡四要素的前两个：<code>transition-property</code> 决定<strong class="hl">哪些属性参与过渡</strong>，
+                    <code>transition-duration</code> 决定<strong class="hl">花多久完成</strong>。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="property-duration.css">
+                    <script type="text/plain" class="lab-code">.box {
+    transition-property: transform, opacity;   /* none / all / 具体属性（逗号分隔） */
+    transition-duration: 0.3s, 0.6s;           /* 与上面一一对应：transform 0.3s、opacity 0.6s */
+}
+
+/* 两份列表长度不一致时，短的会被循环复用 —— 建议手动对齐，别赌 */</script>
+                </div>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>transition-property 取值对比</caption>
+                        <thead>
+                            <tr><th>property 取值</th><th>含义</th><th>建议</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">all（默认）</td><td>所有可过渡属性都过渡</td><td>省心，但重排属性会被一起拖进动画</td></tr>
+                            <tr><td class="td-val">具体属性名</td><td>只有列出的属性过渡</td><td><strong class="hl">推荐</strong>：可控、性能好</td></tr>
+                            <tr><td class="td-val">none</td><td>完全禁用过渡</td><td>调试时临时关掉动效</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>
+                    duration 的单位<strong class="hl">必须写</strong>（<code>s</code> 或 <code>ms</code>），
+                    默认值是 <code>0s</code>——这就是「明明写了 transition 却没动画」的常见原因之一。
+                    拖动感受一下时长差异：
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="duration.css">
+                    <script type="text/plain" class="lab-code">.d1 .ball { transition: bottom 0.1s ease; }  /* 0.1s：快到像没过渡 */
+.d2 .ball { transition: bottom 0.3s ease; }  /* 0.3s：交互反馈的甜点值 */
+.d3 .ball { transition: bottom 0.6s ease; }  /* 0.6s：大面积转场 */
+.d4 .ball { transition: bottom 1s ease; }    /* 1s：太慢，用户开始不耐烦 */</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="duration-demo.css">
+                    <div class="lab-head"><span class="lab-cap">悬停任意跑道，对比四档时长的升降——把 <code>.d1</code> 的 0.1s 改成 0.01s 感受“瞬移”</span></div>
+                    <template class="lab-html">
+                        <div class="c3-du-stage">
+                            <div class="lane d1"><div class="ball"></div><b>0.1s</b></div>
+                            <div class="lane d2"><div class="ball"></div><b>0.3s</b></div>
+                            <div class="lane d3"><div class="ball"></div><b>0.6s</b></div>
+                            <div class="lane d4"><div class="ball"></div><b>1s</b></div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.c3-du-stage {
+    display: flex; gap: 8px; align-items: flex-end; height: 118px; padding: 0 4px; margin: 6px 0 34px;
+}
+.c3-du-stage .lane {
+    flex: 1; background: rgba(138, 78, 99, 0.1); border-radius: 10px; position: relative; height: 100%;
+}
+.c3-du-stage .ball {
+    position: absolute; left: 50%; margin-left: -11px; width: 22px; height: 22px; border-radius: 50%;
+    background: linear-gradient(135deg, #8A4E63, #B3748A); bottom: 8px;
+}
+.c3-du-stage .lane:hover .ball { bottom: 86px; }
+.c3-du-stage .lane.d1 .ball { transition: bottom 0.1s ease; }
+.c3-du-stage .lane.d2 .ball { transition: bottom 0.3s ease; }
+.c3-du-stage .lane.d3 .ball { transition: bottom 0.6s ease; }
+.c3-du-stage .lane.d4 .ball { transition: bottom 1s ease; }
+.c3-du-stage .lane b {
+    position: absolute; bottom: -24px; left: 0; right: 0;
+    text-align: center; font-size: 10.5px; color: #6C3B4C; font-weight: 500;
+}</script>
+                </div>
+                <div class="lx-tip"><span>时长手感参考：<b>按钮等小反馈 0.15~0.3s；卡片、面板 0.3~0.5s；全屏转场 0.5~0.8s</b>。
+                    超过 1s 的过渡，用户会觉得「卡了」。</span></div>
+            </section>
+
+            <section>
+                <h2>三、transition-timing-function：速度曲线</h2>
+                <p>
+                    同样 0.6 秒，<strong class="hl">怎么个跑法</strong>由速度曲线决定：
+                    匀速、先快后慢、先慢后快、甚至冲过头再弹回来。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="timing.css">
+                    <script type="text/plain" class="lab-code">.t1 .ball { transition: bottom 0.6s linear; }                             /* 匀速：机械感 */
+.t2 .ball { transition: bottom 0.6s ease; }                               /* 默认：先快后缓再收尾 */
+.t3 .ball { transition: bottom 0.6s ease-in; }                            /* 慢→快：蓄力感 */
+.t4 .ball { transition: bottom 0.6s ease-out; }                           /* 快→慢：干脆利落 */
+.t5 .ball { transition: bottom 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }  /* 回弹：超出再弹回 */
+
+/* cubic-bezier(x1, y1, x2, y2)：手绘贝塞尔曲线，y 可以超出 0~1 —— 那就是回弹的来源 */
+/* steps(n)：逐格跳变，不补间 —— 打字机、进度格子用 */</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="timing-demo.css">
+                    <div class="lab-head"><span class="lab-cap">五条跑道五种跑法——注意第五条会冲过头弹回来；把 <code>.t2</code> 的 ease 改成 <code>steps(4)</code> 看熄格跳变</span></div>
+                    <template class="lab-html">
+                        <div class="c3-tf-stage">
+                            <div class="lane t1"><div class="ball"></div><b>linear<br>匀速</b></div>
+                            <div class="lane t2"><div class="ball"></div><b>ease<br>默认</b></div>
+                            <div class="lane t3"><div class="ball"></div><b>ease-in<br>慢→快</b></div>
+                            <div class="lane t4"><div class="ball"></div><b>ease-out<br>快→慢</b></div>
+                            <div class="lane t5"><div class="ball"></div><b>回弹<br>bezier</b></div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.c3-tf-stage {
+    display: flex; gap: 8px; align-items: flex-end; height: 118px; padding: 0 4px; margin: 6px 0 34px;
+}
+.c3-tf-stage .lane {
+    flex: 1; background: rgba(110, 139, 110, 0.14); border-radius: 10px; position: relative; height: 100%;
+}
+.c3-tf-stage .ball {
+    position: absolute; left: 50%; margin-left: -11px; width: 22px; height: 22px; border-radius: 50%;
+    background: linear-gradient(135deg, #6E8B6E, #4E7A52); bottom: 8px;
+}
+.c3-tf-stage .lane:hover .ball { bottom: 86px; }
+.c3-tf-stage .lane.t1 .ball { transition: bottom 0.6s linear; }
+.c3-tf-stage .lane.t2 .ball { transition: bottom 0.6s ease; }
+.c3-tf-stage .lane.t3 .ball { transition: bottom 0.6s ease-in; }
+.c3-tf-stage .lane.t4 .ball { transition: bottom 0.6s ease-out; }
+.c3-tf-stage .lane.t5 .ball { transition: bottom 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.c3-tf-stage .lane b {
+    position: absolute; bottom: -24px; left: 0; right: 0;
+    text-align: center; font-size: 10px; color: #4E7A52; font-weight: 500;
+}</script>
+                </div>
+                <div class="lx-tip"><span>UI 惯例：<b>入场用 ease-out</b>（快进慢停，干脆利落），
+                    <b>出场用 ease-in</b>（慢起快走，迅速让位）。回弹曲线只给「强调型」小元素用，
+                    满屏回弹会显得廉价。</span></div>
+            </section>
+
+            <section>
+                <h2>四、transition-delay 与简写：第四要素</h2>
+                <p>
+                    <code>transition-delay</code> 是「等多久才出发」。单个元素用它不多，
+                    <strong class="hl">一群元素排队出场</strong>时它就是节奏大师。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="delay-shorthand.css">
+                    <script type="text/plain" class="lab-code">/* 简写：property  duration  timing-function  delay */
+.box { transition: transform 0.4s ease 0.2s; }
+
+/* 识别规则：第一个时间一定是 duration，第二个才是 delay
+   只写了一个时间？那它是 duration，不是 delay —— 经典坑 */</script>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="delay-stagger.css">
+                    <script type="text/plain" class="lab-code">/* 五个徽章逐个「醒来」：相同的过渡，依次推迟 0.08s */
+.chip { opacity: 0.35; transform: translateY(14px); transition: opacity 0.4s ease, transform 0.4s ease; }
+.c3-dl-row:hover .chip { opacity: 1; transform: translateY(0); }
+
+.chip:nth-child(1) { transition-delay: 0s;    }
+.chip:nth-child(2) { transition-delay: 0.08s; }
+.chip:nth-child(3) { transition-delay: 0.16s; }
+.chip:nth-child(4) { transition-delay: 0.24s; }
+.chip:nth-child(5) { transition-delay: 0.32s; }</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="delay-demo.css">
+                    <div class="lab-head"><span class="lab-cap">悬停整行，五个徽章错峰浮起——把 delay 步长 0.08s 改成 0.2s 让它们“排队得更明显”</span></div>
+                    <template class="lab-html">
+                        <div class="c3-dl-stage">
+                            <div class="c3-dl-row">
+                                <div class="chip">01</div>
+                                <div class="chip">02</div>
+                                <div class="chip">03</div>
+                                <div class="chip">04</div>
+                                <div class="chip">05</div>
+                            </div>
+                            <p class="c3-dl-note">移入移出都排队——注意移出时它们按同样顺序退场</p>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.c3-dl-stage { padding: 10px 0 4px; }
+.c3-dl-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; padding: 12px 0 26px; }
+.c3-dl-row .chip {
+    width: 58px; height: 46px; border-radius: 10px;
+    background: linear-gradient(135deg, #C08A3E, #B3472E); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-size: 12px;
+    opacity: 0.35; transform: translateY(14px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.c3-dl-row:hover .chip { opacity: 1; transform: translateY(0); }
+.c3-dl-row .chip:nth-child(1) { transition-delay: 0s; }
+.c3-dl-row .chip:nth-child(2) { transition-delay: 0.08s; }
+.c3-dl-row .chip:nth-child(3) { transition-delay: 0.16s; }
+.c3-dl-row .chip:nth-child(4) { transition-delay: 0.24s; }
+.c3-dl-row .chip:nth-child(5) { transition-delay: 0.32s; }
+.c3-dl-note { text-align: center; font-size: 12.5px; color: #6B6053; margin: 0; }</script>
+                </div>
+                <div class="lx-warn"><span>简写 <code>transition</code> 会<strong class="hl">整体重置</strong>四个子属性——
+                    先写了子属性再写简写，前面的设置会被覆盖。同一个元素只用一种写法。</span></div>
+            </section>
+
+            <section>
+                <h2>五、哪些属性值得过渡：性能分三档</h2>
+                <p>
+                    不是所有属性过渡起来都一样轻快。按浏览器渲染成本分三档：
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>过渡性能三档：合成层 / 重绘 / 重排</caption>
+                        <thead>
+                            <tr><th>档位</th><th>代表属性</th><th>渲染成本</th><th>建议</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">合成层 ⭐⭐⭐</td><td><code>transform</code> / <code>opacity</code></td><td>GPU 直接算，不碰布局</td><td><strong class="hl">动画首选</strong></td></tr>
+                            <tr><td class="td-val">重绘 ⭐⭐</td><td><code>color</code> / <code>background</code> / <code>box-shadow</code></td><td>重新画像素，不重排</td><td>短动画无妨</td></tr>
+                            <tr><td class="td-val">重排 ⭐</td><td><code>width</code> / <code>height</code> / <code>top</code> / <code>margin</code></td><td>牵一发动全身，兄弟全重算</td><td>尽量避免做动画</td></tr>
+                            <tr><td class="td-val">不可过渡</td><td><code>display</code> / <code>position</code> / <code>font-family</code></td><td>离散值，没有「中间帧」</td><td>换 opacity 或 transform 实现</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-codeblock" data-lang="css" data-file="performance.css">
+                    <script type="text/plain" class="lab-code">.a { transition: transform 0.5s ease; }  .a:hover { transform: scale(1.2); }   /* scale：丝滑，邻居毫无感觉 */
+.b { transition: opacity  0.5s ease; }  .b:hover { opacity: 0.25; }          /* 透明度：同样丝滑 */
+.c { transition: width     0.5s ease; } .c:hover { width: 152px; }           /* width：每帧都在重排 */</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="performance-demo.css">
+                    <div class="lab-head"><span class="lab-cap">悬停三个盒子——前两个走 GPU 稳如老狗，第三个每帧重排布局（把 <code>.c</code> 的 width 换成 <code>transform: scaleX(1.4)</code> 对比顺滑度）</span></div>
+                    <template class="lab-html">
+                        <div class="c3-pa-stage">
+                            <div class="item"><div class="box a">transform<br>scale(1.2)</div><span>合成层 · 最顺滑</span></div>
+                            <div class="item"><div class="box b">opacity<br>0.25</div><span>合成层 · 最顺滑</span></div>
+                            <div class="item"><div class="box c">width<br>152px</div><span>重排 · 文字被挤</span></div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.c3-pa-stage {
+    display: flex; flex-wrap: wrap; gap: 26px; justify-content: center; align-items: flex-start; padding: 16px 0;
+}
+.c3-pa-stage .item { text-align: center; }
+.c3-pa-stage .box {
+    width: 110px; height: 76px; border-radius: 12px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; color: #fff; text-align: center; line-height: 1.5;
+    background: linear-gradient(135deg, #8A4E63, #B3748A);
+}
+.c3-pa-stage .a { transition: transform 0.5s ease; }  .c3-pa-stage .a:hover { transform: scale(1.2); }
+.c3-pa-stage .b { transition: opacity  0.5s ease; }  .c3-pa-stage .b:hover { opacity: 0.25; }
+.c3-pa-stage .c { transition: width     0.5s ease; } .c3-pa-stage .c:hover { width: 152px; }
+.c3-pa-stage span { display: block; margin-top: 10px; font-size: 11.5px; color: #6B6053; }</script>
+                </div>
+                <div class="lx-warn"><span><code>height: auto</code> <strong class="hl">无法过渡</strong>——起点没有具体数值，浏览器不知道从几开始补间。
+                    经典解法：①用 <code>max-height</code> 给一个「比内容大的上限」（见第七节抽屉）；
+                    ②现代方案用 <code>grid-template-rows: 0fr → 1fr</code> 过渡。</span></div>
+            </section>
+
+            <section>
+                <h2>六、多属性分组：一个元素，各玩各的节奏</h2>
+                <p>
+                    逗号分隔多组过渡，<strong class="hl">每组有自己的时长和曲线</strong>。
+                    高级感的 hover 往往就是「快的先走、慢的垫后」：
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="multi-property.css">
+                    <script type="text/plain" class="lab-code">.card {
+    background: #fff; color: #3A2E26; box-shadow: 0 2px 8px rgba(108, 59, 76, 0.08);
+    transition: transform 0.25s ease,    /* 起身：快 */
+                background 0.5s ease,    /* 染色：慢，颜色慢慢浸透 */
+                color      0.5s ease,    /* 文字跟着染色走 */
+                box-shadow 0.45s ease;   /* 影子：中速跟上 */
+}
+.card:hover {
+    transform: translateY(-6px) scale(1.03);
+    background: #8A4E63; color: #fff; box-shadow: 0 16px 32px rgba(108, 59, 76, 0.25);
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="multi-property-demo.css">
+                    <div class="lab-head"><span class="lab-cap">悬停卡片——先快速浮起，颜色和影子慢慢跟上（把 <code>transform .25s</code> 改成 <code>1s</code>，节奏就乱了，试试）</span></div>
+                    <template class="lab-html">
+                        <div class="c3-mp-stage">
+                            <div class="c3-mp-card">
+                                <h4>分节奏卡片</h4>
+                                <p>transform 0.25s 先起身<br>背景色 0.5s 慢慢染<br>阴影 0.45s 中速跟上</p>
+                            </div>
+                            <div class="c3-mp-card">
+                                <h4>为什么要分组</h4>
+                                <p>全部同速 = 机械<br>错开半拍 = 有生命感<br>这就是动效的「编舞」</p>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.c3-mp-stage {
+    display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; padding: 16px 0 22px;
+}
+.c3-mp-card {
+    width: 196px; padding: 20px; background: #fff;
+    border: 1.5px solid #E3D5C4; border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(108, 59, 76, 0.08); color: #3A2E26; cursor: pointer;
+    transition: transform 0.25s ease, background 0.5s ease, box-shadow 0.45s ease, color 0.5s ease;
+}
+.c3-mp-card:hover {
+    transform: translateY(-6px) scale(1.03); background: #8A4E63; color: #fff;
+    box-shadow: 0 16px 32px rgba(108, 59, 76, 0.25);
+}
+.c3-mp-card h4 { margin: 0 0 6px; font-size: 14px; color: inherit; }
+.c3-mp-card p { margin: 0; font-size: 12.5px; color: inherit; opacity: 0.72; line-height: 1.7; }</script>
+                </div>
+                <div class="lx-tip"><span><code>transition: all</code> 图省事，但所有属性被迫<strong class="hl">同一种节奏</strong>，
+                    还会把意外的重排属性拖进动画。正式项目里，写清楚每一个属性名。</span></div>
+            </section>
+
+            <section>
+                <h2>七、实战：纯 CSS 抽屉（点一下展开）</h2>
+                <p>
+                    把本章知识串起来：<strong class="hl">复选框当开关、max-height 过渡高度、箭头同步旋转</strong>。
+                    不写一行 JavaScript，点击标题就能展开收起——手风琴、FAQ 列表的原型。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="drawer.css">
+                    <script type="text/plain" class="lab-code">.toggle { display: none; }                 /* 1. 隐藏复选框本体，label 替它挨点击 */
+.c3-dw-label { cursor: pointer; }         /* 2. 提示可点 */.c3-dw-label::after {
+    content: "▸"; float: right; transition: transform 0.4s ease;   /* 3. 箭头也参与过渡 */
+}
+.c3-dw-panel { overflow: hidden; max-height: 0;                    /* 4. 收起时高度为 0（0 是具体值，可过渡） */
+    transition: max-height 0.5s ease; }                            /*    核心一行：高度平滑伸缩 */
+.toggle:checked ~ .c3-dw-panel { max-height: 200px; }              /* 5. 勾选 → 撑开 */
+.toggle:checked ~ .c3-dw-label::after { transform: rotate(90deg); }/* 箭头转正 */</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="drawer-demo.css">
+                    <div class="lab-head"><span class="lab-cap">点击标题栏，抽屉滑出（再点收起）——把 <code>max-height: 200px</code> 改成 <code>2000px</code> 观察「空跑」的违和感</span></div>
+                    <template class="lab-html">
+                        <div class="c3-dw-stage">
+                            <input type="checkbox" id="c3-dw-sw" class="c3-dw-toggle">
+                            <label class="c3-dw-label" for="c3-dw-sw">什么是 max-height 技巧？</label>
+                            <div class="c3-dw-panel">
+                                <p>内容实际高度未知时，用 max-height 从 0 过渡到一个「足够大的上限」，
+                                浏览器会在 0 和上限之间平滑补间。注意：上限别设太大——
+                                200px 的内容配 2000px 的上限，前 90% 的时间都在「空跑」。</p>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.c3-dw-stage { max-width: 380px; margin: 0 auto; padding: 12px 0; }
+.c3-dw-toggle { display: none; }
+.c3-dw-label {
+    display: block; padding: 13px 18px; border-radius: 12px 12px 0 0;
+    background: linear-gradient(135deg, #8A4E63, #B3748A); color: #fff;
+    font-size: 13.5px; cursor: pointer; user-select: none;
+}
+.c3-dw-label::after { content: "▸"; float: right; transition: transform 0.4s ease; }
+.c3-dw-panel {
+    overflow: hidden; max-height: 0; background: #fff; border: 1.5px solid #E3D5C4; border-top: none;
+    border-radius: 0 0 12px 12px; transition: max-height 0.5s ease;
+}
+.c3-dw-panel p { margin: 0; padding: 16px 18px; font-size: 12.5px; color: #6B6053; line-height: 1.9; }
+.c3-dw-toggle:checked ~ .c3-dw-panel { max-height: 200px; }
+.c3-dw-toggle:checked ~ .c3-dw-label::after { transform: rotate(90deg); }</script>
+                </div>
+                <div class="lx-note"><span>JS 版本一模一样：把 <code>:checked</code> 换成 JS 切换的 <code>.open</code> 类名，
+                    点击事件只干「加减类」这一件事，动画完全交给 CSS——<b>这就是状态与表现分离</b>。</span></div>
+            </section>
+
+            <section>
+                <h2>八、本章小结</h2>
+                <p>过渡四要素总表（背下来，随手就能写）：</p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>过渡四要素一览</caption>
+                        <thead>
+                            <tr><th>子属性</th><th>管什么</th><th>常用值</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val"><code>transition-property</code></td><td>哪些属性动</td><td>具体属性名（推荐）/ <code>all</code> / <code>none</code></td></tr>
+                            <tr><td class="td-val"><code>transition-duration</code></td><td>动多久</td><td><code>0.15s ~ 0.5s</code>（必须带单位）</td></tr>
+                            <tr><td class="td-val"><code>transition-timing-function</code></td><td>怎么个变速法</td><td><code>ease</code> / <code>ease-out</code> / <code>cubic-bezier()</code> / <code>steps()</code></td></tr>
+                            <tr><td class="td-val"><code>transition-delay</code></td><td>多久后出发</td><td><code>0s</code>，错峰入场才用</td></tr>
+                            <tr><td class="td-val"><code>transition</code>（简写）</td><td>一行全包</td><td><code>transform 0.3s ease 0.1s</code></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <ul>
+                    <li>过渡 = <strong class="hl">状态 A → 状态 B 的补间</strong>，必须由状态变化触发；写在<strong class="hl">基态</strong>而非 :hover 里</li>
+                    <li>简写两个时间的识别规则：<strong class="hl">第一个永远是 duration</strong>，第二个才是 delay</li>
+                    <li>性能三档：<strong class="hl">transform / opacity 走 GPU</strong>，颜色类走重绘，宽高边距走重排（尽量别动画）</li>
+                    <li><code>height: auto</code> 不可过渡——用 <code>max-height</code> 或 <code>grid-template-rows: 0fr/1fr</code> 绕行</li>
+                    <li>多属性逗号分组、错开时长，才有「编舞感」；正式项目别偷懒写 <code>all</code></li>
+                    <li>下一章的 <code>animation</code> 是它的完全体：<strong class="hl">多关键帧、能循环、自动播放</strong></li>
+                </ul>
+                <div class="lx-note"><span><b>动手练习</b>：①把第二节的 0.3s 改成 0.03s 和 3s，感受「太快看不见、太慢像死机」；
+                    ②给第五节第三个盒子的 width 过渡换成 <code>transform: scaleX(1.4)</code>，对比顺滑度；
+                    ③把第七节抽屉的 <code>max-height: 200px</code> 改成 <code>2000px</code>，观察「空跑」的违和感。</span></div>
+                <div class="lx-tip"><span><b>无障碍礼仪</b>：尊重系统的「减少动态效果」设置——
+                    <code>@media (prefers-reduced-motion: reduce) { * { transition-duration: 0.01s !important; } }</code>，
+                    让晕动症用户也能舒服地用你的页面。</span></div>
+            </section>
+
+        </article>
+    </main>
+    <script src="../assets/learn.js" defer></script>
+</body>
+</html>

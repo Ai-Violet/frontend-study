@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>背景与渐变 · CSS3 进阶 — 前端自习室</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23B8552F'/%3E%3Ctext x='16' y='22' font-size='16' font-family='serif' font-weight='700' fill='%23FFF7EF' text-anchor='middle'%3E学%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="../assets/learn.css">
+</head>
+<body data-page="04-CSS3进阶/03-背景与渐变.html">
+    <main class="lx-main">
+        <article class="lx-article">
+
+            <nav class="lx-crumb">
+                <a href="../教程中心页.html">学习路线</a><span class="sep">›</span>
+                <a href="index.html">CSS3 进阶</a><span class="sep">›</span>
+                <span class="here">背景与渐变</span>
+            </nav>
+            <h1><span class="h-no">03</span>背景与渐变</h1>
+            <p class="lx-lead">
+                CSS3 把背景从「一张平铺图」升级成<strong class="hl">一套图层系统</strong>：
+                多层叠加、任意缩放、分区裁剪；而渐变函数让 CSS <b>不发一个请求就能「画图」</b>——
+                按钮、横幅、条纹、光斑全是代码画出来的。
+            </p>
+            <div class="lx-meta-row">
+                <span class="lx-chip">约 35 分钟</span>
+                <span class="lx-chip">7 个动手实验</span>
+                <span class="lx-chip">零请求绘图</span>
+            </div>
+
+            <section>
+                <h2>一、CSS3 背景增强总览</h2>
+                <p>
+                    先把新武器摆上桌。下面这批属性里，<code>background-image</code> 支持的
+                    <strong class="hl">渐变函数</strong>和「逗号分隔的多层写法」，是 CSS3 背景的灵魂：
+                </p>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>CSS3 背景属性 / 渐变函数全表</caption>
+                        <thead>
+                            <tr><th>属性 / 函数</th><th>作用</th><th>常用值</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="td-val">background-image</td><td>背景图层，可逗号分隔叠多层</td><td><code>url()</code> / 渐变函数</td></tr>
+                            <tr><td class="td-val">background-size</td><td>每层的尺寸</td><td><code>cover</code> / <code>contain</code> / <code>px</code> / <code>%</code></td></tr>
+                            <tr><td class="td-val">background-origin</td><td>定位的参考区域</td><td><code>border-box</code> / <code>padding-box</code> / <code>content-box</code></td></tr>
+                            <tr><td class="td-val">background-clip</td><td>绘制的裁剪区域</td><td>同上，另有 <code>text</code>（渐变文字）</td></tr>
+                            <tr><td class="td-val">background-position</td><td>每层的位置（可分层）</td><td><code>center</code> / <code>left top</code> / <code>x y</code></td></tr>
+                            <tr><td class="td-val">background-repeat</td><td>平铺方式（可分层）</td><td><code>repeat</code> / <code>no-repeat</code> / <code>repeat-x</code></td></tr>
+                            <tr><td class="td-val">background-attachment</td><td>随内容滚动还是钉在视口</td><td><code>scroll</code> / <code>fixed</code>（视差效果）</td></tr>
+                            <tr><td class="td-val">linear-gradient()</td><td>线性渐变（直线过渡）</td><td>方向 + 色标</td></tr>
+                            <tr><td class="td-val">radial-gradient()</td><td>径向渐变（中心扩散）</td><td>形状 + 位置 + 色标</td></tr>
+                            <tr><td class="td-val">conic-gradient()</td><td>锥形渐变（绕圆心转）</td><td>起始角 + 色标</td></tr>
+                            <tr><td class="td-val">repeating-*-gradient()</td><td>重复渐变（条纹）</td><td>同上三兄弟</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lx-tip"><span>渐变函数属于 <code>background-image</code>（以及 <code>border-image</code>）的取值，
+                    不是独立属性——所以它不能当 <code>background-color</code> 用，但可以和其他背景层层叠加。</span></div>
+            </section>
+
+            <section>
+                <h2>二、多重背景：像图层一样叠加</h2>
+                <p>
+                    <code>background-image</code> 用<strong class="hl">逗号分隔</strong>可以写多层，
+                    <strong class="hl">先写的在最上面</strong>——和 PS 的图层面板一个逻辑：
+                    光斑、纹理放上层的半透明渐变，底色放最下面。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="multi-bg.css">
+                    <script type="text/plain" class="lab-code">.hero {
+    background-image:
+        radial-gradient(circle at 18% 30%, rgba(255,255,255,.4) 0 26px, transparent 26px),  /* 上层：光斑 1 */
+        radial-gradient(circle at 62% 65%, rgba(255,255,255,.25) 0 38px, transparent 38px), /* 中层：光斑 2 */
+        linear-gradient(135deg, #6C3B4C, #B3748A);                                         /* 底层：渐变 */
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* size / position / repeat 也都支持按层写，逗号一一对应 */
+.layered {
+    background-image: url("a.png"), linear-gradient(#fff, #eee);
+    background-size: 80px 80px, cover;        /* 第一层 80px，第二层铺满 */
+    background-position: right top, center;
+    background-repeat: no-repeat, no-repeat;
+}</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="multi-bg-demo.css">
+                    <div class="lab-head"><span class="lab-cap">两个光斑层 + 一个渐变底 = 零图片 Hero——把光斑的 <code>transparent 26px</code> 改成 <code>transparent 10px</code>，光斑变小</span></div>
+                    <template class="lab-html">
+                        <div class="hero">多重背景叠加的 Hero 横幅（一个请求都没发）</div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.hero {
+    height: 132px; border-radius: 14px;
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    font-size: 14px; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    background-image:
+        radial-gradient(circle at 18% 30%, rgba(255, 255, 255, 0.4) 0 26px, transparent 26px),
+        radial-gradient(circle at 62% 65%, rgba(255, 255, 255, 0.25) 0 38px, transparent 38px),
+        linear-gradient(135deg, #6C3B4C, #B3748A);
+}</script>
+                </div>
+                <div class="lx-warn"><span>层序口诀：<b>「逗号排队，先写的在上面」</b>。
+                    想换底层颜色只改最后一层，别把光斑盖到渐变下面去。</span></div>
+            </section>
+
+            <section>
+                <h2>三、background-size：cover 与 contain 之争</h2>
+                <p>
+                    背景图默认按「原始尺寸」显示，塞不满容器就会平铺或留白。
+                    <code>background-size</code> 负责缩放，两个明星值必须分清：
+                    <strong class="hl">cover「铺满裁边」</strong>、<strong class="hl">contain「完整留白」</strong>。
+                </p>
+                <div class="lab" data-lang="css" data-file="background-size.css">
+                    <div class="lab-head"><span class="lab-cap">同一张 3:2 的内嵌 SVG 图、同一个 220×120 容器——把 <code>.a</code> 的 <code>cover</code> 改成 <code>contain</code> 看留白</span></div>
+                    <template class="lab-html">
+                        <div class="sz-stage">
+                            <div class="item"><div class="box a"></div><span>cover：铺满，上下被裁</span></div>
+                            <div class="item"><div class="box b"></div><span>contain：完整，两侧留白</span></div>
+                            <div class="item"><div class="box c"></div><span>100px 80px：原始大小</span></div>
+                            <div class="item"><div class="box d"></div><span>50% 50%：容器的一半</span></div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.sz-stage {
+    display: flex; flex-wrap: wrap; gap: 18px; justify-content: center; padding: 4px 0;
+}
+.sz-stage .item { text-align: center; }
+.sz-stage .box {
+    width: 220px; height: 120px;
+    border: 1.5px dashed #C9A284;
+    background-color: #FDF9F4;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='80'%3E%3Crect width='120' height='80' fill='%23E8C99B'/%3E%3Ccircle cx='60' cy='40' r='26' fill='%23B3472E'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.sz-stage span { display: block; margin-top: 7px; font-size: 11.5px; color: #6B6053; }
+.a { background-size: cover; }      /* 铺满：裁掉超出的部分 */
+.b { background-size: contain; }    /* 完整：装得下就好，留白 */
+.c { background-size: 100px 80px; } /* 指定尺寸：宽 高 */
+.d { background-size: 50% 50%; }    /* 百分比：相对容器 */</script>
+                </div>
+                <div class="lx-table-wrap">
+                    <table class="lx-table">
+                        <caption>cover 与 contain 的选择场景</caption>
+                        <thead>
+                            <tr><th>场景</th><th>用哪个</th><th>理由</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>全屏首屏横幅</td><td><code>cover</code></td><td>必须铺满，裁掉就裁掉</td></tr>
+                            <tr><td>商品图 / 头像框</td><td><code>cover</code></td><td>比例统一不变形（配合裁切）</td></tr>
+                            <tr><td>logo / 图标</td><td><code>contain</code></td><td>完整显示最重要</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section>
+                <h2>四、background-origin 与 background-clip：三个盒子区域</h2>
+                <p>
+                    一个元素从外到内有三层区域：<strong class="hl">border-box（含边框）→ padding-box（含内边距）→ content-box（只有内容）</strong>。
+                    这对属性就是问背景两个问题：
+                </p>
+                <ul>
+                    <li><code>background-origin</code>：<strong class="hl">定位</strong>从哪个区域算起（背景图的原点）</li>
+                    <li><code>background-clip</code>：背景<strong class="hl">绘制</strong>到哪个区域为止（超出就裁掉）</li>
+                </ul>
+                <div class="lab" data-lang="css" data-file="origin-clip.css">
+                    <div class="lab-head"><span class="lab-cap">背景一步步「退让」——<code>.a</code> 铺到边框底下，<code>.c</code> 只铺内容区；把 <code>.c</code> 的 origin 改成 <code>border-box</code> 试试</span></div>
+                    <template class="lab-html">
+                        <div class="oc-stage">
+                            <div class="item"><div class="box a"></div><span>border-box：铺到边框底下</span></div>
+                            <div class="item"><div class="box b"></div><span>padding-box（默认）</span></div>
+                            <div class="item"><div class="box c"></div><span>content-box：只铺内容区</span></div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.oc-stage {
+    display: flex; flex-wrap: wrap; gap: 18px; justify-content: center; padding: 4px 0;
+}
+.oc-stage .item { text-align: center; }
+.oc-stage .box {
+    width: 214px; height: 124px;
+    padding: 18px;                                   /* 内容区和边框拉开距离 */
+    border: 10px dashed rgba(138, 78, 99, 0.55);     /* 虚线边框：能看见底下的东西 */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='80'%3E%3Crect width='120' height='80' fill='%23E8C99B'/%3E%3Ccircle cx='60' cy='40' r='26' fill='%23B3472E'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;                      /* 先铺满，再看 origin 决定铺满谁 */
+}
+.oc-stage span { display: block; margin-top: 7px; font-size: 11.5px; color: #6B6053; }
+.a { background-origin: border-box;   background-clip: border-box; }   /* 连边框底下都铺 */
+.b { background-origin: padding-box;  background-clip: padding-box; }  /* 从边框内侧开始 */
+.c { background-origin: content-box;  background-clip: content-box; }  /* 只铺内容区 */
+
+/* 两者默认值都是 padding-box。
+   另一个高频值：background-clip: text —— 背景只画进文字里，见第八节 */</script>
+                </div>
+                <div class="lx-tip"><span>配一个<strong class="hl">虚线 / 半透明边框</strong>，origin 和 clip 的区别一眼可见——
+                    这也是调试边框区域问题的小技巧。</span></div>
+            </section>
+
+            <section>
+                <h2>五、linear-gradient：线性渐变</h2>
+                <p>
+                    沿着一条直线从一个颜色过渡到另一个颜色。语法三要素：
+                    <strong class="hl">方向 + 至少两个颜色（色标）</strong>。
+                    色标后面可以跟位置，位置可以只写一部分——两个色标挤在同一个位置，就是「硬边」。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="linear.css">
+                    <script type="text/plain" class="lab-code">/* 方向两种写法：to 关键词（to right / to top right）或角度（deg） */
+.lg-a { background: linear-gradient(to right, #6C3B4C, #B3748A); }        /* 向右 */
+
+/* 135deg = 左上 → 右下：UI 界的黄金角度（光从左上打来的习惯） */
+.lg-b { background: linear-gradient(135deg, #6C3B4C, #B3748A); }
+
+/* 多色 + 色标位置：30% 处必须是赭金色 */
+.lg-c { background: linear-gradient(to right, #8A4E63, #C08A3E 30%, #B3472E); }
+
+/* 双位置色标：一段赭金到 50%，下一段从 50% 开始 —— 中间没有过渡 = 硬边双色 */
+.lg-d { background: linear-gradient(to right, #C08A3E 0 50%, #F3D5A0 50% 100%); }</script>
+                </div>
+                <p>方向、多色、色标、硬边四种玩法——改改角度和百分比：</p>
+                <div class="lab" data-lang="css" data-file="linear-demo.css">
+                    <div class="lab-head"><span class="lab-cap">把 <code>.d</code> 的双位置 <code>50%</code> 改成 <code>70%</code>，硬边位置右移；<code>.b</code> 的角度改成 <code>45deg</code></span></div>
+                    <template class="lab-html">
+                        <div class="lg-stage">
+                            <div class="g a">to right 向右</div>
+                            <div class="g b">135deg 左上 → 右下</div>
+                            <div class="g c">三色 + 30% 停靠点</div>
+                            <div class="g d">硬边双色（无过渡）</div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.lg-stage {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; padding: 4px 0;
+}
+.lg-stage .g {
+    height: 84px; border-radius: 12px; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+.a { background: linear-gradient(to right, #6C3B4C, #B3748A); }
+.b { background: linear-gradient(135deg, #6C3B4C, #B3748A); }
+.c { background: linear-gradient(to right, #8A4E63, #C08A3E 30%, #B3472E); }
+.d { background: linear-gradient(to right, #C08A3E 0 50%, #F3D5A0 50% 100%); }</script>
+                </div>
+                <div class="lx-warn"><span>角度方向易记法：deg 指的是<strong class="hl">渐变线指向的方向</strong>——
+                    <code>0deg</code> 向上、<code>90deg</code> 向右、<code>180deg</code> 向下、<code>270deg</code> 向左。
+                    「to right」和「90deg」是同一个意思。</span></div>
+            </section>
+
+            <section>
+                <h2>六、radial-gradient：径向渐变</h2>
+                <p>
+                    从一个<strong class="hl">圆心</strong>向四周扩散，适合光晕、聚光灯、立体球。
+                    语法：<code>radial-gradient(形状 at 位置, 色标…)</code>，
+                    形状 <code>circle</code>（正圆）/ <code>ellipse</code>（椭圆，默认）。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="radial.css">
+                    <script type="text/plain" class="lab-code">/* 圆心在正中：从梅粉过渡到深梅 */
+.rg-a { background: radial-gradient(circle at center, #B3748A, #6C3B4C 70%); }
+
+/* 高光偏移到左上 30% 30% —— 一秒画出立体球 */
+.rg-b { border-radius: 50%;
+        background: radial-gradient(circle at 30% 30%, #E5C6D2, #8A4E63 65%); }
+
+/* 前段透明、后段实色 —— 圆环 */
+.rg-c { background: radial-gradient(circle, transparent 54%, #8A4E63 55%); }
+
+/* ellipse：默认形状，随容器比例拉伸 */
+.rg-d { background: radial-gradient(ellipse at center, #F3D5A0, #C08A3E); }
+
+/* 大小关键字（了解）：closest-side 最近边 / farthest-corner 最远角（默认）
+   .x { background: radial-gradient(circle closest-side at center, #fff, #8A4E63); } */</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="radial-demo.css">
+                    <div class="lab-head"><span class="lab-cap">把 <code>.b</code> 的高光从 <code>30% 30%</code> 挪到 <code>70% 30%</code>，立体球的光源方向翻转</span></div>
+                    <template class="lab-html">
+                        <div class="rg-stage">
+                            <div class="item"><div class="g a"></div><span>居中光</span></div>
+                            <div class="item"><div class="g b"></div><span>偏移高光 = 立体球</span></div>
+                            <div class="item"><div class="g c"></div><span>透明段 = 圆环</span></div>
+                            <div class="item"><div class="g d"></div><span>ellipse 椭圆</span></div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.rg-stage {
+    display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; align-items: center; padding: 6px 0;
+}
+.rg-stage .item { text-align: center; }
+.rg-stage .g { width: 108px; height: 108px; border-radius: 12px; }
+.rg-stage span { display: block; margin-top: 7px; font-size: 11.5px; color: #6B6053; }
+.a { background: radial-gradient(circle at center, #B3748A, #6C3B4C 70%); }
+.b { border-radius: 50%; background: radial-gradient(circle at 30% 30%, #E5C6D2, #8A4E63 65%); }
+.c { background: radial-gradient(circle, transparent 54%, #8A4E63 55%); }
+.d { background: radial-gradient(ellipse at center, #F3D5A0, #C08A3E); }</script>
+                </div>
+                <div class="lx-tip"><span>「立体球」公式值得背下来：<b>高光圆心放 30% 30%，亮色起步、深色收尾、圆形容器</b>。
+                    头像、图标、按钮高光都能套。</span></div>
+            </section>
+
+            <section>
+                <h2>七、conic-gradient 与 repeating：条纹与色环</h2>
+                <p>
+                    <code>conic-gradient</code> 锥形渐变<strong class="hl">绕着圆心转圈</strong>配色——
+                    色环、进度环的官方解法；<code>repeating-linear-gradient</code> 重复线性渐变则是
+                    <strong class="hl">条纹纹理</strong>生成器（警戒条、斑马纹、进度条格纹）。
+                </p>
+                <div class="lx-codeblock" data-lang="css" data-file="conic.css">
+                    <script type="text/plain" class="lab-code">/* 锥形渐变：颜色按角度分布，首尾同色衔接成环 */
+.wheel {
+    border-radius: 50%;
+    background: conic-gradient(#B3472E, #C08A3E, #6E8B6E, #8A4E63, #B3472E);
+}
+
+/* 进度环思路：锥形渐变按百分比硬切 + 中间盖一个白色圆 */
+.ring {
+    border-radius: 50%;
+    background: conic-gradient(#8A4E63 0 65%, #E3D5C4 65% 100%);  /* 65% 处硬切 */
+    display: flex; align-items: center; justify-content: center;
+}
+.ring i { width: 94px; height: 94px; border-radius: 50%; background: #fff; }
+
+/* 重复线性渐变：24px 赭金 + 24px 米黄，无限循环 = 警戒条纹 */
+.stripe {
+    background: repeating-linear-gradient(45deg, #C08A3E 0 24px, #F3D5A0 24px 48px);
+}
+
+/* 还有 repeating-radial-gradient（同心圆波纹），语法同理 */
+.wave { background: repeating-radial-gradient(circle, #E5C6D2 0 10px, #fff 10px 20px); }</script>
+                </div>
+                <div class="lab" data-lang="css" data-file="conic-demo.css">
+                    <div class="lab-head"><span class="lab-cap">把进度环的 <code>65%</code> 改成 <code>25%</code> 或 <code>90%</code>、把条纹的 <code>24px</code> 改成 <code>8px</code>、角度 <code>45deg</code> 改 <code>90deg</code>——改一个数字换一种纹理</span></div>
+                    <template class="lab-html">
+                        <div class="cg-stage">
+                            <div class="item">
+                                <div class="wheel"></div>
+                                <span>conic 色环</span>
+                            </div>
+                            <div class="item">
+                                <div class="ring"><i>65%</i></div>
+                                <span>conic 进度环</span>
+                            </div>
+                            <div class="item">
+                                <div class="stripe"></div>
+                                <span>repeating 警戒条纹</span>
+                            </div>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.cg-stage {
+    display: flex; flex-wrap: wrap; gap: 24px; align-items: center; justify-content: center; padding: 6px 0;
+}
+.cg-stage .item { text-align: center; }
+.cg-stage span { display: block; margin-top: 7px; font-size: 11.5px; color: #6B6053; }
+.wheel {
+    width: 128px; height: 128px; border-radius: 50%;
+    background: conic-gradient(#B3472E, #C08A3E, #6E8B6E, #8A4E63, #B3472E);
+}
+.ring {
+    width: 128px; height: 128px; border-radius: 50%;
+    background: conic-gradient(#8A4E63 0 65%, #E3D5C4 65% 100%);  /* 65% 处硬切 */
+    display: flex; align-items: center; justify-content: center;
+}
+.ring i {
+    width: 94px; height: 94px; border-radius: 50%; background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-style: normal; font-size: 17px; font-weight: 600; color: #8A4E63;
+}
+.stripe {
+    height: 64px; width: 300px; border-radius: 10px;
+    background: repeating-linear-gradient(45deg, #C08A3E 0 24px, #F3D5A0 24px 48px);
+}</script>
+                </div>
+                <div class="lx-note"><span>进度环不用图、不用 JS：<code>conic-gradient(颜色 0 百分比, 底色 百分比 100%)</code>
+                    + 中心盖圆。百分比由 JS 更新时，改一下 <code>style</code> 就能动态转起来。</span></div>
+            </section>
+
+            <section>
+                <h2>八、实战：渐变按钮与渐变文字</h2>
+                <p>
+                    两个高频实战：渐变按钮（渐变 + 阴影 + hover），
+                    和<strong class="hl">渐变文字</strong>——把渐变裁进文字笔画里，
+                    核心是 <code>background-clip: text</code> + 把文字填色变透明。
+                </p>
+                <div class="lab" data-lang="css" data-file="gradient.css">
+                    <div class="lab-head"><span class="lab-cap">渐变按钮（hover 试试）+ 渐变文字——换一组渐变颜色，看按钮和文字一起变色；给渐变文字再加一层光晕试试</span></div>
+                    <template class="lab-html">
+                        <div class="gd-stage">
+                            <button class="btn" type="button">渐变按钮</button>
+                            <p class="text">渐变文字：把彩虹装进笔画</p>
+                        </div>
+                    </template>
+                    <script type="text/plain" class="lab-code">.gd-stage {
+    display: flex; flex-direction: column; gap: 24px; align-items: center; padding: 8px 0;
+}
+.btn {
+    padding: 13px 38px; border: none; border-radius: 999px;
+    color: #fff; font-size: 14px; font-family: inherit; cursor: pointer;
+    background: linear-gradient(135deg, #E8A06A, #C45A3D);
+    box-shadow: 0 6px 16px rgba(196, 90, 61, 0.4);
+    transition: all 0.25s ease;
+}
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(196, 90, 61, 0.5);
+}
+.text {
+    margin: 0; font-size: 36px; font-weight: 700; text-align: center;
+    color: #C45A3D;                                  /* ① 兜底：不支持渐变文字就是纯色 */
+    background: linear-gradient(135deg, #C45A3D, #C08A3E 50%, #8A4E63);  /* ② 渐变打底 */
+    -webkit-background-clip: text;                    /* ③ 背景只画进文字里 */
+    background-clip: text;
+    -webkit-text-fill-color: transparent;             /*    文字填色透明，露出渐变 */
+}</script>
+                </div>
+                <div class="lx-warn"><span><code>background-clip: text</code> 至今习惯带上 <code>-webkit-</code> 双写；
+                    而 <code>-webkit-text-fill-color</code> 一旦生效会盖过 <code>color</code>——
+                    所以兜底纯色要写在前面（又见第 1 课的「先保底，再加糖」）。</span></div>
+            </section>
+
+            <section>
+                <h2>九、本章小结</h2>
+                <ul>
+                    <li>背景是<strong class="hl">图层系统</strong>：<code>background-image</code> 逗号分隔多层，先写的在上</li>
+                    <li><code>background-size</code>：<code>cover</code> 铺满裁边、<code>contain</code> 完整留白，还能指定 px / %</li>
+                    <li><code>background-origin</code> 管「从哪算起」，<code>background-clip</code> 管「画到哪为止」，都有 border / padding / content 三区，clip 还有 <code>text</code></li>
+                    <li>渐变四兄弟：<code>linear</code> 直线、<code>radial</code> 扩散、<code>conic</code> 转圈、<code>repeating</code> 出条纹</li>
+                    <li>色标可带位置，<strong class="hl">两个色标挤同一位置 = 硬边</strong>——分栏、进度环、双色按钮的基础</li>
+                    <li>立体球公式：高光 <code>at 30% 30%</code> + 圆形容器；进度环公式：<code>conic</code> 硬切 + 中心盖圆</li>
+                    <li>渐变文字：<code>background-clip: text</code> + <code>-webkit-text-fill-color: transparent</code>，先写 <code>color</code> 兜底</li>
+                </ul>
+                <div class="lx-note"><span><b>动手练习</b>：在第七节的实验台里，把进度环的 <code>65%</code> 改成 <code>25%</code> 和 <code>90%</code>；
+                    再把警戒条纹的角度 <code>45deg</code> 改成 <code>90deg</code>、把 <code>24px</code> 改成 <code>8px</code>。
+                    体会「改一个数字，换一种纹理」——渐变是最好的免费画图工具。</span></div>
+            </section>
+
+        </article>
+    </main>
+    <script src="../assets/learn.js" defer></script>
+</body>
+</html>
